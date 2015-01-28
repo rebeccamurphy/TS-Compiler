@@ -3,7 +3,7 @@
 <head>
     <title>My Compiler</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="compiler.css" />
+    <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
 </head>
 <body onload="init();">
     <h1>[insert your name here] Compiler Project</h1>
@@ -17,7 +17,7 @@ D ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
 O ::== + | -
     </pre>
     <div>
-        <img style="float:right;" src="images/CompilerPhases.png" alt="Compiler Phases diagram" />
+        <img style="float:right;" src="distimages/CompilerPhases.png" alt="Compiler Phases diagram" />
     </div>    
     <div>
         <textarea id="taSourceCode" cols="32" rows="18"></textarea>
@@ -29,13 +29,13 @@ O ::== + | -
     <!-- Footer -->
     <p>
         <a href="http://validator.w3.org/check?uri=referer">
-            <img src="images/w3cvalidhtml5.jpg" alt="Valid HTML5" width="88" height="31" />
+            <img src="dist/images/w3cvalidhtml5.jpg" alt="Valid HTML5" width="88" height="31" />
         </a>
     </p>
     <!-- Client-side code down here, per the YSlow advice. 
     // (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
-    <script type="text/javascript" src="scripts/utils.js"></script>	
-    <script type="text/javascript" src="scripts/lexer.js"></script>	
+    <script type="text/javascript" src="dist/scripts/utils.js"></script>	
+    <script type="text/javascript" src="dist/scripts/lexer.js"></script>	
     <script type="text/javascript">
     // Global variables
     var tokens = "";
