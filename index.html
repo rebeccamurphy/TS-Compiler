@@ -1,12 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>My Compiler</title>
+    <title>My Bitchen Compiler</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 </head>
 <body onload="init();">
-    <h1>[insert your name here] Compiler Project</h1>
+    <h1>Bloop Compiler</h1>
+    <hr>
     <p>
         . . . <em>a simple parser for a simple grammar</em>:
     </p>
@@ -16,22 +18,23 @@ E ::== D O E | D
 D ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
 O ::== + | -
     </pre>
+    <!--
     <div>
         <img style="float:right;" src="dist/images/CompilerPhases.png" alt="Compiler Phases diagram" />
     </div>    
-    <div>
-        <textarea id="taSourceCode" cols="32" rows="18"></textarea>
-        <br>
+    -->
+    <div style="text-align:center;">
         <input type="button" id="btnCompile" value="Compile" onclick="btnCompile_click();"/>
-        <br>
-        <textarea id="taOutput" cols="32" rows="18"></textarea>
+    </div>
+    <div>
+
+        <div class="source">
+            <textarea id="taSourceCode"></textarea>
+            <textarea id="taOutput"></textarea>
+        </div>
+        
     </div>
     <!-- Footer -->
-    <p>
-        <a href="http://validator.w3.org/check?uri=referer">
-            <img src="dist/images/w3cvalidhtml5.jpg" alt="Valid HTML5" width="88" height="31" />
-        </a>
-    </p>
     <!-- Client-side code down here, per the YSlow advice. 
     // (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
     <script type="text/javascript" src="dist/scripts/utils.js"></script>	
