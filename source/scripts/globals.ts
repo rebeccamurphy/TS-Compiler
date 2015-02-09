@@ -6,9 +6,17 @@ var onDocumentLoad = function() {
 */
 var _Lexer = TSC.Lexer;
 
+//Global Constants
+var EOF = "$";
+
 // Global variables
-    var tokens = "";
-    var tokenIndex = 0;
-    var currentToken = "";
-    var errorCount = 0;
-    var EOF = "$";
+var _Tokens = "";
+var _TokenIndex = 0;
+var _CurrentToken = "";
+var _ErrorCount = 0;
+
+
+
+function putMessage(msg) {
+    (<HTMLInputElement> document.getElementById("taOutput")).value += msg + "\n";
+}
