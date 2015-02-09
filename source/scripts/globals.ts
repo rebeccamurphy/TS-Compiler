@@ -4,7 +4,7 @@ var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };
 */
-var _Lexer = TSC.Lexer;
+
 
 //Global Constants
 var EOF = "$";
@@ -15,8 +15,22 @@ var _TokenIndex = 0;
 var _CurrentToken = "";
 var _ErrorCount = 0;
 
+var _Lexer;
+var _Parser;
 
 
-function putMessage(msg) {
+var putMessage= function(msg){
     (<HTMLInputElement> document.getElementById("taOutput")).value += msg + "\n";
 }
+
+
+
+var onDocumentLoad = function() {
+	_Lexer = TSC.Lexer;
+	_Parser = TSC.Parser;
+	
+	_Tokens = "";
+    _TokenIndex = 0;
+    _CurrentToken = ' ';
+    _ErrorCount = 0;
+};

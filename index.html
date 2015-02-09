@@ -38,18 +38,19 @@ O ::== + | -
     <!-- Client-side code down here, per the YSlow advice. 
     // (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
     <script type="text/javascript" src="dist/scripts/utils.js"></script>	
-    <script type="text/javascript" src="dist/scripts/lexer.js"></script>	
+    <script type="text/javascript" src="dist/scripts/lexer.js"></script>    
+    <script type="text/javascript" src="dist/scripts/globals.js"></script>  
+    <script type="text/javascript" src="dist/scripts/parser.js"></script>	
     <script type="text/javascript">
     
 
     function init() {
+        
         // Clear the message box.
         document.getElementById("taOutput").value = "";
         // Set the initial values for our globals.
-        _Tokens = "";
-        _TokenIndex = 0;
-        _CurrentToken = ' ';
-        _ErrorCount = 0;        
+        onDocumentLoad();
+                
     }
     
     function btnCompile_click() {        
@@ -60,9 +61,9 @@ O ::== + | -
         putMessage("Compilation Started");
         // Grab the tokens from the lexer . . .
         _Tokens = _Lexer.lex();
-        putMessage("Lex returned [" + tokens + "]");
+        putMessage("Lex returned [" + _Tokens + "]");
         // . . . and parse!
-        parse();
+        _Parser.parse();
     }
 
 
