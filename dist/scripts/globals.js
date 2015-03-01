@@ -35,6 +35,7 @@ var TokenType;
     TokenType[TokenType["DIGIT"] = 22] = "DIGIT";
 })(TokenType || (TokenType = {}));
 ;
+var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF', 'QUOTE', 'NEWLINE', 'ID', 'DIGIT'];
 var putMessage = function (msg) {
     document.getElementById("taOutput").value += msg + "\n";
 };

@@ -67,7 +67,8 @@ O ::== + | -
         init();
         putMessage("Compilation Started");
         // Grab the tokens from the lexer . . .
-        _Tokens = _Lexer.lex();
+        _Lexer.lex();
+
         putMessage("Lex returned [" + _Tokens + "]");
         // . . . and parse!
         //_Parser.parse();

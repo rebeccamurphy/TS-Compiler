@@ -10,6 +10,9 @@ var TSC;
             this.value = value;
             this.line = line;
         }
+        Token.prototype.toString = function () {
+            return TokenTypeString[this.kind];
+        };
         Token.createToken = function (type, str, lineNum) {
             var temp = new Token(type, str, lineNum);
             return temp;
@@ -27,6 +30,10 @@ var TSC;
         };
         Token.getToken = function (str, lineNum) {
             //returns created token or null 
+            if (str.match(/\n/)) {
+                //newline sent in
+                return TSC.Token.createToken(20 /* NEWLINE */, str, lineNum);
+            }
             str = str.trim(); //to handle excess spaces and newlines
             if (str.length === 0)
                 return null;
@@ -67,11 +74,6 @@ var TSC;
                     return TSC.Token.createToken(9 /* STR */, str, lineNum);
                 case 'boolean':
                     return TSC.Token.createToken(10 /* BOOL */, str, lineNum);
-            }
-            debugger;
-            if (str.match(/\n/)) {
-                //newline sent in
-                return TSC.Token.createToken(20 /* NEWLINE */, str, lineNum);
             }
             //if a single character (a-Z) has been sent in
             if (str.length === 1 && str.match(/[a-z]/))

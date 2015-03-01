@@ -10,6 +10,9 @@ module TSC
             this.value= value;
             this.line = line;
         }
+        public toString(){
+        	return TokenTypeString[this.kind];
+        }
         public static createToken(type, str, lineNum){
         	var temp = new Token (type, str,lineNum);
         	return temp;
@@ -26,7 +29,12 @@ module TSC
         	_Tokens.push(temp);
         }
         public static getToken(str,lineNum) : any {
+
         	//returns created token or null 
+        	if (str.match(/\n/)){
+        		//newline sent in
+	           return TSC.Token.createToken(TokenType.NEWLINE,str,lineNum); 
+        	}
 	        str = str.trim(); //to handle excess spaces and newlines
 	        if(str.length === 0) //in the case of being passed an empty buffer, don't throw an error
 	            return null;
@@ -71,11 +79,7 @@ module TSC
 	           
 
         	}
-        	debugger;
-        	if (str.match(/\n/)){
-        		//newline sent in
-	           return TSC.Token.createToken(TokenType.NEWLINE,str,lineNum); 
-        	}
+        	
 	        //if a single character (a-Z) has been sent in
 	        if(str.length === 1 && str.match(/[a-z]/)) 
 	           return TSC.Token.createToken(TokenType.ID,str,lineNum); 

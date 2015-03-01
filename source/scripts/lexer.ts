@@ -15,7 +15,11 @@ module TSC
 		        debugger;
 		        //call tokenize TODO
 		        this.tokenize(sourceCode);
-		        return sourceCode;
+		        var TokenStr=[];
+		        for (var i=0; i< _Tokens.length; i++){
+		        	TokenStr.push(_Tokens[i].toString());
+		        }
+		        return TokenStr;
 		    }
 		}
 
@@ -50,7 +54,6 @@ module TSC
 		                    	putError(currentLine, this.part, "Invalid token.");
 		                    else{
 		                    	_Token.addToken(token);
-		                    	tokenized=true;
 		                    }
 	                    }
 	                    //only increment line if new line isnt in string
