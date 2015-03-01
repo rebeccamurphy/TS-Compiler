@@ -3,6 +3,7 @@
 module TSC
 {
 	export class Parser {
+		public static part = 'Parser';
 		public static parse() {
 	        putMessage("Parsing [" + _Tokens + "]");
 	        // Grab the next token.
@@ -17,7 +18,7 @@ module TSC
 	        	msg = _ErrorCount + " error.";
 	        else
 	        	msg = _ErrorCount + " errors.";
-	        putMessage("Parsing found "+ msg);   
+	        putMessage("Parsing found"+ msg);   
 		}
 
 		public static parseG() {

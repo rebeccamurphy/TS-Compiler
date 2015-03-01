@@ -1,5 +1,6 @@
 /* lexer.ts  */
-
+//TODO unended string with quotes
+//only works if there are spaces in code, need to fix that.
 module TSC
 	{
 	export class Lexer {
@@ -161,7 +162,7 @@ module TSC
   	                	//push this last char to the buffer
   	                    buffer.push(currChar); 
   	                    //try to create a token from the buffer
-  	                    if (!buffer.isEmpty){
+  	                    if (!buffer.isEmpty()){
 	  	                    var token = _Token.getToken(buffer.flush(), currentLine);
 	  	                    if(token===null) 
 	  	                        putError(currentLine, this.part, "Invalid token.");
@@ -191,7 +192,11 @@ module TSC
                 else if(!tokenized && currChar!==' '){
                     buffer.push(currChar);
                 }
-
+                var token = _Token.getToken(buffer.get, currentLine);
+                if (token!==null){
+                	buffer.clear();
+                	_Token.add(token);
+                }
                 tokenized = false; //reset tokenized
 
 			}

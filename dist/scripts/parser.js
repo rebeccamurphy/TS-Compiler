@@ -18,7 +18,7 @@ var TSC;
                 msg = _ErrorCount + " error.";
             else
                 msg = _ErrorCount + " errors.";
-            putMessage("Parsing found " + msg);
+            putMessage("Parsing found" + msg);
         };
         Parser.parseG = function () {
             // A G(oal) production can only be an E(xpression), so parse the E production.
@@ -82,6 +82,7 @@ var TSC;
             }
             return thisToken;
         };
+        Parser.part = 'Parser';
         return Parser;
     })();
     TSC.Parser = Parser;
