@@ -4,8 +4,48 @@ module TSC
 {
 	export class Parser {
 		public static part = 'Parser';
+        public static blockOpen = "{";
+        public static blockClose = "}";
+        public static openParen = "(";
+        public static closeParen = ")";
+        public static strStartEnd = '"';
+        public static print = "print";
+        public static space = " ";
+        public static assignment = "=";
+        public static addop = "+";
+        public static type = ["int", "string", "boolean"];
+        public static typeOps = "type";
+        public static while = "while";
+        public static boolval = ["false", "true"];
+        public static boolop = ["==", "!="];
+        public static booleanOperator = "boolean operator";
+        public static if = "if";
+        public static char = "char";
+        public static digit = "digit";
+
+	    public static getNextToken() {
+	        var thisToken = EOF;    // Let's assume that we're at the EOF.
+	        if (_TokenIndex < _Tokens.length)
+	        {
+	            // If we're not at EOF, then return the next token in the stream and advance the index.
+	            thisToken = _Tokens[_TokenIndex];
+	            putMessage("Current token:" + thisToken.toString());
+	            _TokenIndex++;
+	        }
+	        return thisToken;
+    	}
+    	public static getPrevToken() {
+    		var thisToken;
+	        if (_TokenIndex-1 >=0)
+	        {
+	            // If we're not at EOF, then return the next token in the stream and advance the index.
+	            thisToken = _Tokens[_TokenIndex-1];
+	            //putMessage("Current token:" + thisToken);
+	        }
+	        return thisToken;
+    	}
 		public static parse() {
-	        putMessage("Parsing [" + _Tokens + "]");
+	        putMessage("Parsing [" + _TokenStr + "]");
 	        // Grab the next token.
 	        _CurrentToken = this.getNextToken();
 	        // A valid parse derives the G(oal) production, so begin there.
@@ -81,17 +121,6 @@ module TSC
 	        _CurrentToken = this.getNextToken();
 	    }
 
-	    public static getNextToken() {
-	        var thisToken = EOF;    // Let's assume that we're at the EOF.
-	        if (_TokenIndex < _Tokens.length)
-	        {
-	            // If we're not at EOF, then return the next token in the stream and advance the index.
-	            thisToken = _Tokens[_TokenIndex];
-	            putMessage("Current token:" + thisToken);
-	            _TokenIndex++;
-	        }
-	        return thisToken;
-    	}
 
 	}
 }

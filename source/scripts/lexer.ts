@@ -16,11 +16,11 @@ module TSC
 		        debugger;
 		        //call tokenize TODO
 		        this.tokenize(sourceCode);
-		        var TokenStr=[];
+		        
 		        for (var i=0; i< _Tokens.length; i++){
-		        	TokenStr.push(_Tokens[i].toString());
+		        	_TokenStr.push(_Tokens[i].toString());
 		        }
-		        return TokenStr;
+		        return _TokenStr;
 		    }
 		}
 

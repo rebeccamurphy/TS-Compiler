@@ -4,8 +4,26 @@ var TSC;
     var Parser = (function () {
         function Parser() {
         }
+        Parser.getNextToken = function () {
+            var thisToken = EOF; // Let's assume that we're at the EOF.
+            if (_TokenIndex < _Tokens.length) {
+                // If we're not at EOF, then return the next token in the stream and advance the index.
+                thisToken = _Tokens[_TokenIndex];
+                putMessage("Current token:" + thisToken.toString());
+                _TokenIndex++;
+            }
+            return thisToken;
+        };
+        Parser.getPrevToken = function () {
+            var thisToken;
+            if (_TokenIndex - 1 >= 0) {
+                // If we're not at EOF, then return the next token in the stream and advance the index.
+                thisToken = _Tokens[_TokenIndex - 1];
+            }
+            return thisToken;
+        };
         Parser.parse = function () {
-            putMessage("Parsing [" + _Tokens + "]");
+            putMessage("Parsing [" + _TokenStr + "]");
             // Grab the next token.
             _CurrentToken = this.getNextToken();
             // A valid parse derives the G(oal) production, so begin there.
@@ -72,17 +90,25 @@ var TSC;
             // will allow the code to see what's coming next... a sort of "look-ahead".
             _CurrentToken = this.getNextToken();
         };
-        Parser.getNextToken = function () {
-            var thisToken = EOF; // Let's assume that we're at the EOF.
-            if (_TokenIndex < _Tokens.length) {
-                // If we're not at EOF, then return the next token in the stream and advance the index.
-                thisToken = _Tokens[_TokenIndex];
-                putMessage("Current token:" + thisToken);
-                _TokenIndex++;
-            }
-            return thisToken;
-        };
         Parser.part = 'Parser';
+        Parser.blockOpen = "{";
+        Parser.blockClose = "}";
+        Parser.openParen = "(";
+        Parser.closeParen = ")";
+        Parser.strStartEnd = '"';
+        Parser.print = "print";
+        Parser.space = " ";
+        Parser.assignment = "=";
+        Parser.addop = "+";
+        Parser.type = ["int", "string", "boolean"];
+        Parser.typeOps = "type";
+        Parser.while = "while";
+        Parser.boolval = ["false", "true"];
+        Parser.boolop = ["==", "!="];
+        Parser.booleanOperator = "boolean operator";
+        Parser.if = "if";
+        Parser.char = "char";
+        Parser.digit = "digit";
         return Parser;
     })();
     TSC.Parser = Parser;

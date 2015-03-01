@@ -5,6 +5,7 @@ var _Tokens = [];
 var _TokenIndex = 0;
 var _CurrentToken = "";
 var _ErrorCount = 0;
+var _TokenStr = [];
 var _Lexer;
 var _Parser;
 var _Token;
