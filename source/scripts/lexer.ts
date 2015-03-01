@@ -14,7 +14,7 @@ module TSC
 		        //sourceCode = sourceCode.replace(/\s+/g, '');
 		        debugger;
 		        //call tokenize TODO
-		        //this.tokenize(sourceCode);
+		        this.tokenize(sourceCode);
 		        return sourceCode;
 		    }
 		}
@@ -155,6 +155,7 @@ module TSC
   	                    	_Token.addToken(token);//add token
   	                }
   	                _Token.getAndAddToken('$', currentLine); //add EOF token for the user
+  	                //should eof be inserted in sourcecode or just as a token?
   	                putWarning(currentLine, this.part, "EOF character not found. Inserting.");
   	            }
 

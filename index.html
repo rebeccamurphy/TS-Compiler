@@ -41,7 +41,8 @@ O ::== + | -
     <script type="text/javascript" src="dist/scripts/lexer.js"></script>    
     <script type="text/javascript" src="dist/scripts/globals.js"></script>  
     <script type="text/javascript" src="dist/scripts/parser.js"></script>   
-    <script type="text/javascript" src="dist/scripts/buffer.js"></script>	
+    <script type="text/javascript" src="dist/scripts/buffer.js"></script>   
+    <script type="text/javascript" src="dist/scripts/token.js"></script>	
 
     
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -57,6 +58,7 @@ O ::== + | -
         onDocumentLoad();
                 
     }
+
     
     function btnCompile_click() {        
         // This is executed as a result of the usr pressing the 
@@ -68,7 +70,7 @@ O ::== + | -
         _Tokens = _Lexer.lex();
         putMessage("Lex returned [" + _Tokens + "]");
         // . . . and parse!
-        _Parser.parse();
+        //_Parser.parse();
     }
 
 

@@ -12,7 +12,7 @@ var TSC;
                 sourceCode = TSC.Utils.trim(sourceCode);
                 debugger;
                 //call tokenize TODO
-                //this.tokenize(sourceCode);
+                this.tokenize(sourceCode);
                 return sourceCode;
             }
         };
@@ -135,6 +135,7 @@ var TSC;
                             _Token.addToken(token); //add token
                     }
                     _Token.getAndAddToken('$', currentLine); //add EOF token for the user
+                    //should eof be inserted in sourcecode or just as a token?
                     putWarning(currentLine, this.part, "EOF character not found. Inserting.");
                 }
                 //if this character is in a string and hasn't yet been handled and is an alpha char
