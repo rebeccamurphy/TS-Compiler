@@ -20,7 +20,10 @@ module TSC
         public static createAndAddToken(type, str, lineNum){
         	var temp = TSC.Token.createToken(type, str, lineNum);
         	_Tokens.push(temp);
-        	
+        }
+        public static getAndAddToken(str, lineNum){
+        	var temp = TSC.Token.getToken(str, lineNum);
+        	_Tokens.push(temp);
         }
         public static getToken(str,lineNum) : any {
         	//returns created token or null 

@@ -7,6 +7,7 @@ var _TokenIndex = 0;
 var _CurrentToken = "";
 var _ErrorCount = 0;
 
+
 var _Lexer;
 var _Parser;
 var _Token;
@@ -29,7 +30,6 @@ var onDocumentLoad = function() {
 	_Lexer = TSC.Lexer;
 	_Parser = TSC.Parser;
 	_Token = TSC.Token;
-
 	_Tokens = [];
     _TokenIndex = 0;
     _CurrentToken = ' ';

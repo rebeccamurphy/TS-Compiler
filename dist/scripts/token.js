@@ -21,6 +21,10 @@ var TSC;
             var temp = TSC.Token.createToken(type, str, lineNum);
             _Tokens.push(temp);
         };
+        Token.getAndAddToken = function (str, lineNum) {
+            var temp = TSC.Token.getToken(str, lineNum);
+            _Tokens.push(temp);
+        };
         Token.getToken = function (str, lineNum) {
             //returns created token or null 
             str = str.trim(); //to handle excess spaces and newlines
