@@ -14,8 +14,8 @@ module TSC
         	var temp = new Token (type, str,lineNum);
         	return temp;
         }
-        public static addToken(){
-        	_Tokens.push(this);
+        public static addToken(token){
+        	_Tokens.push(token);
         }
         public static createAndAddToken(type, str, lineNum){
         	var temp = TSC.Token.createToken(type, str, lineNum);
@@ -70,6 +70,11 @@ module TSC
 	            	return TSC.Token.createToken(TokenType.BOOL,str,lineNum);
 	           
 
+        	}
+        	debugger;
+        	if (str.match(/\n/)){
+        		//newline sent in
+	           return TSC.Token.createToken(TokenType.NEWLINE,str,lineNum); 
         	}
 	        //if a single character (a-Z) has been sent in
 	        if(str.length === 1 && str.match(/[a-z]/)) 

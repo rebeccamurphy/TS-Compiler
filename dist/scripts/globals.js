@@ -45,7 +45,6 @@ var putWarning = function (line, part, msg) {
     putMessage("(Line: " + line + ") " + part + " Warning " + msg);
 };
 var onDocumentLoad = function () {
-    debugger;
     _Lexer = TSC.Lexer;
     _Parser = TSC.Parser;
     _Token = TSC.Token;

@@ -14,8 +14,8 @@ var TSC;
             var temp = new Token(type, str, lineNum);
             return temp;
         };
-        Token.addToken = function () {
-            _Tokens.push(this);
+        Token.addToken = function (token) {
+            _Tokens.push(token);
         };
         Token.createAndAddToken = function (type, str, lineNum) {
             var temp = TSC.Token.createToken(type, str, lineNum);
@@ -67,6 +67,11 @@ var TSC;
                     return TSC.Token.createToken(9 /* STR */, str, lineNum);
                 case 'boolean':
                     return TSC.Token.createToken(10 /* BOOL */, str, lineNum);
+            }
+            debugger;
+            if (str.match(/\n/)) {
+                //newline sent in
+                return TSC.Token.createToken(20 /* NEWLINE */, str, lineNum);
             }
             //if a single character (a-Z) has been sent in
             if (str.length === 1 && str.match(/[a-z]/))

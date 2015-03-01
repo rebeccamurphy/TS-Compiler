@@ -21,6 +21,9 @@ var TSC;
             //returns the buffer
             return this.str;
         };
+        Buffer.prototype.isEmpty = function () {
+            return this.str === "";
+        };
         Buffer.prototype.flush = function () {
             //returns and clears the buffer
             var text = this.str;
