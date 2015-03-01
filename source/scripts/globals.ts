@@ -11,13 +11,18 @@ var _Lexer;
 var _Parser;
 var _Token;
 
-enum TokenType {LCURLY, RCURLY, PRINT, LPAREN, RPAREN, EQUALSIGN, WHILE, IF, ELSE, INT, STR, BOOL, CHAR,
-	EQUALS, NOTEQUALS,SPACE, FALSE, TRUE, ADD};
+enum TokenType {LCURLY, RCURLY, PRINT, LPAREN, RPAREN, EQUALSIGN, WHILE, IF, INT, STR, BOOL, CHAR,
+	EQUALS, NOTEQUALS,SPACE, FALSE, TRUE, ADD,EOF, QUOTE, NEWLINE, ID,DIGIT};
 
 var putMessage= function(msg){
     (<HTMLInputElement> document.getElementById("taOutput")).value += msg + "\n";
 }
-
+var putError = function (line, part, msg){
+	putMessage("(Line: "+line +") " +part + " Error " + msg);
+}
+var putWarning = function (line, part, msg){
+	putMessage("(Line: "+line+") " +part + "Warning " +msg);
+}
 
 
 var onDocumentLoad = function() {

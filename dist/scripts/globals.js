@@ -1,8 +1,3 @@
-/*
-var onDocumentLoad = function() {
-    TSOS.Control.hostInit();
-};
-*/
 //Global Constants
 var EOF = "$";
 // Global variables
@@ -23,21 +18,31 @@ var TokenType;
     TokenType[TokenType["EQUALSIGN"] = 5] = "EQUALSIGN";
     TokenType[TokenType["WHILE"] = 6] = "WHILE";
     TokenType[TokenType["IF"] = 7] = "IF";
-    TokenType[TokenType["ELSE"] = 8] = "ELSE";
-    TokenType[TokenType["INT"] = 9] = "INT";
-    TokenType[TokenType["STR"] = 10] = "STR";
-    TokenType[TokenType["BOOL"] = 11] = "BOOL";
-    TokenType[TokenType["CHAR"] = 12] = "CHAR";
-    TokenType[TokenType["EQUALS"] = 13] = "EQUALS";
-    TokenType[TokenType["NOTEQUALS"] = 14] = "NOTEQUALS";
-    TokenType[TokenType["SPACE"] = 15] = "SPACE";
-    TokenType[TokenType["FALSE"] = 16] = "FALSE";
-    TokenType[TokenType["TRUE"] = 17] = "TRUE";
-    TokenType[TokenType["ADD"] = 18] = "ADD";
+    TokenType[TokenType["INT"] = 8] = "INT";
+    TokenType[TokenType["STR"] = 9] = "STR";
+    TokenType[TokenType["BOOL"] = 10] = "BOOL";
+    TokenType[TokenType["CHAR"] = 11] = "CHAR";
+    TokenType[TokenType["EQUALS"] = 12] = "EQUALS";
+    TokenType[TokenType["NOTEQUALS"] = 13] = "NOTEQUALS";
+    TokenType[TokenType["SPACE"] = 14] = "SPACE";
+    TokenType[TokenType["FALSE"] = 15] = "FALSE";
+    TokenType[TokenType["TRUE"] = 16] = "TRUE";
+    TokenType[TokenType["ADD"] = 17] = "ADD";
+    TokenType[TokenType["EOF"] = 18] = "EOF";
+    TokenType[TokenType["QUOTE"] = 19] = "QUOTE";
+    TokenType[TokenType["NEWLINE"] = 20] = "NEWLINE";
+    TokenType[TokenType["ID"] = 21] = "ID";
+    TokenType[TokenType["DIGIT"] = 22] = "DIGIT";
 })(TokenType || (TokenType = {}));
 ;
 var putMessage = function (msg) {
     document.getElementById("taOutput").value += msg + "\n";
+};
+var putError = function (line, part, msg) {
+    putMessage("(Line: " + line + ") " + part + " Error " + msg);
+};
+var putWarning = function (line, part, msg) {
+    putMessage("(Line: " + line + ") " + part + "Warning " + msg);
 };
 var onDocumentLoad = function () {
     _Lexer = TSC.Lexer;
