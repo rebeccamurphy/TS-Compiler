@@ -1,11 +1,3 @@
-
-/*
-var onDocumentLoad = function() {
-	TSOS.Control.hostInit();
-};
-*/
-
-
 //Global Constants
 var EOF = "$";
 

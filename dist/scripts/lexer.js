@@ -12,6 +12,8 @@ var TSC;
                 sourceCode = TSC.Utils.trim(sourceCode);
                 //remove all spaces
                 sourceCode = sourceCode.replace(/\s+/g, '');
+                //call tokenize TODO
+                //this.tokenize(sourceCode);
                 return sourceCode;
             }
         };
