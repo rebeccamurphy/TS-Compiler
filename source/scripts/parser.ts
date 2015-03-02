@@ -3,27 +3,27 @@
 module TSC
 {
 	export class Parser {
-		public static part = 'Parser';
-        public static blockOpen = "{";
-        public static blockClose = "}";
-        public static openParen = "(";
-        public static closeParen = ")";
-        public static strStartEnd = '"';
-        public static print = "print";
-        public static space = " ";
-        public static assignment = "=";
-        public static addop = "+";
-        public static type = ["int", "string", "boolean"];
-        public static typeOps = "type";
-        public static while = "while";
-        public static boolval = ["false", "true"];
-        public static boolop = ["==", "!="];
-        public static booleanOperator = "boolean operator";
-        public static if = "if";
-        public static char = "char";
-        public static digit = "digit";
+		public part = 'Parser';
+        public blockStart = "{";
+        public blockEnd = "}";
+        public openParen = "(";
+        public closeParen = ")";
+        public strStartEnd = '"';
+        public print = "print";
+        public space = " ";
+        public assignment = "=";
+        public addOp = "+";
+        public type = ["int", "string", "boolean"];
+        public typeOps = "type";
+        public while = "while";
+        public boolVal = ["false", "true"];
+        public boolOp = ["==", "!="];
+        public booleanOperator = "boolean operator";
+        public if = "if";
+        public char = "char";
+        public digit = "digit";
 
-	    public static getNextToken() {
+	    public getNextToken() {
 	        var thisToken = EOF;    // Let's assume that we're at the EOF.
 	        if (_TokenIndex < _Tokens.length)
 	        {
@@ -34,7 +34,7 @@ module TSC
 	        }
 	        return thisToken;
     	}
-    	public static getPrevToken() {
+    	public getPrevToken() {
     		var thisToken;
 	        if (_TokenIndex-1 >=0)
 	        {
@@ -44,12 +44,12 @@ module TSC
 	        }
 	        return thisToken;
     	}
-		public static parse() {
+		public parse() {
 	        putMessage("Parsing [" + _TokenStr + "]");
 	        // Grab the next token.
 	        _CurrentToken = this.getNextToken();
 	        // A valid parse derives the G(oal) production, so begin there.
-	        this.parseG();
+	        //this.parseG();
 	        // Report the results.
 	        var msg ="";
 	        if (_ErrorCount ===0)
@@ -61,12 +61,66 @@ module TSC
 	        putMessage("Parsing found"+ msg);   
 		}
 
-		public static parseG() {
-        	// A G(oal) production can only be an E(xpression), so parse the E production.
-        	this.parseE();
+		//Program ::== Block 
+		public parseProgram() {
+        	this.parseBlock();
+        	this.match(EOF);
+        	putSuccess(this.part);
+    	}
+    	//Block ::== {StatementList}
+    	public parseBlock(){
+    		this.match(this.blockStart); //expect block to start with {
+    		this.parseStatementList();
+    		this.match(this.blockEnd); //expect block to end with }
     	}
 
-    	public static parseE() {
+    	//StatementList ::== Statement StatementList
+    	//				::== epsilon
+    	public parseStatementList(){
+
+    	}
+
+    	// Statement ::== PrintStatement
+    	//           ::== AssignmentStatement
+    	//           ::== VarDecl
+    	//           ::== WhileStatement
+    	//           ::== IfStatement
+    	//           ::== Block
+    	public parseStatement(){
+
+    	}
+
+    	// PrintStatement ::== print ( Expr )
+    	public parsePrint(){
+
+    	}
+
+    	//AssignmentStatement ::== Id = Expr
+    	public parseAssignmentStatement(){
+
+    	}
+    	
+    	//VarDecl  ::== type Id
+    	public parseVarDecl(){
+
+    	}
+    	//WhileStatement ::== while BooleanExpr Block
+    	public parseWhileStatement(){
+
+    	}
+    	//IfStatement ::== if BooleanExpr Block
+    	public parseIfStatement(){
+
+    	}
+    	//Expr 	::== IntExpr
+    	//		::== StringExpr
+    	//		::== BooleanExpr
+    	//		::==Id
+    	public parseExpr(){
+
+    	}
+
+    	public parseE() {
 	        // All E productions begin with a digit, so make sure that we have one.
 	        this.checkToken("digit");
 	        // Look ahead 1 char (which is now in _CurrentToken because checkToken 
@@ -82,7 +136,35 @@ module TSC
 	        }
     	}
 
-    	public static checkToken(expectedKind) {
+    	//BooleanExpr	::== (Expr boolOp Expr)
+    	//				::== boolVal
+    	public parseBooleanExpr(){
+
+    	}
+
+    	//IntExpr	::== digit intop Expr
+    	//			::== digit
+    	public parseIntExpr(){
+
+    	}
+		
+		//StringExpr ::== " CharList "    	
+		public parseStringExpr(){
+
+		}
+
+		//Id ::== char
+		public parseID(){
+
+		}
+
+		//CharList	::== char CharList
+		//			::== space CharList
+		//			::== epsilon
+		public parseCharList(){
+
+		}
+    	public checkToken(expectedKind) {
 	        // Validate that we have the expected token kind and et the next token.
 	        switch(expectedKind) {
 	            case "digit":{
@@ -121,6 +203,23 @@ module TSC
 	        _CurrentToken = this.getNextToken();
 	    }
 
+
+        // Removes the first Lexeme object from the Lexemes 
+        // array and checks to see if it matches the token 
+        // parameter. If there is a match, output results. 
+        // Otherwise, output an error and halt execution 
+        // of compiler.
+        public match(token) {
+            var nextToken = _Parser.getNextToken();
+            if (nextToken.value == token) {
+                putExpectingCorrect(nextToken.line, this.part, token, nextToken.value);
+            } 
+            else {
+            	putExpectingWrong(nextToken.line, this.part, token, nextToken.value);
+               	putFailed(this.part);
+               	return;
+       		}
+       	}
 
 	}
 }

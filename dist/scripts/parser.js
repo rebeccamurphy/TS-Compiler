@@ -3,8 +3,27 @@ var TSC;
 (function (TSC) {
     var Parser = (function () {
         function Parser() {
+            this.part = 'Parser';
+            this.blockStart = "{";
+            this.blockEnd = "}";
+            this.openParen = "(";
+            this.closeParen = ")";
+            this.strStartEnd = '"';
+            this.print = "print";
+            this.space = " ";
+            this.assignment = "=";
+            this.addOp = "+";
+            this.type = ["int", "string", "boolean"];
+            this.typeOps = "type";
+            this.while = "while";
+            this.boolVal = ["false", "true"];
+            this.boolOp = ["==", "!="];
+            this.booleanOperator = "boolean operator";
+            this.if = "if";
+            this.char = "char";
+            this.digit = "digit";
         }
-        Parser.getNextToken = function () {
+        Parser.prototype.getNextToken = function () {
             var thisToken = EOF; // Let's assume that we're at the EOF.
             if (_TokenIndex < _Tokens.length) {
                 // If we're not at EOF, then return the next token in the stream and advance the index.
@@ -14,7 +33,7 @@ var TSC;
             }
             return thisToken;
         };
-        Parser.getPrevToken = function () {
+        Parser.prototype.getPrevToken = function () {
             var thisToken;
             if (_TokenIndex - 1 >= 0) {
                 // If we're not at EOF, then return the next token in the stream and advance the index.
@@ -22,12 +41,12 @@ var TSC;
             }
             return thisToken;
         };
-        Parser.parse = function () {
+        Parser.prototype.parse = function () {
             putMessage("Parsing [" + _TokenStr + "]");
             // Grab the next token.
             _CurrentToken = this.getNextToken();
             // A valid parse derives the G(oal) production, so begin there.
-            this.parseG();
+            //this.parseG();
             // Report the results.
             var msg = "";
             if (_ErrorCount === 0)
@@ -38,11 +57,52 @@ var TSC;
                 msg = _ErrorCount + " errors.";
             putMessage("Parsing found" + msg);
         };
-        Parser.parseG = function () {
-            // A G(oal) production can only be an E(xpression), so parse the E production.
-            this.parseE();
+        //Program ::== Block 
+        Parser.prototype.parseProgram = function () {
+            this.parseBlock();
+            this.match(EOF);
+            putSuccess(this.part);
         };
-        Parser.parseE = function () {
+        //Block ::== {StatementList}
+        Parser.prototype.parseBlock = function () {
+            this.match(this.blockStart); //expect block to start with {
+            this.parseStatementList();
+            this.match(this.blockEnd); //expect block to end with }
+        };
+        //StatementList ::== Statement StatementList
+        //				::== epsilon
+        Parser.prototype.parseStatementList = function () {
+        };
+        // Statement ::== PrintStatement
+        //           ::== AssignmentStatement
+        //           ::== VarDecl
+        //           ::== WhileStatement
+        //           ::== IfStatement
+        //           ::== Block
+        Parser.prototype.parseStatement = function () {
+        };
+        // PrintStatement ::== print ( Expr )
+        Parser.prototype.parsePrint = function () {
+        };
+        //AssignmentStatement ::== Id = Expr
+        Parser.prototype.parseAssignmentStatement = function () {
+        };
+        //VarDecl  ::== type Id
+        Parser.prototype.parseVarDecl = function () {
+        };
+        //WhileStatement ::== while BooleanExpr Block
+        Parser.prototype.parseWhileStatement = function () {
+        };
+        //IfStatement ::== if BooleanExpr Block
+        Parser.prototype.parseIfStatement = function () {
+        };
+        //Expr 	::== IntExpr
+        //		::== StringExpr
+        //		::== BooleanExpr
+        //		::==Id
+        Parser.prototype.parseExpr = function () {
+        };
+        Parser.prototype.parseE = function () {
             // All E productions begin with a digit, so make sure that we have one.
             this.checkToken("digit");
             // Look ahead 1 char (which is now in _CurrentToken because checkToken 
@@ -58,7 +118,26 @@ var TSC;
                 putMessage("EOF reached");
             }
         };
-        Parser.checkToken = function (expectedKind) {
+        //BooleanExpr	::== (Expr boolOp Expr)
+        //				::== boolVal
+        Parser.prototype.parseBooleanExpr = function () {
+        };
+        //IntExpr	::== digit intop Expr
+        //			::== digit
+        Parser.prototype.parseIntExpr = function () {
+        };
+        //StringExpr ::== " CharList "    	
+        Parser.prototype.parseStringExpr = function () {
+        };
+        //Id ::== char
+        Parser.prototype.parseID = function () {
+        };
+        //CharList	::== char CharList
+        //			::== space CharList
+        //			::== epsilon
+        Parser.prototype.parseCharList = function () {
+        };
+        Parser.prototype.checkToken = function (expectedKind) {
             switch (expectedKind) {
                 case "digit": {
                     putMessage("Expecting a digit");
@@ -90,25 +169,22 @@ var TSC;
             // will allow the code to see what's coming next... a sort of "look-ahead".
             _CurrentToken = this.getNextToken();
         };
-        Parser.part = 'Parser';
-        Parser.blockOpen = "{";
-        Parser.blockClose = "}";
-        Parser.openParen = "(";
-        Parser.closeParen = ")";
-        Parser.strStartEnd = '"';
-        Parser.print = "print";
-        Parser.space = " ";
-        Parser.assignment = "=";
-        Parser.addop = "+";
-        Parser.type = ["int", "string", "boolean"];
-        Parser.typeOps = "type";
-        Parser.while = "while";
-        Parser.boolval = ["false", "true"];
-        Parser.boolop = ["==", "!="];
-        Parser.booleanOperator = "boolean operator";
-        Parser.if = "if";
-        Parser.char = "char";
-        Parser.digit = "digit";
+        // Removes the first Lexeme object from the Lexemes 
+        // array and checks to see if it matches the token 
+        // parameter. If there is a match, output results. 
+        // Otherwise, output an error and halt execution 
+        // of compiler.
+        Parser.prototype.match = function (token) {
+            var nextToken = _Parser.getNextToken();
+            if (nextToken.value == token) {
+                putExpectingCorrect(nextToken.line, this.part, token, nextToken.value);
+            }
+            else {
+                putExpectingWrong(nextToken.line, this.part, token, nextToken.value);
+                putFailed(this.part);
+                return;
+            }
+        };
         return Parser;
     })();
     TSC.Parser = Parser;

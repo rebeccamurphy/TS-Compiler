@@ -46,6 +46,18 @@ var putError = function (line, part, msg) {
 var putWarning = function (line, part, msg) {
     putMessage("(Line: " + line + ") " + part + " Warning " + msg);
 };
+var putExpectingCorrect = function (line, part, expected, found) {
+    putMessage("(Line: " + line + ") " + part + "Expected " + expected + ", Found " + found);
+};
+var putExpectingWrong = function (line, part, expected, found) {
+    putMessage("(Line: " + line + ") " + part + " Error: Expected " + expected + ", Found " + found);
+};
+var putFailed = function (part) {
+    putMessage(part + ": Failed. Compilation has been terminated.");
+};
+var putSuccess = function (part) {
+    putMessage(part + ": Completed Successfully.");
+};
 var onDocumentLoad = function () {
     _Lexer = TSC.Lexer;
     _Parser = TSC.Parser;
