@@ -4,6 +4,10 @@ module TSC
 {
 	export class Parser {
 		public part = 'Parser';
+		constructor(){
+
+		}
+        
 	    public getNextToken() :any {
 	        var thisToken = EOF;    // Let's assume that we're at the EOF.
 	        if (_TokenIndex < _Tokens.length){
@@ -29,7 +33,7 @@ module TSC
 	        // Grab the next token.
 	        _CurrentToken = this.getNextToken();
 	        // A valid parse derives the G(oal) production, so begin there.
-	        //this.parseProgram();
+	        this.parseProgram();
 	        // Report the results.
 	        var msg ="";
 	        if (_ErrorCount ===0)

@@ -63,7 +63,7 @@ var putSuccess = function (part) {
 };
 var onDocumentLoad = function () {
     _Lexer = TSC.Lexer;
-    _Parser = TSC.Parser;
+    _Parser = new TSC.Parser();
     _Token = TSC.Token;
     _Tokens = [];
     _TokenIndex = 0;

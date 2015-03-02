@@ -28,7 +28,7 @@ var TSC;
             // Grab the next token.
             _CurrentToken = this.getNextToken();
             // A valid parse derives the G(oal) production, so begin there.
-            //this.parseProgram();
+            this.parseProgram();
             // Report the results.
             var msg = "";
             if (_ErrorCount === 0)
