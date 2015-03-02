@@ -4,26 +4,6 @@ module TSC
 {
 	export class Parser {
 		public part = 'Parser';
-		/*
-        public blockStart = "{";
-        public blockEnd = "}";
-        public openParen = "(";
-        public closeParen = ")";
-        public strStartEnd = '"';
-        public print = "print";
-        public space = " ";
-        public assignment = "=";
-        public addOp = "+";
-        public type = ["int", "string", "boolean"];
-        public typeOps = "type";
-        public while = "while";
-        public boolVal = ["false", "true"];
-        public boolOp = ["==", "!="];
-        public booleanOperator = "boolean operator";
-        public if = "if";
-        public char = "char";
-        public digit = "digit";
-		*/
 	    public getNextToken() :any {
 	        var thisToken = EOF;    // Let's assume that we're at the EOF.
 	        if (_TokenIndex < _Tokens.length){
@@ -64,14 +44,14 @@ module TSC
 		//Program ::== Block 
 		public parseProgram() {
         	this.parseBlock();
-        	this.match(EOF);
+        	this.checkToken(EOF);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
     	public parseBlock(){
-    		this.match(TokenType.LCURLY); //expect block to start with {
+    		this.checkToken(TokenType.LCURLY); //expect block to start with {
     		this.parseStatementList();
-    		this.match(TokenType.RCURLY); //expect block to end with }
+    		this.checkToken(TokenType.RCURLY); //expect block to end with }
     	}
 
     	//StatementList ::== Statement StatementList
@@ -123,32 +103,69 @@ module TSC
 
     	// PrintStatement ::== print ( Expr )
     	public parsePrintStatement(){
-
+    		this.checkToken(TokenType.PRINT);
+    		this.checkToken(TokenType.LPAREN);
+    		this.parseExpr();
+    		this.checkToken(TokenType.RPAREN);
     	}
 
     	//AssignmentStatement ::== Id = Expr
     	public parseAssignmentStatement(){
-
+    		this.parseID();
+    		this.checkToken(TokenType.EQUALSIGN);
+    		this.parseExpr();
     	}
     	
     	//VarDecl  ::== type Id
     	public parseVarDecl(){
+    		switch (_CurrentToken.type){
+    			case TokenType.STR:
+    				this.checkToken(TokenType.STR);
+    				break;
+    			case TokenType.INT:
+    				this.checkToken(TokenType.BOOL);
+    				break;
+    			case TokenType.BOOL:
+    				this.checkToken(TokenType.BOOL)
+    				break;
+    			default:
+    				//when we hit this it means we were expecting a type and failed
+    				this.checkToken(TokenType.TYPE);
+    		}
 
     	}
     	//WhileStatement ::== while BooleanExpr Block
     	public parseWhileStatement(){
-
+    		this.checkToken(TokenType.WHILE);
+    		this.parseBooleanExpr();
+    		this.parseBlock();
     	}
     	//IfStatement ::== if BooleanExpr Block
     	public parseIfStatement(){
-
+    		this.checkToken(TokenType.IF);
+    		this.parseBooleanExpr();
+    		this.parseBlock();
     	}
     	//Expr 	::== IntExpr
     	//		::== StringExpr
     	//		::== BooleanExpr
     	//		::==Id
     	public parseExpr(){
+    		switch(_CurrentToken.type){
+    			case TokenType.DIGIT:
+    				this.parseIntExpr();
+    				break;
+    			case TokenType.QUOTE:
+    				this.parseStringExpr();
+    			case TokenType.LPAREN:
+    			case TokenType.TRUE:
+    			case TokenType.FALSE:
+    				this.parseBooleanExpr();
+    				break;
+    			case TokenType.ID:
+    				this.parseID();
 
+    		}
     	}
 
     	public parseE() {
@@ -170,31 +187,74 @@ module TSC
     	//BooleanExpr	::== (Expr boolOp Expr)
     	//				::== boolVal
     	public parseBooleanExpr(){
-
+    		if(_CurrentToken.type=== TokenType.TRUE)
+    			this.checkToken(TokenType.TRUE)
+    		else if(_CurrentToken.type===TokenType.FALSE)
+    			this.checkToken(TokenType.FALSE);
+    		else {
+    			this.checkToken(TokenType.LPAREN);
+    			this.parseExpr();
+    			if (_CurrentToken.type ===TokenType.EQUALS){
+    				this.checkToken(TokenType.EQUALS);
+    				this.parseExpr();
+    				this.checkToken(TokenType.RPAREN);
+    			}
+    			else if (_CurrentToken.type ===TokenType.NOTEQUALS){
+    				this.checkToken(TokenType.NOTEQUALS);
+    				this.parseExpr();
+    				this.checkToken(TokenType.RPAREN);
+    			}			
+    			else {
+    				//when this is hit it means a boolean operator was expected but not found
+    				this.checkToken(TokenType.BOOLOP);
+    			}
+    		}
     	}
 
     	//IntExpr	::== digit intop Expr
     	//			::== digit
     	public parseIntExpr(){
-
+    		if (_CurrentToken.type ===TokenType.DIGIT){
+    			this.checkToken(TokenType.DIGIT);
+    			if (_CurrentToken.type ===TokenType.ADD){
+    				this.checkToken(TokenType.ADD);
+    				this.parseExpr();
+    			}
+    		}
+    		else {
+    			this.checkToken(TokenType.DIGIT);
+    		}
     	}
 		
 		//StringExpr ::== " CharList "    	
 		public parseStringExpr(){
+			this.checkToken(TokenType.QUOTE);
+			this.parseCharList();
+			this.checkToken(TokenType.QUOTE);
 
 		}
 
 		//Id ::== char
 		public parseID(){
-
+			this.checkToken(TokenType.ID);
 		}
 
 		//CharList	::== char CharList
 		//			::== space CharList
 		//			::== epsilon
 		public parseCharList(){
-
+			switch (_CurrentToken.type){
+			    case TokenType.CHAR:
+			    	this.checkToken(TokenType.CHAR);
+			        break;
+			    case TokenType.SPACE:
+			    	this.checkToken(TokenType.SPACE);
+			    	break;
+			    default: 
+			    	//epsilon production no code boi
+			}
 		}
+		/*
     	public checkToken(expectedKind) {
 	        // Validate that we have the expected token kind and et the next token.
 	        switch(expectedKind) {
@@ -233,17 +293,29 @@ module TSC
 	        // will allow the code to see what's coming next... a sort of "look-ahead".
 	        _CurrentToken = this.getNextToken();
 	    }
-
-        public match(tokenType) {
+	    */
+        public checkToken(tokenType) {
             if (_CurrentToken.type == tokenType) {
                 putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             } 
             else {
-            	putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+            	switch(tokenType){
+            		case TokenType.TYPE:
+            			putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", "+
+            				TokenTypeChar[TokenType.STR] +", or " + TokenTypeChar[TokenType.BOOL],
+            			 	_CurrentToken.value);
+            			break;
+            		case TokenType.BOOLOP:
+            			putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] +", or " 
+            				+ TokenTypeChar[TokenType.NOTEQUALS],
+            			 	_CurrentToken.value);
+            			break;
+            		default:
+            			putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+               	}
                	putFailed(this.part);
                	return;
        		}
-
             _CurrentToken = this.getNextToken();
        	}
 

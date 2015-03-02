@@ -28,7 +28,30 @@ var TSC;
             var temp = TSC.Token.getToken(str, lineNum);
             _Tokens.push(temp);
         };
+        Token.getWordMatchToken = function (str, lineNum) {
+            switch (str) {
+                case 'false':
+                    return TSC.Token.createToken(15 /* FALSE */, str, lineNum);
+                case 'true':
+                    return TSC.Token.createToken(16 /* TRUE */, str, lineNum);
+                case 'print':
+                    return TSC.Token.createToken(2 /* PRINT */, str, lineNum);
+                case 'while':
+                    return TSC.Token.createToken(6 /* WHILE */, str, lineNum);
+                case 'if':
+                    return TSC.Token.createToken(7 /* IF */, str, lineNum);
+                case 'int':
+                    return TSC.Token.createToken(8 /* INT */, str, lineNum);
+                case 'string':
+                    return TSC.Token.createToken(9 /* STR */, str, lineNum);
+                case 'boolean':
+                    return TSC.Token.createToken(10 /* BOOL */, str, lineNum);
+                default:
+                    return null;
+            }
+        };
         Token.getToken = function (str, lineNum) {
+            debugger;
             //returns created token or null 
             if (str.match(/\n/)) {
                 //newline sent in
@@ -59,9 +82,9 @@ var TSC;
                 case '"':
                     return TSC.Token.createToken(19 /* QUOTE */, str, lineNum);
                 case 'false':
-                    return TSC.Token.createToken(16 /* TRUE */, str, lineNum);
-                case 'true':
                     return TSC.Token.createToken(15 /* FALSE */, str, lineNum);
+                case 'true':
+                    return TSC.Token.createToken(16 /* TRUE */, str, lineNum);
                 case 'print':
                     return TSC.Token.createToken(2 /* PRINT */, str, lineNum);
                 case 'while':

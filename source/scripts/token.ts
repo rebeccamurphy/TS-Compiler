@@ -28,8 +28,33 @@ module TSC
         	var temp = TSC.Token.getToken(str, lineNum);
         	_Tokens.push(temp);
         }
-        public static getToken(str,lineNum) : any {
 
+        public static getWordMatchToken(str, lineNum):any{
+        	switch (str){
+        		case 'false':
+	            	return TSC.Token.createToken(TokenType.FALSE,str,lineNum);
+	            case 'true':
+	                return TSC.Token.createToken(TokenType.TRUE, str,lineNum);
+	            case 'print':
+	            	return TSC.Token.createToken(TokenType.PRINT,str,lineNum);
+	            case 'while':
+	            	return TSC.Token.createToken(TokenType.WHILE,str,lineNum);
+	            case 'if':
+	            	return TSC.Token.createToken(TokenType.IF,str,lineNum);
+	            case 'int':
+	            	return TSC.Token.createToken(TokenType.INT,str,lineNum);
+	            case 'string':
+	            	return TSC.Token.createToken(TokenType.STR,str,lineNum);
+	            case 'boolean':
+	            	return TSC.Token.createToken(TokenType.BOOL,str,lineNum);
+	            default:
+	            	return null;
+	        }
+
+        }
+
+        public static getToken(str,lineNum) : any {
+        	debugger;
         	//returns created token or null 
         	if (str.match(/\n/)){
         		//newline sent in
@@ -61,9 +86,9 @@ module TSC
 	            case '"':
 	            	return TSC.Token.createToken(TokenType.QUOTE,str,lineNum);
 	            case 'false':
-	            	return TSC.Token.createToken(TokenType.TRUE,str,lineNum);
+	            	return TSC.Token.createToken(TokenType.FALSE,str,lineNum);
 	            case 'true':
-	                return TSC.Token.createToken(TokenType.FALSE, str,lineNum);
+	                return TSC.Token.createToken(TokenType.TRUE, str,lineNum);
 	            case 'print':
 	            	return TSC.Token.createToken(TokenType.PRINT,str,lineNum);
 	            case 'while':

@@ -5,26 +5,6 @@ var TSC;
         function Parser() {
             this.part = 'Parser';
         }
-        /*
-        public blockStart = "{";
-        public blockEnd = "}";
-        public openParen = "(";
-        public closeParen = ")";
-        public strStartEnd = '"';
-        public print = "print";
-        public space = " ";
-        public assignment = "=";
-        public addOp = "+";
-        public type = ["int", "string", "boolean"];
-        public typeOps = "type";
-        public while = "while";
-        public boolVal = ["false", "true"];
-        public boolOp = ["==", "!="];
-        public booleanOperator = "boolean operator";
-        public if = "if";
-        public char = "char";
-        public digit = "digit";
-        */
         Parser.prototype.getNextToken = function () {
             var thisToken = EOF; // Let's assume that we're at the EOF.
             if (_TokenIndex < _Tokens.length) {
@@ -62,14 +42,14 @@ var TSC;
         //Program ::== Block 
         Parser.prototype.parseProgram = function () {
             this.parseBlock();
-            this.match(EOF);
+            this.checkToken(EOF);
             putSuccess(this.part);
         };
         //Block ::== {StatementList}
         Parser.prototype.parseBlock = function () {
-            this.match(0 /* LCURLY */); //expect block to start with {
+            this.checkToken(0 /* LCURLY */); //expect block to start with {
             this.parseStatementList();
-            this.match(1 /* RCURLY */); //expect block to end with }
+            this.checkToken(1 /* RCURLY */); //expect block to end with }
         };
         //StatementList ::== Statement StatementList
         //				::== epsilon
@@ -112,24 +92,65 @@ var TSC;
         };
         // PrintStatement ::== print ( Expr )
         Parser.prototype.parsePrintStatement = function () {
+            this.checkToken(2 /* PRINT */);
+            this.checkToken(3 /* LPAREN */);
+            this.parseExpr();
+            this.checkToken(4 /* RPAREN */);
         };
         //AssignmentStatement ::== Id = Expr
         Parser.prototype.parseAssignmentStatement = function () {
+            this.parseID();
+            this.checkToken(5 /* EQUALSIGN */);
+            this.parseExpr();
         };
         //VarDecl  ::== type Id
         Parser.prototype.parseVarDecl = function () {
+            switch (_CurrentToken.type) {
+                case 9 /* STR */:
+                    this.checkToken(9 /* STR */);
+                    break;
+                case 8 /* INT */:
+                    this.checkToken(10 /* BOOL */);
+                    break;
+                case 10 /* BOOL */:
+                    this.checkToken(10 /* BOOL */);
+                    break;
+                default:
+                    //when we hit this it means we were expecting a type and failed
+                    this.checkToken(23 /* TYPE */);
+            }
         };
         //WhileStatement ::== while BooleanExpr Block
         Parser.prototype.parseWhileStatement = function () {
+            this.checkToken(6 /* WHILE */);
+            this.parseBooleanExpr();
+            this.parseBlock();
         };
         //IfStatement ::== if BooleanExpr Block
         Parser.prototype.parseIfStatement = function () {
+            this.checkToken(7 /* IF */);
+            this.parseBooleanExpr();
+            this.parseBlock();
         };
         //Expr 	::== IntExpr
         //		::== StringExpr
         //		::== BooleanExpr
         //		::==Id
         Parser.prototype.parseExpr = function () {
+            switch (_CurrentToken.type) {
+                case 22 /* DIGIT */:
+                    this.parseIntExpr();
+                    break;
+                case 19 /* QUOTE */:
+                    this.parseStringExpr();
+                case 3 /* LPAREN */:
+                case 16 /* TRUE */:
+                case 15 /* FALSE */:
+                    this.parseBooleanExpr();
+                    break;
+                case 21 /* ID */:
+                    this.parseID();
+            }
         };
         Parser.prototype.parseE = function () {
             // All E productions begin with a digit, so make sure that we have one.
@@ -150,38 +171,90 @@ var TSC;
         //BooleanExpr	::== (Expr boolOp Expr)
         //				::== boolVal
         Parser.prototype.parseBooleanExpr = function () {
+            if (_CurrentToken.type === 16 /* TRUE */)
+                this.checkToken(16 /* TRUE */);
+            else if (_CurrentToken.type === 15 /* FALSE */)
+                this.checkToken(15 /* FALSE */);
+            else {
+                this.checkToken(3 /* LPAREN */);
+                this.parseExpr();
+                if (_CurrentToken.type === 12 /* EQUALS */) {
+                    this.checkToken(12 /* EQUALS */);
+                    this.parseExpr();
+                    this.checkToken(4 /* RPAREN */);
+                }
+                else if (_CurrentToken.type === 13 /* NOTEQUALS */) {
+                    this.checkToken(13 /* NOTEQUALS */);
+                    this.parseExpr();
+                    this.checkToken(4 /* RPAREN */);
+                }
+                else {
+                    //when this is hit it means a boolean operator was expected but not found
+                    this.checkToken(24 /* BOOLOP */);
+                }
+            }
         };
         //IntExpr	::== digit intop Expr
         //			::== digit
         Parser.prototype.parseIntExpr = function () {
+            if (_CurrentToken.type === 22 /* DIGIT */) {
+                this.checkToken(22 /* DIGIT */);
+                if (_CurrentToken.type === 17 /* ADD */) {
+                    this.checkToken(17 /* ADD */);
+                    this.parseExpr();
+                }
+            }
+            else {
+                this.checkToken(22 /* DIGIT */);
+            }
         };
         //StringExpr ::== " CharList "    	
         Parser.prototype.parseStringExpr = function () {
+            this.checkToken(19 /* QUOTE */);
+            this.parseCharList();
+            this.checkToken(19 /* QUOTE */);
         };
         //Id ::== char
         Parser.prototype.parseID = function () {
+            this.checkToken(21 /* ID */);
         };
         //CharList	::== char CharList
         //			::== space CharList
         //			::== epsilon
         Parser.prototype.parseCharList = function () {
+            switch (_CurrentToken.type) {
+                case 11 /* CHAR */:
+                    this.checkToken(11 /* CHAR */);
+                    break;
+                case 14 /* SPACE */:
+                    this.checkToken(14 /* SPACE */);
+                    break;
+                default:
+            }
         };
-        Parser.prototype.checkToken = function (expectedKind) {
-            switch (expectedKind) {
-                case "digit": {
+        /*
+        public checkToken(expectedKind) {
+            // Validate that we have the expected token kind and et the next token.
+            switch(expectedKind) {
+                case "digit":{
                     putMessage("Expecting a digit");
-                    if (_CurrentToken == "0" || _CurrentToken == "1" || _CurrentToken == "2" || _CurrentToken == "3" || _CurrentToken == "4" || _CurrentToken == "5" || _CurrentToken == "6" || _CurrentToken == "7" || _CurrentToken == "8" || _CurrentToken == "9") {
+
+                    if (_CurrentToken=="0" || _CurrentToken=="1" || _CurrentToken=="2" ||
+                        _CurrentToken=="3" || _CurrentToken=="4" || _CurrentToken=="5" ||
+                        _CurrentToken=="6" || _CurrentToken=="7" || _CurrentToken=="8" ||
+                        _CurrentToken=="9"){
                         putMessage("Got a digit!");
                     }
-                    else {
+                    else{
                         _ErrorCount++;
                         putMessage("NOT a digit.  Error at position " + _TokenIndex + ".");
                     }
                     break;
                 }
-                case "op": {
+                case "op":{
                     putMessage("Expecting an operator");
-                    if (_CurrentToken == "+" || _CurrentToken == "-") {
+
+                    if (_CurrentToken=="+" || _CurrentToken=="-"){
                         putMessage("Got an operator!");
                     }
                     else {
@@ -194,16 +267,26 @@ var TSC;
                     putMessage("Parse Error: Invalid Token Type at position " + _TokenIndex + ".");
                     break;
             }
-            // Consume another token, having just checked this one, because that 
+            // Consume another token, having just checked this one, because that
             // will allow the code to see what's coming next... a sort of "look-ahead".
             _CurrentToken = this.getNextToken();
-        };
-        Parser.prototype.match = function (tokenType) {
+        }
+        */
+        Parser.prototype.checkToken = function (tokenType) {
             if (_CurrentToken.type == tokenType) {
                 putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             }
             else {
-                putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+                switch (tokenType) {
+                    case 23 /* TYPE */:
+                        putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[8 /* INT */] + ", " + TokenTypeChar[9 /* STR */] + ", or " + TokenTypeChar[10 /* BOOL */], _CurrentToken.value);
+                        break;
+                    case 24 /* BOOLOP */:
+                        putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[12 /* EQUALS */] + ", or " + TokenTypeChar[13 /* NOTEQUALS */], _CurrentToken.value);
+                        break;
+                    default:
+                        putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+                }
                 putFailed(this.part);
                 return;
             }

@@ -192,10 +192,11 @@ module TSC
                 else if(!tokenized && currChar!==' '){
                     buffer.push(currChar);
                 }
-                var token = _Token.getToken(buffer.get, currentLine);
-                if (token!==null){
+                //check longest match 
+                var token = _Token.getWordMatchToken(buffer.get(), currentLine);
+                if (token!==null && !inString){
                 	buffer.clear();
-                	_Token.add(token);
+                	_Token.addToken(token);
                 }
                 tokenized = false; //reset tokenized
 
