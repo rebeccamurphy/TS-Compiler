@@ -4,6 +4,7 @@ module TSC
 {
 	export class Parser {
 		public part = 'Parser';
+		/*
         public blockStart = "{";
         public blockEnd = "}";
         public openParen = "(";
@@ -22,11 +23,10 @@ module TSC
         public if = "if";
         public char = "char";
         public digit = "digit";
-
-	    public getNextToken() {
+		*/
+	    public getNextToken() :any {
 	        var thisToken = EOF;    // Let's assume that we're at the EOF.
-	        if (_TokenIndex < _Tokens.length)
-	        {
+	        if (_TokenIndex < _Tokens.length){
 	            // If we're not at EOF, then return the next token in the stream and advance the index.
 	            thisToken = _Tokens[_TokenIndex];
 	            putMessage("Current token:" + thisToken.toString());
@@ -49,7 +49,7 @@ module TSC
 	        // Grab the next token.
 	        _CurrentToken = this.getNextToken();
 	        // A valid parse derives the G(oal) production, so begin there.
-	        //this.parseG();
+	        //this.parseProgram();
 	        // Report the results.
 	        var msg ="";
 	        if (_ErrorCount ===0)
@@ -69,17 +69,28 @@ module TSC
     	}
     	//Block ::== {StatementList}
     	public parseBlock(){
-    		this.match(this.blockStart); //expect block to start with {
+    		this.match(TokenType.LCURLY); //expect block to start with {
     		this.parseStatementList();
-    		this.match(this.blockEnd); //expect block to end with }
+    		this.match(TokenType.RCURLY); //expect block to end with }
     	}
 
     	//StatementList ::== Statement StatementList
     	//				::== epsilon
     	public parseStatementList(){
+    		if( _CurrentToken.type===TokenType.PRINT ||
+    			_CurrentToken.type===TokenType.ID ||
+    			_CurrentToken.type===TokenType.WHILE ||
+    			_CurrentToken.type===TokenType.IF ||
+    			_CurrentToken.type===TokenType.LCURLY
+    		){
+    			this.parseStatement;
+    			this.parseStatementList();
+    		}
+    		else{
+    			//Epsilon production (no code for now project 1)
+    		}
 
     	}
-
     	// Statement ::== PrintStatement
     	//           ::== AssignmentStatement
     	//           ::== VarDecl
@@ -87,11 +98,31 @@ module TSC
     	//           ::== IfStatement
     	//           ::== Block
     	public parseStatement(){
-
+	    	switch (_CurrentToken.type){
+	    			case TokenType.PRINT:
+	    				this.parsePrintStatement();
+	    				break;
+	    			case TokenType.ID:
+	    				this.parseAssignmentStatement();
+	    				break;
+	    			case TokenType.STR:
+	    			case TokenType.INT:
+	    			case TokenType.BOOL:
+	    				this.parseVarDecl();
+	    				break;
+	    			case TokenType.WHILE:
+	    				this.parseWhileStatement();
+	    				break;
+	    			case TokenType.IF:
+	    				this.parseIfStatement();
+	    				break;
+	    			default:
+	    				this.parseBlock();
+	    		}
     	}
 
     	// PrintStatement ::== print ( Expr )
-    	public parsePrint(){
+    	public parsePrintStatement(){
 
     	}
 
@@ -203,22 +234,17 @@ module TSC
 	        _CurrentToken = this.getNextToken();
 	    }
 
-
-        // Removes the first Lexeme object from the Lexemes 
-        // array and checks to see if it matches the token 
-        // parameter. If there is a match, output results. 
-        // Otherwise, output an error and halt execution 
-        // of compiler.
-        public match(token) {
-            var nextToken = _Parser.getNextToken();
-            if (nextToken.value == token) {
-                putExpectingCorrect(nextToken.line, this.part, token, nextToken.value);
+        public match(tokenType) {
+            if (_CurrentToken.type == tokenType) {
+                putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             } 
             else {
-            	putExpectingWrong(nextToken.line, this.part, token, nextToken.value);
+            	putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
                	putFailed(this.part);
                	return;
        		}
+
+            _CurrentToken = this.getNextToken();
        	}
 
 	}

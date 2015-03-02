@@ -2,16 +2,16 @@
 var TSC;
 (function (TSC) {
     var Token = (function () {
-        function Token(kind, value, line) {
-            this.kind = kind;
+        function Token(type, value, line) {
+            this.type = type;
             this.value = value;
             this.line = line;
-            this.kind = kind;
+            this.type = type;
             this.value = value;
             this.line = line;
         }
         Token.prototype.toString = function () {
-            return TokenTypeString[this.kind];
+            return TokenTypeString[this.type];
         };
         Token.createToken = function (type, str, lineNum) {
             var temp = new Token(type, str, lineNum);

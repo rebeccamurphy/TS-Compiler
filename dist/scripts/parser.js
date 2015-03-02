@@ -4,25 +4,27 @@ var TSC;
     var Parser = (function () {
         function Parser() {
             this.part = 'Parser';
-            this.blockStart = "{";
-            this.blockEnd = "}";
-            this.openParen = "(";
-            this.closeParen = ")";
-            this.strStartEnd = '"';
-            this.print = "print";
-            this.space = " ";
-            this.assignment = "=";
-            this.addOp = "+";
-            this.type = ["int", "string", "boolean"];
-            this.typeOps = "type";
-            this.while = "while";
-            this.boolVal = ["false", "true"];
-            this.boolOp = ["==", "!="];
-            this.booleanOperator = "boolean operator";
-            this.if = "if";
-            this.char = "char";
-            this.digit = "digit";
         }
+        /*
+        public blockStart = "{";
+        public blockEnd = "}";
+        public openParen = "(";
+        public closeParen = ")";
+        public strStartEnd = '"';
+        public print = "print";
+        public space = " ";
+        public assignment = "=";
+        public addOp = "+";
+        public type = ["int", "string", "boolean"];
+        public typeOps = "type";
+        public while = "while";
+        public boolVal = ["false", "true"];
+        public boolOp = ["==", "!="];
+        public booleanOperator = "boolean operator";
+        public if = "if";
+        public char = "char";
+        public digit = "digit";
+        */
         Parser.prototype.getNextToken = function () {
             var thisToken = EOF; // Let's assume that we're at the EOF.
             if (_TokenIndex < _Tokens.length) {
@@ -46,7 +48,7 @@ var TSC;
             // Grab the next token.
             _CurrentToken = this.getNextToken();
             // A valid parse derives the G(oal) production, so begin there.
-            //this.parseG();
+            //this.parseProgram();
             // Report the results.
             var msg = "";
             if (_ErrorCount === 0)
@@ -65,13 +67,19 @@ var TSC;
         };
         //Block ::== {StatementList}
         Parser.prototype.parseBlock = function () {
-            this.match(this.blockStart); //expect block to start with {
+            this.match(0 /* LCURLY */); //expect block to start with {
             this.parseStatementList();
-            this.match(this.blockEnd); //expect block to end with }
+            this.match(1 /* RCURLY */); //expect block to end with }
         };
         //StatementList ::== Statement StatementList
         //				::== epsilon
         Parser.prototype.parseStatementList = function () {
+            if (_CurrentToken.type === 2 /* PRINT */ || _CurrentToken.type === 21 /* ID */ || _CurrentToken.type === 6 /* WHILE */ || _CurrentToken.type === 7 /* IF */ || _CurrentToken.type === 0 /* LCURLY */) {
+                this.parseStatement;
+                this.parseStatementList();
+            }
+            else {
+            }
         };
         // Statement ::== PrintStatement
         //           ::== AssignmentStatement
@@ -80,9 +88,30 @@ var TSC;
         //           ::== IfStatement
         //           ::== Block
         Parser.prototype.parseStatement = function () {
+            switch (_CurrentToken.type) {
+                case 2 /* PRINT */:
+                    this.parsePrintStatement();
+                    break;
+                case 21 /* ID */:
+                    this.parseAssignmentStatement();
+                    break;
+                case 9 /* STR */:
+                case 8 /* INT */:
+                case 10 /* BOOL */:
+                    this.parseVarDecl();
+                    break;
+                case 6 /* WHILE */:
+                    this.parseWhileStatement();
+                    break;
+                case 7 /* IF */:
+                    this.parseIfStatement();
+                    break;
+                default:
+                    this.parseBlock();
+            }
         };
         // PrintStatement ::== print ( Expr )
-        Parser.prototype.parsePrint = function () {
+        Parser.prototype.parsePrintStatement = function () {
         };
         //AssignmentStatement ::== Id = Expr
         Parser.prototype.parseAssignmentStatement = function () {
@@ -169,21 +198,16 @@ var TSC;
             // will allow the code to see what's coming next... a sort of "look-ahead".
             _CurrentToken = this.getNextToken();
         };
-        // Removes the first Lexeme object from the Lexemes 
-        // array and checks to see if it matches the token 
-        // parameter. If there is a match, output results. 
-        // Otherwise, output an error and halt execution 
-        // of compiler.
-        Parser.prototype.match = function (token) {
-            var nextToken = _Parser.getNextToken();
-            if (nextToken.value == token) {
-                putExpectingCorrect(nextToken.line, this.part, token, nextToken.value);
+        Parser.prototype.match = function (tokenType) {
+            if (_CurrentToken.type == tokenType) {
+                putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             }
             else {
-                putExpectingWrong(nextToken.line, this.part, token, nextToken.value);
+                putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
                 putFailed(this.part);
                 return;
             }
+            _CurrentToken = this.getNextToken();
         };
         return Parser;
     })();

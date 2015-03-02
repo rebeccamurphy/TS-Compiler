@@ -4,7 +4,7 @@ var EOF = "$";
 // Global variables
 var _Tokens = [];
 var _TokenIndex = 0;
-var _CurrentToken = "";
+var _CurrentToken;
 var _ErrorCount = 0;
 var _TokenStr=[];
 
@@ -17,6 +17,10 @@ enum TokenType {LCURLY, RCURLY, PRINT, LPAREN, RPAREN, EQUALSIGN, WHILE, IF, INT
 var TokenTypeString =['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 
 'STR', 'BOOL', 'CHAR','EQUALS', 'NOTEQUALS','SPACE', 'FALSE', 'TRUE', 'ADD','EOF', 
 'QUOTE', 'NEWLINE', 'ID','DIGIT'];
+var TokenTypeChar =['{', '}', 'print', '(', ')', '=', 'while', 'if', 'int', 
+'string', 'boolean', 'character','==', '!==',' ', 'false', 'true', '+','$', 
+'"', '\n', 'id','digit'];
+
 var putMessage= function(msg){
     (<HTMLInputElement> document.getElementById("taOutput")).value += msg + "\n";
 }

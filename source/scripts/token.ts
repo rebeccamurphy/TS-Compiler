@@ -3,15 +3,15 @@
 module TSC
 {
 	export class Token {
-		constructor(public kind: TokenType,
+		constructor(public type: TokenType,
                     public value,
                     public line: number) {
-            this.kind = kind;
+            this.type = type;
             this.value= value;
             this.line = line;
         }
         public toString(){
-        	return TokenTypeString[this.kind];
+        	return TokenTypeString[this.type];
         }
         public static createToken(type, str, lineNum){
         	var temp = new Token (type, str,lineNum);
