@@ -14,7 +14,7 @@ module TSC
 		        sourceCode = TSC.Utils.trim(sourceCode);
 		        //remove all spaces
 		        //sourceCode = sourceCode.replace(/\s+/g, '');
-		        debugger;
+		        
 		        //call tokenize TODO
 		        this.tokenize(sourceCode);
 		        
@@ -26,7 +26,7 @@ module TSC
 		}
 
 		public static tokenize(sourceCode){
-			debugger;
+			
 			var currentLine =1;
 			var inString =false;
 			var tokenized = false;
@@ -211,6 +211,7 @@ module TSC
                 if (this.prevToken.type ===TokenType.EQUALSIGN && buffer.get().match(/[0-9]/)){
                 	_Token.getAndAddToken(buffer.flush());
                 }
+
                 else {//check longest match 
                 	var tokenList = _Token.getWordMatchToken(buffer.get(), currentLine);
 	                if (tokenList.length!==0 && !inString){
@@ -220,6 +221,12 @@ module TSC
 	                }
 
 	            }
+	            if (!inString && !buffer.isEmpty()){
+                	while (!_Token.testForToken(buffer.get())){
+                		_Token.getAndAddToken(buffer.pop());
+                	}
+
+                }
 
                 tokenized = false; //reset tokenized
 

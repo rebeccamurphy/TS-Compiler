@@ -278,6 +278,8 @@ module TSC
 			    default: 
 			    	//epsilon production no code boi
 			}
+			if (_CurrentToken.type ==TokenType.CHAR ||_CurrentToken ===TokenType.SPACE )
+				this.parseCharList();
 		}
 		/*
     	public checkToken(expectedKind) {

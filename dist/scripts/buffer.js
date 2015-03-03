@@ -30,6 +30,11 @@ var TSC;
             this.str = '';
             return text;
         };
+        Buffer.prototype.pop = function () {
+            var temp = this.str.charAt(0);
+            this.str = this.str.slice(1);
+            return temp;
+        };
         return Buffer;
     })();
     TSC.Buffer = Buffer;

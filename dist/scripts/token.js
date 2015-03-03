@@ -29,7 +29,6 @@ var TSC;
             _Tokens.push(temp);
         };
         Token.getWordMatchToken = function (str, lineNum) {
-            debugger;
             var tokenList = [];
             switch (str) {
                 case 'false':
@@ -83,6 +82,12 @@ var TSC;
             if (str.length === 1 && str.match(/[a-z]/))
                 tokenList.unshift(TSC.Token.createToken(21 /* ID */, str, lineNum));
             return tokenList;
+        };
+        Token.testForToken = function (str) {
+            if ('false'.indexOf(str) > -1 || 'true'.indexOf(str) > -1 || 'print'.indexOf(str) > -1 || 'while'.indexOf(str) > -1 || 'if'.indexOf(str) > -1 || 'int'.indexOf(str) > -1 || 'string'.indexOf(str) > -1 || 'boolean'.indexOf(str) > -1)
+                return true;
+            else
+                return false;
         };
         Token.getToken = function (str, lineNum) {
             //returns created token or null 

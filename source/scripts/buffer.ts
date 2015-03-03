@@ -30,6 +30,11 @@ module TSC
 			this.str= '';
 			return text;
 		}
+		public pop(){
+			var temp = this.str.charAt(0);
+			this.str = this.str.slice(1);
+			return temp;
+		}
 
 	}
 }

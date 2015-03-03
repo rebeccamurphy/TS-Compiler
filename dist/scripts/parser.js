@@ -249,6 +249,8 @@ var TSC;
                     break;
                 default:
             }
+            if (_CurrentToken.type == 11 /* CHAR */ || _CurrentToken === 14 /* SPACE */)
+                this.parseCharList();
         };
         /*
         public checkToken(expectedKind) {

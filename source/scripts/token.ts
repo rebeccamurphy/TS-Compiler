@@ -30,7 +30,7 @@ module TSC
         }
 
         public static getWordMatchToken(str, lineNum):any{
-        	debugger;
+        	
         	var tokenList =[];
         	switch (str){
         		case 'false':
@@ -91,7 +91,15 @@ module TSC
 	        
 
         }
-
+        public static testForToken(str){
+			if ('false'.indexOf(str) >-1	||'true'.indexOf(str) >-1
+				||'print'.indexOf(str) >-1 	||'while'.indexOf(str) >-1
+				||'if'.indexOf(str) >-1 	||'int'.indexOf(str) >-1
+				||'string'.indexOf(str) >-1 ||'boolean'.indexOf(str) >-1)
+				return true;
+			else
+				return false;
+        }
         public static getToken(str,lineNum) : any {
         	
         	//returns created token or null 

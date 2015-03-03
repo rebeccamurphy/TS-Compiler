@@ -12,7 +12,8 @@ var TSC;
                 var sourceCode = document.getElementById("taSourceCode").value;
                 // Trim the leading and trailing spaces.
                 sourceCode = TSC.Utils.trim(sourceCode);
-                debugger;
+                //remove all spaces
+                //sourceCode = sourceCode.replace(/\s+/g, '');
                 //call tokenize TODO
                 this.tokenize(sourceCode);
                 for (var i = 0; i < _Tokens.length; i++) {
@@ -22,7 +23,6 @@ var TSC;
             }
         };
         Lexer.tokenize = function (sourceCode) {
-            debugger;
             var currentLine = 1;
             var inString = false;
             var tokenized = false;
@@ -195,6 +195,11 @@ var TSC;
                         buffer.clear();
                         for (var j = 0; j < tokenList.length; j++)
                             _Token.addToken(tokenList[j]);
+                    }
+                }
+                if (!inString && !buffer.isEmpty()) {
+                    while (!_Token.testForToken(buffer.get())) {
+                        _Token.getAndAddToken(buffer.pop());
                     }
                 }
                 tokenized = false; //reset tokenized
