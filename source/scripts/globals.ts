@@ -13,7 +13,7 @@ var _Parser;
 var _Token;
 
 enum TokenType {LCURLY, RCURLY, PRINT, LPAREN, RPAREN, EQUALSIGN, WHILE, IF, INT, STR, BOOL, CHAR,
-	EQUALS, NOTEQUALS,SPACE, FALSE, TRUE, ADD,EOF, QUOTE, NEWLINE, ID,DIGIT, TYPE, BOOLOP};
+	EQUALS, NOTEQUALS,SPACE, FALSE, TRUE, ADD,EOF, QUOTE, NEWLINE, ID,DIGIT, TYPE, BOOLOP, NONE};
 var TokenTypeString =['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 
 'STR', 'BOOL', 'CHAR','EQUALS', 'NOTEQUALS','SPACE', 'FALSE', 'TRUE', 'ADD','EOF', 
 'QUOTE', 'NEWLINE', 'ID','DIGIT', 'TYPE', 'BOOLOP'];
@@ -50,6 +50,7 @@ var onDocumentLoad = function() {
 	_Parser = new TSC.Parser();
 	_Token = TSC.Token;
 	_Tokens = [];
+	_TokenStr =[];
     _TokenIndex = 0;
     _CurrentToken = ' ';
     _ErrorCount = 0;

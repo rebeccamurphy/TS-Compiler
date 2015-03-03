@@ -9,7 +9,7 @@ var TSC;
         function Utils() {
         }
         Utils.trim = function (str) {
-            return str.replace(/^\s+ | \s+$/g, "");
+            return str.replace(/^\s+|\s+$/g, "");
             /*
             Huh?  Take a breath.  Here we go:
             - The "|" separates this into two expressions, as in A or B.
@@ -37,6 +37,9 @@ var TSC;
                 }
             }
             return retVal;
+        };
+        Utils.insertAt = function (original, index, string) {
+            return original.substr(0, index) + string + original.substr(index);
         };
         return Utils;
     })();

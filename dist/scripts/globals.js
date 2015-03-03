@@ -36,6 +36,7 @@ var TokenType;
     TokenType[TokenType["DIGIT"] = 22] = "DIGIT";
     TokenType[TokenType["TYPE"] = 23] = "TYPE";
     TokenType[TokenType["BOOLOP"] = 24] = "BOOLOP";
+    TokenType[TokenType["NONE"] = 25] = "NONE";
 })(TokenType || (TokenType = {}));
 ;
 var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF', 'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP'];
@@ -66,6 +67,7 @@ var onDocumentLoad = function () {
     _Parser = new TSC.Parser();
     _Token = TSC.Token;
     _Tokens = [];
+    _TokenStr = [];
     _TokenIndex = 0;
     _CurrentToken = ' ';
     _ErrorCount = 0;

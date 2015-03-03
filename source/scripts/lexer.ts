@@ -5,6 +5,7 @@ module TSC
 	{
 	export class Lexer {
 		public static part = "Lexer";
+		public static prevToken;
 		public static lex() {
 		    {
 		        // Grab the "raw" source code.
@@ -25,6 +26,7 @@ module TSC
 		}
 
 		public static tokenize(sourceCode){
+			debugger;
 			var currentLine =1;
 			var inString =false;
 			var tokenized = false;
@@ -192,12 +194,23 @@ module TSC
                 else if(!tokenized && currChar!==' '){
                     buffer.push(currChar);
                 }
-                //check longest match 
-                var token = _Token.getWordMatchToken(buffer.get(), currentLine);
-                if (token!==null && !inString){
-                	buffer.clear();
-                	_Token.addToken(token);
+                this.prevToken = (_Tokens.length>0&&!tokenized) ? _Tokens[_Tokens.length-1]: new Token(TokenType.NONE, '', currentLine);
+                if (this.prevToken.type ===TokenType.INT ||this.prevToken.type ===TokenType.BOOL
+                	|| this.prevToken.type ===TokenType.STR &&!inString){
+                	sourceCode = TSC.Utils.insertAt(sourceCode, i+1, ' ');
                 }
+                else if (this.prevToken.type===TokenType.EQUALSIGN &&!inString){
+					sourceCode = TSC.Utils.insertAt(sourceCode, i+1, ' ');	                	
+                }
+
+                else {//check longest match 
+                	var token = _Token.getWordMatchToken(buffer.get(), currentLine);
+	                if (token!==null && !inString){
+	                	buffer.clear();
+	                	_Token.addToken(token);
+	                }
+	            }
+
                 tokenized = false; //reset tokenized
 
 			}

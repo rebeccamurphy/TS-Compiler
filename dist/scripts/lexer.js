@@ -22,6 +22,7 @@ var TSC;
             }
         };
         Lexer.tokenize = function (sourceCode) {
+            debugger;
             var currentLine = 1;
             var inString = false;
             var tokenized = false;
@@ -172,11 +173,19 @@ var TSC;
                 else if (!tokenized && currChar !== ' ') {
                     buffer.push(currChar);
                 }
-                //check longest match 
-                var token = _Token.getWordMatchToken(buffer.get(), currentLine);
-                if (token !== null && !inString) {
-                    buffer.clear();
-                    _Token.addToken(token);
+                this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(25 /* NONE */, '', currentLine);
+                if (this.prevToken.type === 8 /* INT */ || this.prevToken.type === 10 /* BOOL */ || this.prevToken.type === 9 /* STR */ && !inString) {
+                    sourceCode = TSC.Utils.insertAt(sourceCode, i + 1, ' ');
+                }
+                else if (this.prevToken.type === 5 /* EQUALSIGN */ && !inString) {
+                    sourceCode = TSC.Utils.insertAt(sourceCode, i + 1, ' ');
+                }
+                else {
+                    var token = _Token.getWordMatchToken(buffer.get(), currentLine);
+                    if (token !== null && !inString) {
+                        buffer.clear();
+                        _Token.addToken(token);
+                    }
                 }
                 tokenized = false; //reset tokenized
             }
