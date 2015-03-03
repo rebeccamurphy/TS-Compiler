@@ -308,7 +308,7 @@ var TSC;
                         putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
                 }
                 putFailed(this.part);
-                return;
+                throw new Error('Failed');
             }
             _CurrentToken = this.getNextToken();
         };

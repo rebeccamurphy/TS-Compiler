@@ -30,26 +30,65 @@ module TSC
         }
 
         public static getWordMatchToken(str, lineNum):any{
+        	debugger;
+        	var tokenList =[];
         	switch (str){
         		case 'false':
-	            	return TSC.Token.createToken(TokenType.FALSE,str,lineNum);
+	            	return [TSC.Token.createToken(TokenType.FALSE,str,lineNum)];
 	            case 'true':
-	                return TSC.Token.createToken(TokenType.TRUE, str,lineNum);
+	                return [TSC.Token.createToken(TokenType.TRUE, str,lineNum)];
 	            case 'print':
-	            	return TSC.Token.createToken(TokenType.PRINT,str,lineNum);
+	            	return [TSC.Token.createToken(TokenType.PRINT,str,lineNum)];
 	            case 'while':
-	            	return TSC.Token.createToken(TokenType.WHILE,str,lineNum);
+	            	return [TSC.Token.createToken(TokenType.WHILE,str,lineNum)];
 	            case 'if':
-	            	return TSC.Token.createToken(TokenType.IF,str,lineNum);
+	            	return [TSC.Token.createToken(TokenType.IF,str,lineNum)];
 	            case 'int':
-	            	return TSC.Token.createToken(TokenType.INT,str,lineNum);
+	            	return [TSC.Token.createToken(TokenType.INT,str,lineNum)];
 	            case 'string':
-	            	return TSC.Token.createToken(TokenType.STR,str,lineNum);
+	            	return [TSC.Token.createToken(TokenType.STR,str,lineNum)];
 	            case 'boolean':
-	            	return TSC.Token.createToken(TokenType.BOOL,str,lineNum);
-	            default:
-	            	return null;
+	            	return [TSC.Token.createToken(TokenType.BOOL,str,lineNum)];
+
 	        }
+	        if (str.indexOf('false') >-1){
+	        	tokenList.push(TSC.Token.createToken(TokenType.FALSE,'false',lineNum));
+	        }
+	        else if (str.indexOf('true') >-1){
+	        	tokenList.push(TSC.Token.createToken(TokenType.TRUE,'true',lineNum));
+	        }
+	        else if (str.indexOf('print') >-1){
+	        	tokenList.push(TSC.Token.createToken(TokenType.PRINT,'print',lineNum));
+	        }
+	        else if (str.indexOf('while') >-1){
+	        	tokenList.push(TSC.Token.createToken(TokenType.WHILE,'while',lineNum));
+	        }
+	       	else if (str.indexOf('if') >-1){
+	       		tokenList.push(TSC.Token.createToken(TokenType.IF,'if',lineNum));
+	       	}
+	       	else if (str.indexOf('int') >-1){
+	       		tokenList.push(TSC.Token.createToken(TokenType.INT,'int',lineNum));
+	       	}
+	       	else if (str.indexOf('string') >-1){
+	       		tokenList.push(TSC.Token.createToken(TokenType.STR,'string',lineNum));
+
+	       	}
+	       	else if (str.indexOf('boolean') >-1){
+	       		tokenList.push(TSC.Token.createToken(TokenType.FALSE,'boolean',lineNum));
+	       	}
+	       	else{
+	       		return [];
+	       	}
+
+	       	//remove token from string
+	       	str = str.replace(tokenList[0].value, '');
+	       	//check if there is an id left over
+	       	//unshift puts token in correct order
+	       	if (str.length===1 && str.match(/[a-z]/))
+	       		tokenList.unshift(TSC.Token.createToken(TokenType.ID, str, lineNum));
+
+	       	return tokenList;
+	        
 
         }
 

@@ -6,6 +6,7 @@ var _TokenIndex = 0;
 var _CurrentToken;
 var _ErrorCount = 0;
 var _TokenStr = [];
+var _LexerError;
 var _Lexer;
 var _Parser;
 var _Token;
@@ -46,6 +47,8 @@ var putMessage = function (msg) {
 };
 var putError = function (line, part, msg) {
     putMessage("(Line: " + line + ") " + part + " Error " + msg);
+    if (part === "Lexer")
+        _LexerError = true;
 };
 var putWarning = function (line, part, msg) {
     putMessage("(Line: " + line + ") " + part + " Warning " + msg);
@@ -63,6 +66,7 @@ var putSuccess = function (part) {
     putMessage(part + ": Completed Successfully.");
 };
 var onDocumentLoad = function () {
+    _LexerError = false;
     _Lexer = TSC.Lexer;
     _Parser = new TSC.Parser();
     _Token = TSC.Token;

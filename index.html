@@ -71,7 +71,10 @@ O ::== + | -
 
         putMessage("Lex returned [" + _Tokens + "]");
         // . . . and parse!
-        _Parser.parse();
+        if (_LexerError)
+            putMessage("Parse canceled because lexer error(s).")
+        else
+            _Parser.parse();
     }
 
 

@@ -173,18 +173,28 @@ var TSC;
                 else if (!tokenized && currChar !== ' ') {
                     buffer.push(currChar);
                 }
-                this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(25 /* NONE */, '', currentLine);
-                if (this.prevToken.type === 8 /* INT */ || this.prevToken.type === 10 /* BOOL */ || this.prevToken.type === 9 /* STR */ && !inString) {
-                    sourceCode = TSC.Utils.insertAt(sourceCode, i + 1, ' ');
+                /*
+                Figure out how to do longest match here
+                this.prevToken = (_Tokens.length>0&&!tokenized) ? _Tokens[_Tokens.length-1]: new Token(TokenType.NONE, '', currentLine);
+                if (this.prevToken.type ===TokenType.INT ||this.prevToken.type ===TokenType.BOOL
+                    || this.prevToken.type ===TokenType.STR &&!inString){
+                    sourceCode = TSC.Utils.insertAt(sourceCode, i+1, ' ');
                 }
-                else if (this.prevToken.type === 5 /* EQUALSIGN */ && !inString) {
-                    sourceCode = TSC.Utils.insertAt(sourceCode, i + 1, ' ');
+                else if (this.prevToken.type===TokenType.EQUALSIGN &&!inString){
+                    sourceCode = TSC.Utils.insertAt(sourceCode, i+1, ' ');
+                }
+                
+                else*/
+                this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(25 /* NONE */, '', currentLine);
+                if (this.prevToken.type === 5 /* EQUALSIGN */ && buffer.get().match(/[0-9]/)) {
+                    _Token.getAndAddToken(buffer.flush());
                 }
                 else {
-                    var token = _Token.getWordMatchToken(buffer.get(), currentLine);
-                    if (token !== null && !inString) {
+                    var tokenList = _Token.getWordMatchToken(buffer.get(), currentLine);
+                    if (tokenList.length !== 0 && !inString) {
                         buffer.clear();
-                        _Token.addToken(token);
+                        for (var j = 0; j < tokenList.length; j++)
+                            _Token.addToken(tokenList[j]);
                     }
                 }
                 tokenized = false; //reset tokenized

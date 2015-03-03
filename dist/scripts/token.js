@@ -29,26 +29,60 @@ var TSC;
             _Tokens.push(temp);
         };
         Token.getWordMatchToken = function (str, lineNum) {
+            debugger;
+            var tokenList = [];
             switch (str) {
                 case 'false':
-                    return TSC.Token.createToken(15 /* FALSE */, str, lineNum);
+                    return [TSC.Token.createToken(15 /* FALSE */, str, lineNum)];
                 case 'true':
-                    return TSC.Token.createToken(16 /* TRUE */, str, lineNum);
+                    return [TSC.Token.createToken(16 /* TRUE */, str, lineNum)];
                 case 'print':
-                    return TSC.Token.createToken(2 /* PRINT */, str, lineNum);
+                    return [TSC.Token.createToken(2 /* PRINT */, str, lineNum)];
                 case 'while':
-                    return TSC.Token.createToken(6 /* WHILE */, str, lineNum);
+                    return [TSC.Token.createToken(6 /* WHILE */, str, lineNum)];
                 case 'if':
-                    return TSC.Token.createToken(7 /* IF */, str, lineNum);
+                    return [TSC.Token.createToken(7 /* IF */, str, lineNum)];
                 case 'int':
-                    return TSC.Token.createToken(8 /* INT */, str, lineNum);
+                    return [TSC.Token.createToken(8 /* INT */, str, lineNum)];
                 case 'string':
-                    return TSC.Token.createToken(9 /* STR */, str, lineNum);
+                    return [TSC.Token.createToken(9 /* STR */, str, lineNum)];
                 case 'boolean':
-                    return TSC.Token.createToken(10 /* BOOL */, str, lineNum);
-                default:
-                    return null;
+                    return [TSC.Token.createToken(10 /* BOOL */, str, lineNum)];
             }
+            if (str.indexOf('false') > -1) {
+                tokenList.push(TSC.Token.createToken(15 /* FALSE */, 'false', lineNum));
+            }
+            else if (str.indexOf('true') > -1) {
+                tokenList.push(TSC.Token.createToken(16 /* TRUE */, 'true', lineNum));
+            }
+            else if (str.indexOf('print') > -1) {
+                tokenList.push(TSC.Token.createToken(2 /* PRINT */, 'print', lineNum));
+            }
+            else if (str.indexOf('while') > -1) {
+                tokenList.push(TSC.Token.createToken(6 /* WHILE */, 'while', lineNum));
+            }
+            else if (str.indexOf('if') > -1) {
+                tokenList.push(TSC.Token.createToken(7 /* IF */, 'if', lineNum));
+            }
+            else if (str.indexOf('int') > -1) {
+                tokenList.push(TSC.Token.createToken(8 /* INT */, 'int', lineNum));
+            }
+            else if (str.indexOf('string') > -1) {
+                tokenList.push(TSC.Token.createToken(9 /* STR */, 'string', lineNum));
+            }
+            else if (str.indexOf('boolean') > -1) {
+                tokenList.push(TSC.Token.createToken(15 /* FALSE */, 'boolean', lineNum));
+            }
+            else {
+                return [];
+            }
+            //remove token from string
+            str = str.replace(tokenList[0].value, '');
+            //check if there is an id left over
+            //unshift puts token in correct order
+            if (str.length === 1 && str.match(/[a-z]/))
+                tokenList.unshift(TSC.Token.createToken(21 /* ID */, str, lineNum));
+            return tokenList;
         };
         Token.getToken = function (str, lineNum) {
             //returns created token or null 

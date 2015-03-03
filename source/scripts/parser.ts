@@ -340,8 +340,8 @@ module TSC
             		default:
             			putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
                	}
-               	putFailed(this.part);
-               	return;
+               	putFailed(this.part)
+               	throw new Error ('Failed');
        		}
        		_CurrentToken = this.getNextToken();
        	}
