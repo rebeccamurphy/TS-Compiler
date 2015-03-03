@@ -42,14 +42,14 @@ module TSC
 	        	msg = _ErrorCount + " error.";
 	        else
 	        	msg = _ErrorCount + " errors.";
-	        putMessage("Parsing found"+ msg);   
+	        putMessage("Parsing found "+ msg);   
 		}
 
 		//Program ::== Block 
 		public parseProgram() {
 			debugger;
         	this.parseBlock();
-        	this.checkToken(EOF);
+        	this.checkToken(TokenType.EOF);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
@@ -320,11 +320,12 @@ module TSC
 	    }
 	    */
         public checkToken(tokenType) {
-            
+            debugger;
             if (_CurrentToken.type == tokenType) {
                 putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             } 
             else {
+            	debugger;
             	switch(tokenType){
             		case TokenType.TYPE:
             			putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", "+

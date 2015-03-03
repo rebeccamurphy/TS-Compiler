@@ -37,13 +37,13 @@ var TSC;
                 msg = _ErrorCount + " error.";
             else
                 msg = _ErrorCount + " errors.";
-            putMessage("Parsing found" + msg);
+            putMessage("Parsing found " + msg);
         };
         //Program ::== Block 
         Parser.prototype.parseProgram = function () {
             debugger;
             this.parseBlock();
-            this.checkToken(EOF);
+            this.checkToken(18 /* EOF */);
             putSuccess(this.part);
         };
         //Block ::== {StatementList}
@@ -291,10 +291,12 @@ var TSC;
         }
         */
         Parser.prototype.checkToken = function (tokenType) {
+            debugger;
             if (_CurrentToken.type == tokenType) {
                 putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             }
             else {
+                debugger;
                 switch (tokenType) {
                     case 23 /* TYPE */:
                         putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[8 /* INT */] + ", " + TokenTypeChar[9 /* STR */] + ", or " + TokenTypeChar[10 /* BOOL */], _CurrentToken.value);
