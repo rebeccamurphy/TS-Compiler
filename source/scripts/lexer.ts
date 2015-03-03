@@ -25,7 +25,6 @@ module TSC
 		}
 
 		public static tokenize(sourceCode){
-			debugger;
 			var currentLine =1;
 			var inString =false;
 			var tokenized = false;
@@ -57,6 +56,7 @@ module TSC
 		                    	_Token.addToken(token);
 		                    }
 	                    }
+	                    tokenized=true;
 	                    //only increment line if new line isnt in string
 	                    currentLine++;
 

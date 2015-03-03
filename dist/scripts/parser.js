@@ -24,10 +24,10 @@ var TSC;
             return thisToken;
         };
         Parser.prototype.parse = function () {
+            debugger;
             putMessage("Parsing [" + _TokenStr + "]");
-            // Grab the next token.
-            _CurrentToken = this.getNextToken();
             // A valid parse derives the G(oal) production, so begin there.
+            _CurrentToken = this.getNextToken();
             this.parseProgram();
             // Report the results.
             var msg = "";
@@ -41,12 +41,14 @@ var TSC;
         };
         //Program ::== Block 
         Parser.prototype.parseProgram = function () {
+            debugger;
             this.parseBlock();
             this.checkToken(EOF);
             putSuccess(this.part);
         };
         //Block ::== {StatementList}
         Parser.prototype.parseBlock = function () {
+            debugger;
             this.checkToken(0 /* LCURLY */); //expect block to start with {
             this.parseStatementList();
             this.checkToken(1 /* RCURLY */); //expect block to end with }
@@ -54,8 +56,9 @@ var TSC;
         //StatementList ::== Statement StatementList
         //				::== epsilon
         Parser.prototype.parseStatementList = function () {
-            if (_CurrentToken.type === 2 /* PRINT */ || _CurrentToken.type === 21 /* ID */ || _CurrentToken.type === 6 /* WHILE */ || _CurrentToken.type === 7 /* IF */ || _CurrentToken.type === 0 /* LCURLY */) {
-                this.parseStatement;
+            debugger;
+            if (_CurrentToken.type === 2 /* PRINT */ || _CurrentToken.type === 21 /* ID */ || _CurrentToken.type === 6 /* WHILE */ || _CurrentToken.type === 7 /* IF */ || _CurrentToken.type === 0 /* LCURLY */ || _CurrentToken.type === 8 /* INT */ || _CurrentToken.type === 9 /* STR */ || _CurrentToken.type === 10 /* BOOL */) {
+                this.parseStatement();
                 this.parseStatementList();
             }
             else {
@@ -68,6 +71,7 @@ var TSC;
         //           ::== IfStatement
         //           ::== Block
         Parser.prototype.parseStatement = function () {
+            debugger;
             switch (_CurrentToken.type) {
                 case 2 /* PRINT */:
                     this.parsePrintStatement();
@@ -92,6 +96,7 @@ var TSC;
         };
         // PrintStatement ::== print ( Expr )
         Parser.prototype.parsePrintStatement = function () {
+            debugger;
             this.checkToken(2 /* PRINT */);
             this.checkToken(3 /* LPAREN */);
             this.parseExpr();
@@ -99,21 +104,26 @@ var TSC;
         };
         //AssignmentStatement ::== Id = Expr
         Parser.prototype.parseAssignmentStatement = function () {
+            debugger;
             this.parseID();
             this.checkToken(5 /* EQUALSIGN */);
             this.parseExpr();
         };
         //VarDecl  ::== type Id
         Parser.prototype.parseVarDecl = function () {
+            debugger;
             switch (_CurrentToken.type) {
                 case 9 /* STR */:
                     this.checkToken(9 /* STR */);
+                    this.parseID();
                     break;
                 case 8 /* INT */:
-                    this.checkToken(10 /* BOOL */);
+                    this.checkToken(8 /* INT */);
+                    this.parseID();
                     break;
                 case 10 /* BOOL */:
                     this.checkToken(10 /* BOOL */);
+                    this.parseID();
                     break;
                 default:
                     //when we hit this it means we were expecting a type and failed
@@ -122,12 +132,14 @@ var TSC;
         };
         //WhileStatement ::== while BooleanExpr Block
         Parser.prototype.parseWhileStatement = function () {
+            debugger;
             this.checkToken(6 /* WHILE */);
             this.parseBooleanExpr();
             this.parseBlock();
         };
         //IfStatement ::== if BooleanExpr Block
         Parser.prototype.parseIfStatement = function () {
+            debugger;
             this.checkToken(7 /* IF */);
             this.parseBooleanExpr();
             this.parseBlock();
@@ -137,6 +149,7 @@ var TSC;
         //		::== BooleanExpr
         //		::==Id
         Parser.prototype.parseExpr = function () {
+            debugger;
             switch (_CurrentToken.type) {
                 case 22 /* DIGIT */:
                     this.parseIntExpr();
@@ -171,6 +184,7 @@ var TSC;
         //BooleanExpr	::== (Expr boolOp Expr)
         //				::== boolVal
         Parser.prototype.parseBooleanExpr = function () {
+            debugger;
             if (_CurrentToken.type === 16 /* TRUE */)
                 this.checkToken(16 /* TRUE */);
             else if (_CurrentToken.type === 15 /* FALSE */)
@@ -197,6 +211,7 @@ var TSC;
         //IntExpr	::== digit intop Expr
         //			::== digit
         Parser.prototype.parseIntExpr = function () {
+            debugger;
             if (_CurrentToken.type === 22 /* DIGIT */) {
                 this.checkToken(22 /* DIGIT */);
                 if (_CurrentToken.type === 17 /* ADD */) {
@@ -210,18 +225,21 @@ var TSC;
         };
         //StringExpr ::== " CharList "    	
         Parser.prototype.parseStringExpr = function () {
+            debugger;
             this.checkToken(19 /* QUOTE */);
             this.parseCharList();
             this.checkToken(19 /* QUOTE */);
         };
         //Id ::== char
         Parser.prototype.parseID = function () {
+            debugger;
             this.checkToken(21 /* ID */);
         };
         //CharList	::== char CharList
         //			::== space CharList
         //			::== epsilon
         Parser.prototype.parseCharList = function () {
+            debugger;
             switch (_CurrentToken.type) {
                 case 11 /* CHAR */:
                     this.checkToken(11 /* CHAR */);

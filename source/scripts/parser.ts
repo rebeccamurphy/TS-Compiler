@@ -29,10 +29,10 @@ module TSC
 	        return thisToken;
     	}
 		public parse() {
+			debugger;
 	        putMessage("Parsing [" + _TokenStr + "]");
-	        // Grab the next token.
-	        _CurrentToken = this.getNextToken();
 	        // A valid parse derives the G(oal) production, so begin there.
+	        _CurrentToken = this.getNextToken();
 	        this.parseProgram();
 	        // Report the results.
 	        var msg ="";
@@ -47,12 +47,14 @@ module TSC
 
 		//Program ::== Block 
 		public parseProgram() {
+			debugger;
         	this.parseBlock();
         	this.checkToken(EOF);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
     	public parseBlock(){
+    		debugger;
     		this.checkToken(TokenType.LCURLY); //expect block to start with {
     		this.parseStatementList();
     		this.checkToken(TokenType.RCURLY); //expect block to end with }
@@ -61,13 +63,17 @@ module TSC
     	//StatementList ::== Statement StatementList
     	//				::== epsilon
     	public parseStatementList(){
+    		debugger;
     		if( _CurrentToken.type===TokenType.PRINT ||
     			_CurrentToken.type===TokenType.ID ||
     			_CurrentToken.type===TokenType.WHILE ||
     			_CurrentToken.type===TokenType.IF ||
-    			_CurrentToken.type===TokenType.LCURLY
+    			_CurrentToken.type===TokenType.LCURLY ||
+    			_CurrentToken.type===TokenType.INT ||
+    			_CurrentToken.type===TokenType.STR ||
+    			_CurrentToken.type===TokenType.BOOL
     		){
-    			this.parseStatement;
+    			this.parseStatement();
     			this.parseStatementList();
     		}
     		else{
@@ -82,6 +88,7 @@ module TSC
     	//           ::== IfStatement
     	//           ::== Block
     	public parseStatement(){
+    		debugger;
 	    	switch (_CurrentToken.type){
 	    			case TokenType.PRINT:
 	    				this.parsePrintStatement();
@@ -107,6 +114,7 @@ module TSC
 
     	// PrintStatement ::== print ( Expr )
     	public parsePrintStatement(){
+    		debugger;
     		this.checkToken(TokenType.PRINT);
     		this.checkToken(TokenType.LPAREN);
     		this.parseExpr();
@@ -115,6 +123,7 @@ module TSC
 
     	//AssignmentStatement ::== Id = Expr
     	public parseAssignmentStatement(){
+    		debugger;
     		this.parseID();
     		this.checkToken(TokenType.EQUALSIGN);
     		this.parseExpr();
@@ -122,15 +131,19 @@ module TSC
     	
     	//VarDecl  ::== type Id
     	public parseVarDecl(){
+    		debugger;
     		switch (_CurrentToken.type){
     			case TokenType.STR:
     				this.checkToken(TokenType.STR);
+    				this.parseID();
     				break;
     			case TokenType.INT:
-    				this.checkToken(TokenType.BOOL);
+    				this.checkToken(TokenType.INT);
+    				this.parseID();
     				break;
     			case TokenType.BOOL:
-    				this.checkToken(TokenType.BOOL)
+    				this.checkToken(TokenType.BOOL);
+    				this.parseID();
     				break;
     			default:
     				//when we hit this it means we were expecting a type and failed
@@ -140,12 +153,14 @@ module TSC
     	}
     	//WhileStatement ::== while BooleanExpr Block
     	public parseWhileStatement(){
+    		debugger;
     		this.checkToken(TokenType.WHILE);
     		this.parseBooleanExpr();
     		this.parseBlock();
     	}
     	//IfStatement ::== if BooleanExpr Block
     	public parseIfStatement(){
+    		debugger;
     		this.checkToken(TokenType.IF);
     		this.parseBooleanExpr();
     		this.parseBlock();
@@ -155,6 +170,7 @@ module TSC
     	//		::== BooleanExpr
     	//		::==Id
     	public parseExpr(){
+    		debugger;
     		switch(_CurrentToken.type){
     			case TokenType.DIGIT:
     				this.parseIntExpr();
@@ -191,6 +207,7 @@ module TSC
     	//BooleanExpr	::== (Expr boolOp Expr)
     	//				::== boolVal
     	public parseBooleanExpr(){
+    		debugger;
     		if(_CurrentToken.type=== TokenType.TRUE)
     			this.checkToken(TokenType.TRUE)
     		else if(_CurrentToken.type===TokenType.FALSE)
@@ -218,6 +235,7 @@ module TSC
     	//IntExpr	::== digit intop Expr
     	//			::== digit
     	public parseIntExpr(){
+    		debugger;
     		if (_CurrentToken.type ===TokenType.DIGIT){
     			this.checkToken(TokenType.DIGIT);
     			if (_CurrentToken.type ===TokenType.ADD){
@@ -232,6 +250,7 @@ module TSC
 		
 		//StringExpr ::== " CharList "    	
 		public parseStringExpr(){
+			debugger;
 			this.checkToken(TokenType.QUOTE);
 			this.parseCharList();
 			this.checkToken(TokenType.QUOTE);
@@ -240,6 +259,7 @@ module TSC
 
 		//Id ::== char
 		public parseID(){
+			debugger;
 			this.checkToken(TokenType.ID);
 		}
 
@@ -247,6 +267,7 @@ module TSC
 		//			::== space CharList
 		//			::== epsilon
 		public parseCharList(){
+			debugger;
 			switch (_CurrentToken.type){
 			    case TokenType.CHAR:
 			    	this.checkToken(TokenType.CHAR);
@@ -299,6 +320,7 @@ module TSC
 	    }
 	    */
         public checkToken(tokenType) {
+            
             if (_CurrentToken.type == tokenType) {
                 putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
             } 
@@ -320,8 +342,9 @@ module TSC
                	putFailed(this.part);
                	return;
        		}
-            _CurrentToken = this.getNextToken();
+       		_CurrentToken = this.getNextToken();
        	}
+
 
 	}
 }

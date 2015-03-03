@@ -54,7 +54,7 @@ module TSC
         }
 
         public static getToken(str,lineNum) : any {
-        	debugger;
+        	
         	//returns created token or null 
         	if (str.match(/\n/)){
         		//newline sent in

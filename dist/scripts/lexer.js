@@ -22,7 +22,6 @@ var TSC;
             }
         };
         Lexer.tokenize = function (sourceCode) {
-            debugger;
             var currentLine = 1;
             var inString = false;
             var tokenized = false;
@@ -51,6 +50,7 @@ var TSC;
                                 _Token.addToken(token);
                             }
                         }
+                        tokenized = true;
                         //only increment line if new line isnt in string
                         currentLine++;
                     }
