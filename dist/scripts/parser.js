@@ -156,6 +156,7 @@ var TSC;
                     break;
                 case 19 /* QUOTE */:
                     this.parseStringExpr();
+                    break;
                 case 3 /* LPAREN */:
                 case 16 /* TRUE */:
                 case 15 /* FALSE */:

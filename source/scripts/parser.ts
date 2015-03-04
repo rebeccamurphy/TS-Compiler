@@ -177,6 +177,7 @@ module TSC
     				break;
     			case TokenType.QUOTE:
     				this.parseStringExpr();
+    				break;
     			case TokenType.LPAREN:
     			case TokenType.TRUE:
     			case TokenType.FALSE:
