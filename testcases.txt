@@ -1,0 +1,42 @@
+TODO
+make more verbose errors.
+Valid Examples
+-----------------
+{
+	int i
+	i = 2 + i
+}
+
+{
+	stringii="int"
+}
+
+{
+	int i
+	i = 2
+
+
+}
+
+
+Invalid Examples
+-----------------
+{intfintif=2i=2} 
+
+should it be read as this which is invalid:
+{
+int f
+int
+if
+=2
+i=2
+}
+
+{intprint="print"}
+should be read as
+{
+	int
+	print
+	=
+	"print"
+}
