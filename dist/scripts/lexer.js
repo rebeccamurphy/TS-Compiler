@@ -12,9 +12,7 @@ var TSC;
                 var sourceCode = document.getElementById("taSourceCode").value;
                 // Trim the leading and trailing spaces.
                 sourceCode = TSC.Utils.trim(sourceCode);
-                //remove all spaces
-                //sourceCode = sourceCode.replace(/\s+/g, '');
-                //call tokenize TODO
+                sourceCode = sourceCode.toLowerCase();
                 this.tokenize(sourceCode);
                 for (var i = 0; i < _Tokens.length; i++) {
                     _TokenStr.push(_Tokens[i].toString());
@@ -173,18 +171,6 @@ var TSC;
                 else if (!tokenized && currChar !== ' ') {
                     buffer.push(currChar);
                 }
-                /*
-                Figure out how to do longest match here
-                this.prevToken = (_Tokens.length>0&&!tokenized) ? _Tokens[_Tokens.length-1]: new Token(TokenType.NONE, '', currentLine);
-                if (this.prevToken.type ===TokenType.INT ||this.prevToken.type ===TokenType.BOOL
-                    || this.prevToken.type ===TokenType.STR &&!inString){
-                    sourceCode = TSC.Utils.insertAt(sourceCode, i+1, ' ');
-                }
-                else if (this.prevToken.type===TokenType.EQUALSIGN &&!inString){
-                    sourceCode = TSC.Utils.insertAt(sourceCode, i+1, ' ');
-                }
-                
-                else*/
                 this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(25 /* NONE */, '', currentLine);
                 if (this.prevToken.type === 5 /* EQUALSIGN */ && buffer.get().match(/[0-9]/)) {
                     _Token.getAndAddToken(buffer.flush());

@@ -287,6 +287,14 @@ module TSC
             debugger;
             if (_CurrentToken.type == tokenType) {
             	switch(tokenType){
+            		case TokenType.CHAR:
+            			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] + 
+            				" a single character in range: a-z.", _CurrentToken.value);
+            			break;
+            		case TokenType.ID:
+            			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] + 
+            				" a single character in range: a-z.", _CurrentToken.value);
+            			break;
             		case TokenType.TYPE:
             			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", "+
             				TokenTypeChar[TokenType.STR] +", or " + TokenTypeChar[TokenType.BOOL],

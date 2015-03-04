@@ -257,6 +257,12 @@ var TSC;
             debugger;
             if (_CurrentToken.type == tokenType) {
                 switch (tokenType) {
+                    case 11 /* CHAR */:
+                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[21 /* ID */] + " a single character in range: a-z.", _CurrentToken.value);
+                        break;
+                    case 21 /* ID */:
+                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[21 /* ID */] + " a single character in range: a-z.", _CurrentToken.value);
+                        break;
                     case 23 /* TYPE */:
                         putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[8 /* INT */] + ", " + TokenTypeChar[9 /* STR */] + ", or " + TokenTypeChar[10 /* BOOL */], _CurrentToken.value);
                         break;
