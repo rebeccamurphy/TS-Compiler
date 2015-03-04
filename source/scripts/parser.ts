@@ -282,50 +282,24 @@ module TSC
 			if (_CurrentToken.type ==TokenType.CHAR ||_CurrentToken ===TokenType.SPACE )
 				this.parseCharList();
 		}
-		/*
-    	public checkToken(expectedKind) {
-	        // Validate that we have the expected token kind and et the next token.
-	        switch(expectedKind) {
-	            case "digit":{
-	            	putMessage("Expecting a digit");
-
-                    if (_CurrentToken=="0" || _CurrentToken=="1" || _CurrentToken=="2" || 
-                        _CurrentToken=="3" || _CurrentToken=="4" || _CurrentToken=="5" || 
-                        _CurrentToken=="6" || _CurrentToken=="7" || _CurrentToken=="8" || 
-                        _CurrentToken=="9"){
-                        putMessage("Got a digit!");
-                    }
-                    else{
-                        _ErrorCount++;
-                        putMessage("NOT a digit.  Error at position " + _TokenIndex + ".");
-                    }
-                    break;
-                }
-	            case "op":{      
-	            	putMessage("Expecting an operator");
-
-                    if (_CurrentToken=="+" || _CurrentToken=="-"){
-                        putMessage("Got an operator!");
-                    }
-                    else {
-                        _ErrorCount++;
-                        putMessage("NOT an operator.  Error at position " + _TokenIndex + ".");
-                    }
-                    break;
-                }
-	            default:        
-	            	putMessage("Parse Error: Invalid Token Type at position " + _TokenIndex + ".");
-	                break;			
-	        }
-	        // Consume another token, having just checked this one, because that 
-	        // will allow the code to see what's coming next... a sort of "look-ahead".
-	        _CurrentToken = this.getNextToken();
-	    }
-	    */
+		
         public checkToken(tokenType) {
             debugger;
             if (_CurrentToken.type == tokenType) {
-                putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+            	switch(tokenType){
+            		case TokenType.TYPE:
+            			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", "+
+            				TokenTypeChar[TokenType.STR] +", or " + TokenTypeChar[TokenType.BOOL],
+            			 	_CurrentToken.value);
+            			break;
+            		case TokenType.BOOLOP:
+            			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] +", or " 
+            				+ TokenTypeChar[TokenType.NOTEQUALS],
+            			 	_CurrentToken.value);
+            			break;
+            		default:
+            			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+               	}
             } 
             else {
             	debugger;
