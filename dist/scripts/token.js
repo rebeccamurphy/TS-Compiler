@@ -26,7 +26,10 @@ var TSC;
         };
         Token.getAndAddToken = function (str, lineNum) {
             var temp = TSC.Token.getToken(str, lineNum);
-            _Tokens.push(temp);
+            if (typeof temp === "string")
+                putError(lineNum, "Lexer", "[" + temp + "] Invalid token.");
+            else
+                _Tokens.push(temp);
         };
         Token.getWordMatchToken = function (str, lineNum) {
             var tokenList = [];
@@ -98,6 +101,15 @@ var TSC;
             str = str.trim(); //to handle excess spaces and newlines
             if (str.length === 0)
                 return null;
+            //if a single character (a-Z) has been sent in
+            if (str.length === 1 && str.match(/[a-z]/))
+                return TSC.Token.createToken(21 /* ID */, str, lineNum);
+            //we've found an identifier	        
+            //if a single digit has been sent in
+            if (str.length === 1 && str.match(/[0-9]/))
+                return TSC.Token.createToken(22 /* DIGIT */, str, lineNum);
+            //covert case to lower case
+            str = str.toLowerCase();
             switch (str) {
                 case '{':
                     return TSC.Token.createToken(0 /* LCURLY */, str, lineNum);
@@ -136,14 +148,7 @@ var TSC;
                 case 'boolean':
                     return TSC.Token.createToken(10 /* BOOL */, str, lineNum);
             }
-            //if a single character (a-Z) has been sent in
-            if (str.length === 1 && str.match(/[a-z]/))
-                return TSC.Token.createToken(21 /* ID */, str, lineNum);
-            //we've found an identifier	        
-            //if a single digit has been sent in
-            if (str.length === 1 && str.match(/[0-9]/))
-                return TSC.Token.createToken(22 /* DIGIT */, str, lineNum);
-            return null; //This token doesn't match anything
+            return str; //This token doesn't match anything
         };
         return Token;
     })();

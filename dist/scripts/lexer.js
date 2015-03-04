@@ -12,7 +12,7 @@ var TSC;
                 var sourceCode = document.getElementById("taSourceCode").value;
                 // Trim the leading and trailing spaces.
                 sourceCode = TSC.Utils.trim(sourceCode);
-                sourceCode = sourceCode.toLowerCase();
+                //sourceCode = sourceCode.toLowerCase();
                 this.tokenize(sourceCode);
                 for (var i = 0; i < _Tokens.length; i++) {
                     _TokenStr.push(_Tokens[i].toString());
@@ -21,6 +21,7 @@ var TSC;
             }
         };
         Lexer.tokenize = function (sourceCode) {
+            debugger;
             var currentLine = 1;
             var inString = false;
             var tokenized = false;
@@ -38,53 +39,38 @@ var TSC;
                 if (currChar.match(/\n/)) {
                     if (inString) {
                         //newlines are not allowed in strings in this lang so throw and error
-                        putError(currentLine, this.part, "Invalid character in string.");
+                        putError(currentLine, this.part, "[" + currChar + "] Invalid character in string.");
                     }
                     else {
                         if (!buffer.isEmpty()) {
-                            var token = _Token.getToken(buffer.flush(), currentLine);
-                            if (token === null)
-                                putError(currentLine, this.part, "Invalid token.");
-                            else {
-                                _Token.addToken(token);
-                            }
+                            _Token.getAndAddToken(buffer.flush(), currentLine);
                         }
                         tokenized = true;
-                        //only increment line if new line isnt in string
-                        currentLine++;
                     }
+                    currentLine++;
                 }
                 else if (currChar.match(/\s/)) {
                     if (inString) {
-                        //if we are in a string, we want to preserve the whitespace and not make the wrong token
-                        var temp = new TSC.Token(14 /* SPACE */, currChar, currentLine);
-                        //adds token to global _Tokens
-                        _Token.addToken(temp);
+                        //if in a string preserve the whitespace and not make the wrong token
+                        var temp = _Token.createAndAddToken(14 /* SPACE */, currChar, currentLine);
                         tokenized = true;
                     }
                     else if (!buffer.isEmpty()) {
-                        var token = _Token.getToken(buffer.flush(), currentLine);
-                        if (token === null)
-                            putError(currentLine, this.part, "Invalid token.");
-                        else
-                            _Token.addToken(token);
+                        //if not in a string, must check to see if hit a token
+                        _Token.getAndAddToken(buffer.flush(), currentLine);
                     }
                 }
                 //if hit a token ending character
                 if (currChar.match(/\{|\}|\(|\)|\$|\+/)) {
                     if (inString)
                         //characters are not valid in string so error
-                        putError(currentLine, this.part, "Invalid character in string.");
+                        putError(currentLine, this.part, "[" + currChar + "] Invalid character in string.");
                     else {
                         if (!buffer.isEmpty()) {
                             //if we are not in a string, check to see if we've hit a token
-                            var token = _Token.getToken(buffer.flush(), currentLine);
-                            if (token === null)
-                                putError(currentLine, this.part, "Invalid token.");
-                            else
-                                _Token.addToken(token);
+                            _Token.getAndAddToken(buffer.flush(), currentLine);
                         }
-                        _Token.addToken(_Token.getToken(currChar, currentLine)); //add current char to token list
+                        _Token.getAndAddToken(currChar, currentLine); //add current char to token list
                         tokenized = true; //note that the current token has been tokenized *lazer noises*
                     }
                 }
@@ -93,11 +79,7 @@ var TSC;
                     if (!inString && !buffer.isEmpty()) {
                         //if we are not in a string, see if we can create a token from buffer contents
                         //because a string has just started
-                        var token = _Token.getToken(buffer.flush(), currentLine);
-                        if (token === null)
-                            putError(currentLine, this.part, "Invalid token.");
-                        else
-                            _Token.addToken(token);
+                        _Token.getAndAddToken(buffer.flush(), currentLine);
                     }
                     inString = !inString; //flip inString
                     _Token.getAndAddToken(currChar, currentLine); //add quote token to the token list
@@ -112,11 +94,7 @@ var TSC;
                         // since ! can only mean != or an error, and 
                         // = can only mean == or =, empty the buffer before proceeding
                         if (!buffer.isEmpty()) {
-                            var token = _Token.getToken(buffer.flush(), currentLine);
-                            if (token === null)
-                                putError(currentLine, this.part, "Invalid token.");
-                            else
-                                _Token.addToken(token);
+                            _Token.getAndAddToken(buffer.flush(), currentLine);
                         }
                         if (sourceCode[i + 1] === '=') {
                             //if it is != or == create a token
@@ -144,11 +122,7 @@ var TSC;
                         buffer.push(currChar);
                         //try to create a token from the buffer
                         if (!buffer.isEmpty()) {
-                            var token = _Token.getToken(buffer.flush(), currentLine);
-                            if (token === null)
-                                putError(currentLine, this.part, "Invalid token.");
-                            else
-                                _Token.addToken(token); //add token
+                            _Token.getAndAddToken(buffer.flush(), currentLine);
                         }
                     }
                     _Token.getAndAddToken('$', currentLine); //add EOF token for the user
@@ -164,11 +138,11 @@ var TSC;
                 //having checked all cases where a token must be processed from the buffer,
                 // can safely add whatever character 
                 // its on to the current buffer if it hasn't already been tokenized
-                if (currChar === ' ' && !tokenized && inString) {
+                if (!tokenized && inString) {
                     //ignore whitespace except in strings.
                     buffer.push(currChar);
                 }
-                else if (!tokenized && currChar !== ' ') {
+                else if (!tokenized && !currChar.match(/\s/)) {
                     buffer.push(currChar);
                 }
                 this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(25 /* NONE */, '', currentLine);

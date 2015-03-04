@@ -26,7 +26,10 @@ module TSC
         }
         public static getAndAddToken(str, lineNum){
         	var temp = TSC.Token.getToken(str, lineNum);
-        	_Tokens.push(temp);
+        	if(typeof temp === "string")
+        		putError(lineNum, "Lexer", "[" +temp+"] Invalid token.");
+        	else
+        		_Tokens.push(temp);
         }
 
         public static getWordMatchToken(str, lineNum):any{
@@ -108,8 +111,20 @@ module TSC
 	           return TSC.Token.createToken(TokenType.NEWLINE,str,lineNum); 
         	}
 	        str = str.trim(); //to handle excess spaces and newlines
+	        
 	        if(str.length === 0) //in the case of being passed an empty buffer, don't throw an error
 	            return null;
+	        //if a single character (a-Z) has been sent in
+	        if(str.length === 1 && str.match(/[a-z]/)) 
+	           return TSC.Token.createToken(TokenType.ID,str,lineNum); 
+	           //we've found an identifier	        
+
+	        //if a single digit has been sent in
+	        if(str.length === 1 && str.match(/[0-9]/)) 
+	            return TSC.Token.createToken(TokenType.DIGIT,str,lineNum);
+	        
+	        //covert case to lower case
+	        str = str.toLowerCase();
 
 	        switch(str) {
 	            case '{':
@@ -152,16 +167,8 @@ module TSC
 
         	}
         	
-	        //if a single character (a-Z) has been sent in
-	        if(str.length === 1 && str.match(/[a-z]/)) 
-	           return TSC.Token.createToken(TokenType.ID,str,lineNum); 
-	           //we've found an identifier	        
-
-	        //if a single digit has been sent in
-	        if(str.length === 1 && str.match(/[0-9]/)) 
-	            return TSC.Token.createToken(TokenType.DIGIT,str,lineNum);
 	           
-	        return null; //This token doesn't match anything
+	        return str; //This token doesn't match anything
 
         }
 
