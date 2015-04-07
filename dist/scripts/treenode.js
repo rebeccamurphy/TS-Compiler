@@ -8,6 +8,7 @@ var TSC;
             this.value = value;
             this.parent = parent;
             this.children = [];
+            this.chr = [];
         }
         TreeNode.prototype.getValue = function () {
             return this.value;
@@ -21,11 +22,13 @@ var TSC;
         TreeNode.prototype.addChild = function (child) {
             var ch = new TreeNode(child, this);
             this.children.push(ch);
+            this.chr.push({ id: child });
             return ch;
         };
         TreeNode.prototype.addChildNode = function (child) {
             child.setParent(this);
             this.children.push(child);
+            this.chr.push({ id: child.value });
             return child;
         };
         TreeNode.prototype.getChilden = function () {
@@ -43,6 +46,13 @@ var TSC;
                     if (this.children[i] === (value))
                         return this.children[i];
                 }
+        };
+        TreeNode.prototype.createRoot = function (rootTreeNode) {
+            var tree = new TreeModel();
+            var root = tree.parse({
+                id: rootTreeNode.value,
+                chr: rootTreeNode.chr
+            });
         };
         TreeNode.prototype.toString = function () {
             return this.value.toUpperCase();

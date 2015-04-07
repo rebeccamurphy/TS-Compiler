@@ -1,3 +1,5 @@
+declare var TreeModel:any;
+
 //Global Constants
 var EOF = "$";
 
