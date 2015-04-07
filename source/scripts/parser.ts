@@ -4,7 +4,7 @@ module TSC
 {
 	export class Parser {
 		public part = 'Parser';
-        private rootNode:TreeNode;
+        public rootNode:TreeNode;
 		constructor(){
 
 		}
@@ -30,7 +30,7 @@ module TSC
 	        return thisToken;
     	}
 		public parse() {
-			debugger;
+			
 	        putMessage("Parsing [" + _TokenStr + "]");
 	        // A valid parse derives the G(oal) production, so begin there.
 	        _CurrentToken = this.getNextToken();
@@ -44,11 +44,12 @@ module TSC
 	        else
 	        	msg = _ErrorCount + " errors.";
 	        putMessage("Parsing found "+ msg);   
+            this.rootNode.printTree(0);
 		}
 
 		//Program ::== Block 
 		public parseProgram(node:TreeNode) {
-			debugger;
+			
             this.rootNode = new TreeNode("Program", null);
             node = this.rootNode;
         	this.parseBlock(node);
@@ -126,7 +127,7 @@ module TSC
 
     	// PrintStatement ::== print ( Expr )
     	public parsePrintStatement(node:TreeNode){
-    		debugger;
+    		
     		this.checkToken(TokenType.PRINT, node);
     		this.checkToken(TokenType.LPAREN, node);
     		this.parseExpr(node);
@@ -135,7 +136,7 @@ module TSC
 
     	//AssignmentStatement ::== Id = Expr
     	public parseAssignmentStatement(node:TreeNode){
-    		debugger;
+    		
             node.addChild("AssignmentStatement");
             node = node.getNewestChild();
     		this.parseID(node);
@@ -145,7 +146,7 @@ module TSC
     	
     	//VarDecl  ::== type Id
     	public parseVarDecl(node:TreeNode){
-    		debugger;
+    		
             node.addChild("VarDecl");
             node = node.getNewestChild();
     		switch (_CurrentToken.type){
@@ -169,7 +170,7 @@ module TSC
     	}
     	//WhileStatement ::== while BooleanExpr Block
     	public parseWhileStatement(node:TreeNode){
-    		debugger;
+    		
             node.addChild("WhileStatement");
             node = node.getNewestChild();
     		this.checkToken(TokenType.WHILE, node);
@@ -178,7 +179,7 @@ module TSC
     	}
     	//IfStatement ::== if BooleanExpr Block
     	public parseIfStatement(node:TreeNode){
-    		debugger;
+    		
             node.addChild("IfStatement");
             node = node.getNewestChild();
     		this.checkToken(TokenType.IF,node);
@@ -190,7 +191,7 @@ module TSC
     	//		::== BooleanExpr
     	//		::==Id
     	public parseExpr(node:TreeNode){
-    		debugger;
+    		
             node.addChild("Expr");
             node = node.getNewestChild();
     		switch(_CurrentToken.type){
@@ -232,7 +233,7 @@ module TSC
     	//BooleanExpr	::== (Expr boolOp Expr)
     	//				::== boolVal
     	public parseBooleanExpr(node:TreeNode){
-    		debugger;
+    		
             node.addChild("BooleanExpr");
             node = node.getNewestChild();
     		if(_CurrentToken.type=== TokenType.TRUE)
@@ -262,7 +263,7 @@ module TSC
     	//IntExpr	::== digit intop Expr
     	//			::== digit
     	public parseIntExpr(node:TreeNode){
-    		debugger;
+    		
             node.addChild("IntExpr");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
@@ -279,7 +280,7 @@ module TSC
 		
 		//StringExpr ::== " CharList "    	
 		public parseStringExpr(node:TreeNode){
-			debugger;
+			
             node.addChild("StringExpr");
             node = node.getNewestChild();
 			this.checkToken(TokenType.QUOTE, node);
@@ -290,7 +291,7 @@ module TSC
 
 		//Id ::== char
 		public parseID(node:TreeNode){
-			debugger;
+			
             node.addChild("Id");
             node = node.getNewestChild();
 			this.checkToken(TokenType.ID, node);
@@ -300,7 +301,7 @@ module TSC
 		//			::== space CharList
 		//			::== epsilon
 		public parseCharList(node:TreeNode){
-			debugger;
+			
             node.addChild("CharList");
             node = node.getNewestChild();
 			switch (_CurrentToken.type){
@@ -318,10 +319,10 @@ module TSC
 		}
 		
         public checkToken(tokenType, node) {
-            debugger;
+            
             if (_CurrentToken.type == tokenType) {
                 node.addChild(TokenTypeString[_CurrentToken.type]);
-                node = node.getNextToken();
+                node = node.getNewestChild();
             	switch(tokenType){
             		case TokenType.CHAR:
             			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] + 
@@ -346,7 +347,7 @@ module TSC
                	}
             } 
             else {
-            	debugger;
+            	
             	switch(tokenType){
             		case TokenType.TYPE:
             			putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", "+

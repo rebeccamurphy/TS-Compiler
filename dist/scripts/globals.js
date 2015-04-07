@@ -41,8 +41,12 @@ var TokenType;
     TokenType[TokenType["PROGRAM"] = 26] = "PROGRAM";
 })(TokenType || (TokenType = {}));
 ;
-var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF', 'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'PROGRAM'];
-var TokenTypeChar = ['{', '}', 'print', '(', ')', '=', 'while', 'if', 'int', 'string', 'boolean', 'character', '==', '!==', ' ', 'false', 'true', '+', '$', '"', '\n', 'id', 'digit', 'type', 'boolean operator'];
+var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT',
+    'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF',
+    'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'PROGRAM'];
+var TokenTypeChar = ['{', '}', 'print', '(', ')', '=', 'while', 'if', 'int',
+    'string', 'boolean', 'character', '==', '!==', ' ', 'false', 'true', '+', '$',
+    '"', '\n', 'id', 'digit', 'type', 'boolean operator'];
 var putMessage = function (msg) {
     document.getElementById("taOutput").value += msg + "\n";
 };
