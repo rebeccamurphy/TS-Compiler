@@ -10,8 +10,11 @@ var TSC;
             this.value = value;
             this.line = line;
         }
+        Token.prototype.equals = function (token) {
+            return token.type === this.type && token.value === this.value && token.line == this.line;
+        };
         Token.prototype.toString = function () {
-            return TokenTypeString[this.type];
+            return "Type: " + TokenTypeString[this.type] + ", Value: " + this.value + ", Line: " + this.line;
         };
         Token.createToken = function (type, str, lineNum) {
             var temp = new Token(type, str, lineNum);

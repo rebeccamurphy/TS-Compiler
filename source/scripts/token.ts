@@ -10,8 +10,11 @@ module TSC
             this.value= value;
             this.line = line;
         }
+        public equals(token){
+        	return token.type===this.type &&token.value===this.value&&token.line==this.line;
+        }
         public toString(){
-        	return TokenTypeString[this.type];
+        	return "Type: " +TokenTypeString[this.type] +", Value: "+ this.value+", Line: "+this.line;
         }
         public static createToken(type, str, lineNum){
         	var temp = new Token (type, str,lineNum);
