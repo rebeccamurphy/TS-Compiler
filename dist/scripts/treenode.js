@@ -1,45 +1,53 @@
 var TSC;
 (function (TSC) {
-    var Treenode = (function () {
-        function Treenode(token, parent, children) {
-            this.token = token;
+    var TreeNode = (function () {
+        function TreeNode(value, parent, children) {
+            this.value = value;
             this.parent = parent;
             this.children = children;
-            this.token = token;
+            this.value = value;
             this.parent = parent;
             this.children = [];
         }
-        Treenode.prototype.getToken = function () {
-            return this.token;
+        TreeNode.prototype.getValue = function () {
+            return this.value;
         };
-        Treenode.prototype.setParent = function (parent) {
+        TreeNode.prototype.setParent = function (parent) {
             this.parent = parent;
         };
-        Treenode.prototype.getParent = function () {
+        TreeNode.prototype.getParent = function () {
             return this.parent;
         };
-        Treenode.prototype.addChild = function (child) {
+        TreeNode.prototype.addChild = function (child) {
+            var ch = new TreeNode(child, this);
+            this.children.push(ch);
+            return ch;
+        };
+        TreeNode.prototype.addChildNode = function (child) {
             child.setParent(this);
             this.children.push(child);
             return child;
         };
-        Treenode.prototype.getChilden = function () {
+        TreeNode.prototype.getChilden = function () {
             return this.children;
         };
-        Treenode.prototype.getChild = function (token) {
+        TreeNode.prototype.getNewestChild = function () {
+            return this.children[this.children.length - 1];
+        };
+        TreeNode.prototype.getChild = function (value) {
             //token or index don't ask
-            if (typeof token === "number")
-                return this.children[token];
+            if (typeof value === "number")
+                return this.children[value];
             else
                 for (var i = 0; i < this.children.length; i++) {
-                    if (this.children[i].token.equals(token))
+                    if (this.children[i] === (value))
                         return this.children[i];
                 }
         };
-        Treenode.prototype.toString = function () {
-            return this.token.type + ", " + this.token.value;
+        TreeNode.prototype.toString = function () {
+            return this.value.toUpperCase();
         };
-        return Treenode;
+        return TreeNode;
     })();
-    TSC.Treenode = Treenode;
+    TSC.TreeNode = TreeNode;
 })(TSC || (TSC = {}));
