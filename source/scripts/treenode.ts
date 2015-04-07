@@ -44,9 +44,11 @@ module TSC
 	    	}
 
     }
+    
     public toString(){
     	return this.value.toUpperCase();
     }
+
 	}
     	
 }
