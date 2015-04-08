@@ -2,9 +2,19 @@ module TSC
 {
 	export class TreeNode {
 	private chr;
-	constructor(private value:any, private parent:TreeNode, private children?:Array<TreeNode>) {
+	constructor(private value:any, private parent:TreeNode, private children?:Array<TreeNode>, private item?) {
+        //for CST
         this.value = value;
         this.parent = parent;
+        this.item = null;
+        this.children =[];
+        this.chr = [];
+    }
+    constructor(private value:any) {
+        //for symbol table
+        this.value = value;
+        this.parent = null;
+        this.item = null;
         this.children =[];
         this.chr = [];
     }
@@ -18,7 +28,16 @@ module TSC
         return this.value===node.value &&this.parent === this.parent;
     }
     public getValue(){
-    	return this.value;
+        return this.value;
+    }
+    public setValue(val:any){
+        this.value = val;
+    }
+    public getItem(){
+    	return this.item;
+    }
+    public setItem(val:any){
+        this.item = val;
     }
     public setParent(parent:TreeNode){
     	this.parent=parent;
