@@ -50,31 +50,31 @@ module TSC
 		//Program ::== Block 
 		public parseProgram(node:TreeNode) {
 			
-            this.rootNode = new TreeNode("Program", null);
+            this.rootNode = new TreeNode("PROGRAM", null);
             node = this.rootNode;
         	this.parseBlock(node);
-        	this.checkToken(TokenType.EOF, node);
-            //TODO ADD EOF NODE
-            
+        	this.checkToken(TokenType.EOF);
+            node.addChild(TokenTypeString[_CurrentToken.type]);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
     	public parseBlock(node:TreeNode){
-            node.addChild('Block');
+            node.addChild('BLOCK');
             //set current node to be the new block node
             node = node.getNewestChild();
 
-    		this.checkToken(TokenType.LCURLY, node); //expect block to start with {
-            //TODO ADD { NODE
+    		this.checkToken(TokenType.LCURLY); //expect block to start with {
+            node.addChild(TokenTypeString[TokenType.LCURLY]);
     		this.parseStatementList(node);
-    		this.checkToken(TokenType.RCURLY, node); //expect block to end with }
-            //TODO ADD } NODE
+    		this.checkToken(TokenType.RCURLY); //expect block to end with }
+            node.addChild(TokenTypeString[TokenType.RCURLY]);
+            
     	}
 
     	//StatementList ::== Statement StatementList
     	//				::== epsilon
     	public parseStatementList(node:TreeNode){
-    		node.addChild("StatementList");
+    		node.addChild("STATEMENTLIST");
             node = node.getNewestChild();
     		if( _CurrentToken.type===TokenType.PRINT ||
     			_CurrentToken.type===TokenType.ID ||
@@ -100,7 +100,7 @@ module TSC
     	//           ::== IfStatement
     	//           ::== Block
     	public parseStatement(node:TreeNode){
-    		node.addChild("Statement");
+    		node.addChild("STATEMENT");
             node = node.getNewestChild();
 	    	switch (_CurrentToken.type){
 	    			case TokenType.PRINT:
@@ -127,72 +127,86 @@ module TSC
 
     	// PrintStatement ::== print ( Expr )
     	public parsePrintStatement(node:TreeNode){
-    		
-    		this.checkToken(TokenType.PRINT, node);
-    		this.checkToken(TokenType.LPAREN, node);
+
+    		node.addChild("PRINTSTATEMENT");
+            node = node.getNewestChild();
+            
+    		this.checkToken(TokenType.PRINT);
+            node.addChild("PRINT");
+    		this.checkToken(TokenType.LPAREN);
+            node.addChild(TokenTypeString[TokenType.LPAREN]);   
     		this.parseExpr(node);
-    		this.checkToken(TokenType.RPAREN, node);
+    		this.checkToken(TokenType.RPAREN);
+            node.addChild(TokenTypeString[TokenType.RPAREN]);
+            
     	}
 
     	//AssignmentStatement ::== Id = Expr
     	public parseAssignmentStatement(node:TreeNode){
     		
-            node.addChild("AssignmentStatement");
+            node.addChild("ASSIGNMENTSTATEMENT");
             node = node.getNewestChild();
     		this.parseID(node);
-    		this.checkToken(TokenType.EQUALSIGN, node);
+
+    		this.checkToken(TokenType.EQUALSIGN);
+            node.addChild(TokenTypeString[TokenType.EQUALSIGN]);
     		this.parseExpr(node);
     	}
     	
     	//VarDecl  ::== type Id
     	public parseVarDecl(node:TreeNode){
     		
-            node.addChild("VarDecl");
+            node.addChild("VARDECL");
             node = node.getNewestChild();
     		switch (_CurrentToken.type){
     			case TokenType.STR:
-    				this.checkToken(TokenType.STR, node);
+    				this.checkToken(TokenType.STR);
+                    node.addChild(TokenTypeString[TokenType.STR]);           
     				this.parseID(node);
     				break;
     			case TokenType.INT:
-    				this.checkToken(TokenType.INT, node);
+    				this.checkToken(TokenType.INT);
+                    node.addChild(TokenTypeString[TokenType.INT]);
     				this.parseID(node);
     				break;
     			case TokenType.BOOL:
-    				this.checkToken(TokenType.BOOL, node);
+    				this.checkToken(TokenType.BOOL);
+                    node.addChild(TokenTypeString[TokenType.BOOL]);
     				this.parseID(node);
     				break;
     			default:
     				//when we hit this it means we were expecting a type and failed
-    				this.checkToken(TokenType.TYPE, node);
+    				this.checkToken(TokenType.TYPE);
     		}
 
     	}
     	//WhileStatement ::== while BooleanExpr Block
     	public parseWhileStatement(node:TreeNode){
     		
-            node.addChild("WhileStatement");
+            node.addChild("WHILESTATEMENT");
             node = node.getNewestChild();
-    		this.checkToken(TokenType.WHILE, node);
+    		this.checkToken(TokenType.WHILE);
+            node.addChild(TokenTypeString[TokenType.WHILE]);
     		this.parseBooleanExpr(node);
     		this.parseBlock(node);
     	}
     	//IfStatement ::== if BooleanExpr Block
     	public parseIfStatement(node:TreeNode){
     		
-            node.addChild("IfStatement");
+            node.addChild("IFSTATEMENT");
             node = node.getNewestChild();
-    		this.checkToken(TokenType.IF,node);
+    		this.checkToken(TokenType.IF);
+            node.addChild(TokenTypeString[TokenType.IF]);
     		this.parseBooleanExpr(node);
     		this.parseBlock(node);
     	}
     	//Expr 	::== IntExpr
     	//		::== StringExpr
     	//		::== BooleanExpr
-    	//		::==Id
+    	//		::== Id
     	public parseExpr(node:TreeNode){
     		
-            node.addChild("Expr");
+            node.addChild("EXPR");
             node = node.getNewestChild();
     		switch(_CurrentToken.type){
     			case TokenType.DIGIT:
@@ -212,50 +226,42 @@ module TSC
     		}
     	}
 
-    	public parseE(node:TreeNode) {
-            node.addChild("E");
-            node =node.getNewestChild();
-	        // All E productions begin with a digit, so make sure that we have one.
-	        this.checkToken("digit", node);
-	        // Look ahead 1 char (which is now in _CurrentToken because checkToken 
-	        // consumes another one) and see which E production to follow.
-	        if (_CurrentToken != EOF) {
-	            // We're not done, we we expect to have an op.
-	            this.checkToken("op", node);
-	            this.parseE(node);
-	        } else {
-	            // There is nothing else in the token stream, 
-	            // and that's cool since E --> digit is valid.
-	            putMessage("EOF reached");
-	        }
-    	}
 
     	//BooleanExpr	::== (Expr boolOp Expr)
     	//				::== boolVal
-    	public parseBooleanExpr(node:TreeNode){
-    		
-            node.addChild("BooleanExpr");
+    	public parseBooleanExpr(node:TreeNode){    		
+            node.addChild("BOOLEANEXPR");
             node = node.getNewestChild();
-    		if(_CurrentToken.type=== TokenType.TRUE)
-    			this.checkToken(TokenType.TRUE, node)
-    		else if(_CurrentToken.type===TokenType.FALSE)
-    			this.checkToken(TokenType.FALSE, node);
+    		if(_CurrentToken.type=== TokenType.TRUE){
+    			this.checkToken(TokenType.TRUE);
+                node.addChild(TokenTypeString[TokenType.TRUE]);
+            }
+    		else if(_CurrentToken.type===TokenType.FALSE){
+    			this.checkToken(TokenType.FALSE);
+                node.addChild(TokenTypeString[TokenType.FALSE]);
+            }
     		else {
-    			this.checkToken(TokenType.LPAREN, node);
+    			this.checkToken(TokenType.LPAREN);
+                node.addChild(TokenTypeString[TokenType.LPAREN]);
     			this.parseExpr(node);
     			if (_CurrentToken.type ===TokenType.EQUALS){
-    				this.checkToken(TokenType.EQUALS,node);
+    				this.checkToken(TokenType.EQUALS);
+                    node.addChild(TokenTypeString[TokenType.EQUALS]);
     				this.parseExpr(node);
-    				this.checkToken(TokenType.RPAREN, node);
+    				this.checkToken(TokenType.RPAREN);
+                    node.addChild(TokenTypeString[TokenType.RPAREN]);
     			}
     			else if (_CurrentToken.type ===TokenType.NOTEQUALS){
-    				this.checkToken(TokenType.NOTEQUALS, node);
+    				this.checkToken(TokenType.NOTEQUALS);
+                    node.addChild(TokenTypeString[TokenType.NOTEQUALS]);
     				this.parseExpr(node);
-    				this.checkToken(TokenType.RPAREN, node);
+    				this.checkToken(TokenType.RPAREN);
+                    node.addChild(TokenTypeString[TokenType.RPAREN]);
     			}			
     			else {
     				//when this is hit it means a boolean operator was expected but not found
-    				this.checkToken(TokenType.BOOLOP, node);
+    				this.checkToken(TokenType.BOOLOP);
+                    node.addChild(TokenTypeString[TokenType.BOOLOP]);
     			}
     		}
     	}
@@ -264,37 +270,41 @@ module TSC
     	//			::== digit
     	public parseIntExpr(node:TreeNode){
     		
-            node.addChild("IntExpr");
+            node.addChild("INTEXPR");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
-    			this.checkToken(TokenType.DIGIT,node);
-    			if (_CurrentToken.type ===TokenType.ADD){
-    				this.checkToken(TokenType.ADD, node);
+                node.addChild(TokenTypeString[TokenType.DIGIT]+", "+_CurrentToken.value;);
+    			this.checkToken(TokenType.DIGIT);
+                if (_CurrentToken.type ===TokenType.ADD){
+    				this.checkToken(TokenType.ADD);
+                    node.addChild(TokenTypeString[TokenType.ADD]);
     				this.parseExpr(node);
     			}
     		}
     		else {
-    			this.checkToken(TokenType.DIGIT, node);
+    			this.checkToken(TokenType.DIGIT);
     		}
     	}
 		
 		//StringExpr ::== " CharList "    	
 		public parseStringExpr(node:TreeNode){
 			
-            node.addChild("StringExpr");
+            node.addChild("STRINGEXPR");
             node = node.getNewestChild();
-			this.checkToken(TokenType.QUOTE, node);
+			this.checkToken(TokenType.QUOTE);
+            node.addChild(TokenTypeString[TokenType.QUOTE]);
 			this.parseCharList(node);
-			this.checkToken(TokenType.QUOTE,node);
+			this.checkToken(TokenType.QUOTE);
+            node.addChild(TokenTypeString[TokenType.QUOTE]);
 
 		}
 
 		//Id ::== char
 		public parseID(node:TreeNode){
-			
-            node.addChild("Id");
+            node.addChild("ID");
             node = node.getNewestChild();
-			this.checkToken(TokenType.ID, node);
+            node.addChild(_CurrentToken.value);
+			this.checkToken(TokenType.ID);
 		}
 
 		//CharList	::== char CharList
@@ -302,27 +312,27 @@ module TSC
 		//			::== epsilon
 		public parseCharList(node:TreeNode){
 			
-            node.addChild("CharList");
+            node.addChild("CHARLIST");
             node = node.getNewestChild();
 			switch (_CurrentToken.type){
 			    case TokenType.CHAR:
-			    	this.checkToken(TokenType.CHAR, node);
+			    	this.checkToken(TokenType.CHAR);
+                    node.addChild(TokenTypeString[TokenType.CHAR]);
 			        break;
 			    case TokenType.SPACE:
-			    	this.checkToken(TokenType.SPACE,node);
+			    	this.checkToken(TokenType.SPACE);
+                    node.addChild(TokenTypeString[TokenType.SPACE]);
 			    	break;
 			    default: 
 			    	//epsilon production no code boi
 			}
-			if (_CurrentToken.type ==TokenType.CHAR ||_CurrentToken ===TokenType.SPACE )
+			if (_CurrentToken.type ===TokenType.CHAR ||_CurrentToken ===TokenType.SPACE )
 				this.parseCharList(node);
 		}
 		
-        public checkToken(tokenType, node) {
+        public checkToken(tokenType) {
             
             if (_CurrentToken.type == tokenType) {
-                node.addChild(TokenTypeString[_CurrentToken.type]);
-                node = node.getNewestChild();
             	switch(tokenType){
             		case TokenType.CHAR:
             			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] + 
@@ -345,6 +355,7 @@ module TSC
             		default:
             			putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
                	}
+                
             } 
             else {
             	
