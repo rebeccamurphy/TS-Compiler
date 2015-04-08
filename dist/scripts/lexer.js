@@ -27,7 +27,6 @@ var TSC;
             var tokenized = false;
             var buffer = new TSC.Buffer();
             var currChar = '';
-            //loop through each character in the source code
             for (var i = 0; i < sourceCode.length; i++) {
                 currChar = sourceCode[i];
                 //check if code had eof char before end 
@@ -53,7 +52,7 @@ var TSC;
                 else if (currChar.match(/\s/)) {
                     if (inString) {
                         //if in a string preserve the whitespace and not make the wrong token
-                        var temp = _Token.createAndAddToken(TokenType.SPACE, currChar, currentLine);
+                        var temp = _Token.createAndAddToken(14 /* SPACE */, currChar, currentLine);
                         tokenized = true;
                     }
                     else if (!buffer.isEmpty()) {
@@ -133,7 +132,7 @@ var TSC;
                 //if this character is in a string and hasn't yet been handled and is an alpha char
                 if (inString && !tokenized && currChar.match(/[a-zA-Z]/)) {
                     //create a character token
-                    _Token.createAndAddToken(TokenType.CHAR, currChar, currentLine);
+                    _Token.createAndAddToken(11 /* CHAR */, currChar, currentLine);
                     tokenized = true; //current token has been tokenized
                 }
                 //having checked all cases where a token must be processed from the buffer,
@@ -146,8 +145,8 @@ var TSC;
                 else if (!tokenized && !currChar.match(/\s/)) {
                     buffer.push(currChar);
                 }
-                this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(TokenType.NONE, '', currentLine);
-                if (this.prevToken.type === TokenType.EQUALSIGN && buffer.get().match(/[0-9]/)) {
+                this.prevToken = (_Tokens.length > 0 && !tokenized) ? _Tokens[_Tokens.length - 1] : new TSC.Token(25 /* NONE */, '', currentLine);
+                if (this.prevToken.type === 5 /* EQUALSIGN */ && buffer.get().match(/[0-9]/)) {
                     _Token.getAndAddToken(buffer.flush());
                 }
                 else {

@@ -54,7 +54,7 @@ module TSC
             node = this.rootNode;
         	this.parseBlock(node);
         	this.checkToken(TokenType.EOF);
-            node.addChild(TokenTypeString[_CurrentToken.type]);
+            node.addChild(TokenTypeString[TokenType.EOF]);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
@@ -74,8 +74,7 @@ module TSC
     	//StatementList ::== Statement StatementList
     	//				::== epsilon
     	public parseStatementList(node:TreeNode){
-    		node.addChild("STATEMENTLIST");
-            node = node.getNewestChild();
+    		
     		if( _CurrentToken.type===TokenType.PRINT ||
     			_CurrentToken.type===TokenType.ID ||
     			_CurrentToken.type===TokenType.WHILE ||
@@ -85,6 +84,8 @@ module TSC
     			_CurrentToken.type===TokenType.STR ||
     			_CurrentToken.type===TokenType.BOOL
     		){
+                node.addChild("STATEMENTLIST");
+                node = node.getNewestChild();
     			this.parseStatement(node);
     			this.parseStatementList(node);
     		}
@@ -273,7 +274,7 @@ module TSC
             node.addChild("INTEXPR");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
-                node.addChild(TokenTypeString[TokenType.DIGIT]+", "+_CurrentToken.value;);
+                node.addChild(TokenTypeString[TokenType.DIGIT]+", "+_CurrentToken.value);
     			this.checkToken(TokenType.DIGIT);
                 if (_CurrentToken.type ===TokenType.ADD){
     				this.checkToken(TokenType.ADD);

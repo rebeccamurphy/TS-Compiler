@@ -96,8 +96,7 @@ var TSC;
         TreeNode.prototype.printTree = function (depth) {
             if (!depth)
                 depth = 0;
-            document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML +
-                "<div>" + this.tabs(depth) + this.value + "</div>";
+            document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML + "<div>" + this.tabs(depth) + this.value + "</div>";
             for (var i = 0; i < this.children.length; i++)
                 this.children[i].printTree(depth + 1);
         };
