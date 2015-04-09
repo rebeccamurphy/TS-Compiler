@@ -54,7 +54,7 @@ module TSC
             node = this.rootNode;
         	this.parseBlock(node);
         	this.checkToken(TokenType.EOF);
-            node.addChild(TokenTypeString[TokenType.EOF]);
+            node.addChildWithValue(TokenTypeString[TokenType.EOF], TokenTypeChar[TokenType.EOF]);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
@@ -64,10 +64,10 @@ module TSC
             node = node.getNewestChild();
 
     		this.checkToken(TokenType.LCURLY); //expect block to start with {
-            node.addChild(TokenTypeString[TokenType.LCURLY]);
+            node.addChildWithValue(TokenTypeString[TokenType.LCURLY], TokenTypeChar[TokenType.LCURLY]);
     		this.parseStatementList(node);
     		this.checkToken(TokenType.RCURLY); //expect block to end with }
-            node.addChild(TokenTypeString[TokenType.RCURLY]);
+            node.addChildWithValue(TokenTypeString[TokenType.RCURLY], TokenTypeChar[TokenType.RCURLY]);
             
     	}
 
@@ -135,10 +135,10 @@ module TSC
     		this.checkToken(TokenType.PRINT);
             node.addChild("PRINT");
     		this.checkToken(TokenType.LPAREN);
-            node.addChild(TokenTypeString[TokenType.LPAREN]);   
+            node.addChildWithValue(TokenTypeString[TokenType.LPAREN],TokenTypeChar[TokenType.LPAREN]);   
     		this.parseExpr(node);
     		this.checkToken(TokenType.RPAREN);
-            node.addChild(TokenTypeString[TokenType.RPAREN]);
+            node.addChildWithValue(TokenTypeString[TokenType.RPAREN], TokenTypeChar[TokenType.RPAREN]);
             
     	}
 
@@ -150,7 +150,7 @@ module TSC
     		this.parseID(node);
 
     		this.checkToken(TokenType.EQUALSIGN);
-            node.addChild(TokenTypeString[TokenType.EQUALSIGN]);
+            node.addChildWithValue(TokenTypeString[TokenType.EQUALSIGN], TokenTypeChar[TokenType.EQUALSIGN]);
     		this.parseExpr(node);
     	}
     	
@@ -234,6 +234,7 @@ module TSC
             node.addChild("BOOLEANEXPR");
             node = node.getNewestChild();
     		if(_CurrentToken.type=== TokenType.TRUE){
+                //TODO change tokens to bool type with value of true false
     			this.checkToken(TokenType.TRUE);
                 node.addChild(TokenTypeString[TokenType.TRUE]);
             }
@@ -247,17 +248,17 @@ module TSC
     			this.parseExpr(node);
     			if (_CurrentToken.type ===TokenType.EQUALS){
     				this.checkToken(TokenType.EQUALS);
-                    node.addChild(TokenTypeString[TokenType.EQUALS]);
+                    node.addChildWithValue(TokenTypeString[TokenType.EQUALS], TokenTypeChar[TokenType.EQUALS]);
     				this.parseExpr(node);
     				this.checkToken(TokenType.RPAREN);
-                    node.addChild(TokenTypeString[TokenType.RPAREN]);
+                    node.addChildWithValue(TokenTypeString[TokenType.RPAREN], TokenTypeChar[TokenType.RPAREN]);
     			}
     			else if (_CurrentToken.type ===TokenType.NOTEQUALS){
     				this.checkToken(TokenType.NOTEQUALS);
-                    node.addChild(TokenTypeString[TokenType.NOTEQUALS]);
+                    node.addChildWithValue(TokenTypeString[TokenType.NOTEQUALS], TokenTypeChar[TokenType.NOTEQUALS]);
     				this.parseExpr(node);
     				this.checkToken(TokenType.RPAREN);
-                    node.addChild(TokenTypeString[TokenType.RPAREN]);
+                    node.addChildWithValue(TokenTypeString[TokenType.RPAREN], TokenTypeChar[TokenType.RPAREN]);
     			}			
     			else {
     				//when this is hit it means a boolean operator was expected but not found
@@ -274,11 +275,11 @@ module TSC
             node.addChild("INTEXPR");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
-                node.addChild(TokenTypeString[TokenType.DIGIT]+", "+_CurrentToken.value);
+                node.addChildWithValue(TokenTypeString[TokenType.DIGIT], _CurrentToken.value);
     			this.checkToken(TokenType.DIGIT);
                 if (_CurrentToken.type ===TokenType.ADD){
     				this.checkToken(TokenType.ADD);
-                    node.addChild(TokenTypeString[TokenType.ADD]);
+                    node.addChildWithValue(TokenTypeString[TokenType.ADD], TokenTypeChar[TokenType.ADD]);
     				this.parseExpr(node);
     			}
     		}
@@ -302,9 +303,8 @@ module TSC
 
 		//Id ::== char
 		public parseID(node:TreeNode){
-            node.addChild("ID");
+            node.addChildWithValue("ID",_CurrentToken.value );
             node = node.getNewestChild();
-            node.addChild(_CurrentToken.value);
 			this.checkToken(TokenType.ID);
 		}
 

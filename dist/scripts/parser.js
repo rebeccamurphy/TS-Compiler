@@ -45,7 +45,7 @@ var TSC;
             node = this.rootNode;
             this.parseBlock(node);
             this.checkToken(18 /* EOF */);
-            node.addChild(TokenTypeString[18 /* EOF */]);
+            node.addChildWithValue(TokenTypeString[18 /* EOF */], TokenTypeChar[18 /* EOF */]);
             putSuccess(this.part);
         };
         //Block ::== {StatementList}
@@ -54,10 +54,10 @@ var TSC;
             //set current node to be the new block node
             node = node.getNewestChild();
             this.checkToken(0 /* LCURLY */); //expect block to start with {
-            node.addChild(TokenTypeString[0 /* LCURLY */]);
+            node.addChildWithValue(TokenTypeString[0 /* LCURLY */], TokenTypeChar[0 /* LCURLY */]);
             this.parseStatementList(node);
             this.checkToken(1 /* RCURLY */); //expect block to end with }
-            node.addChild(TokenTypeString[1 /* RCURLY */]);
+            node.addChildWithValue(TokenTypeString[1 /* RCURLY */], TokenTypeChar[1 /* RCURLY */]);
         };
         //StatementList ::== Statement StatementList
         //				::== epsilon
@@ -109,10 +109,10 @@ var TSC;
             this.checkToken(2 /* PRINT */);
             node.addChild("PRINT");
             this.checkToken(3 /* LPAREN */);
-            node.addChild(TokenTypeString[3 /* LPAREN */]);
+            node.addChildWithValue(TokenTypeString[3 /* LPAREN */], TokenTypeChar[3 /* LPAREN */]);
             this.parseExpr(node);
             this.checkToken(4 /* RPAREN */);
-            node.addChild(TokenTypeString[4 /* RPAREN */]);
+            node.addChildWithValue(TokenTypeString[4 /* RPAREN */], TokenTypeChar[4 /* RPAREN */]);
         };
         //AssignmentStatement ::== Id = Expr
         Parser.prototype.parseAssignmentStatement = function (node) {
@@ -120,7 +120,7 @@ var TSC;
             node = node.getNewestChild();
             this.parseID(node);
             this.checkToken(5 /* EQUALSIGN */);
-            node.addChild(TokenTypeString[5 /* EQUALSIGN */]);
+            node.addChildWithValue(TokenTypeString[5 /* EQUALSIGN */], TokenTypeChar[5 /* EQUALSIGN */]);
             this.parseExpr(node);
         };
         //VarDecl  ::== type Id
@@ -195,6 +195,7 @@ var TSC;
             node.addChild("BOOLEANEXPR");
             node = node.getNewestChild();
             if (_CurrentToken.type === 16 /* TRUE */) {
+                //TODO change tokens to bool type with value of true false
                 this.checkToken(16 /* TRUE */);
                 node.addChild(TokenTypeString[16 /* TRUE */]);
             }
@@ -208,17 +209,17 @@ var TSC;
                 this.parseExpr(node);
                 if (_CurrentToken.type === 12 /* EQUALS */) {
                     this.checkToken(12 /* EQUALS */);
-                    node.addChild(TokenTypeString[12 /* EQUALS */]);
+                    node.addChildWithValue(TokenTypeString[12 /* EQUALS */], TokenTypeChar[12 /* EQUALS */]);
                     this.parseExpr(node);
                     this.checkToken(4 /* RPAREN */);
-                    node.addChild(TokenTypeString[4 /* RPAREN */]);
+                    node.addChildWithValue(TokenTypeString[4 /* RPAREN */], TokenTypeChar[4 /* RPAREN */]);
                 }
                 else if (_CurrentToken.type === 13 /* NOTEQUALS */) {
                     this.checkToken(13 /* NOTEQUALS */);
-                    node.addChild(TokenTypeString[13 /* NOTEQUALS */]);
+                    node.addChildWithValue(TokenTypeString[13 /* NOTEQUALS */], TokenTypeChar[13 /* NOTEQUALS */]);
                     this.parseExpr(node);
                     this.checkToken(4 /* RPAREN */);
-                    node.addChild(TokenTypeString[4 /* RPAREN */]);
+                    node.addChildWithValue(TokenTypeString[4 /* RPAREN */], TokenTypeChar[4 /* RPAREN */]);
                 }
                 else {
                     //when this is hit it means a boolean operator was expected but not found
@@ -233,11 +234,11 @@ var TSC;
             node.addChild("INTEXPR");
             node = node.getNewestChild();
             if (_CurrentToken.type === 22 /* DIGIT */) {
-                node.addChild(TokenTypeString[22 /* DIGIT */] + ", " + _CurrentToken.value);
+                node.addChildWithValue(TokenTypeString[22 /* DIGIT */], _CurrentToken.value);
                 this.checkToken(22 /* DIGIT */);
                 if (_CurrentToken.type === 17 /* ADD */) {
                     this.checkToken(17 /* ADD */);
-                    node.addChild(TokenTypeString[17 /* ADD */]);
+                    node.addChildWithValue(TokenTypeString[17 /* ADD */], TokenTypeChar[17 /* ADD */]);
                     this.parseExpr(node);
                 }
             }
@@ -257,9 +258,8 @@ var TSC;
         };
         //Id ::== char
         Parser.prototype.parseID = function (node) {
-            node.addChild("ID");
+            node.addChildWithValue("ID", _CurrentToken.value);
             node = node.getNewestChild();
-            node.addChild(_CurrentToken.value);
             this.checkToken(21 /* ID */);
         };
         //CharList	::== char CharList

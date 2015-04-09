@@ -2,14 +2,16 @@ module TSC
 {
 	export class TreeNode {
 	private chr;
-	constructor(private value:any, private parent:TreeNode, private children?:Array<TreeNode>, private item?) {
+	constructor(private type:string, private parent:TreeNode, private value?:any, private children?:Array<TreeNode>, private item?) {
         //for CST
+        this.type = type;
         this.value = value;
         this.parent = parent;
         this.item = null;
-        this.children =[];
+        this.children = (children===null)? []: children;
         this.chr = [];
     }
+    /*
     constructor(private value:any) {
         //for symbol table
         this.value = value;
@@ -17,7 +19,7 @@ module TSC
         this.item = null;
         this.children =[];
         this.chr = [];
-    }
+    }*/
     private tabs(n) {
         var str = "";
         for(var i=0; i<n; i++)
@@ -26,6 +28,9 @@ module TSC
     }
     public equals(node:TreeNode){
         return this.value===node.value &&this.parent === this.parent;
+    }
+    public getType(){
+    	return this.type;
     }
     public getValue(){
         return this.value;
@@ -48,14 +53,17 @@ module TSC
     }
     public addChild(child:string){
     	var ch = new TreeNode(child, this);
-    	this.children.push(ch);
-    	this.chr.push({id:child});
+    	this.children.push(ch);;
+    	return ch;
+    }
+    public addChildWithValue(child:string, value:any){
+    	var ch = new TreeNode(child, this, value);
+    	this.children.push(ch);;
     	return ch;
     }
     public addChildNode(child:TreeNode) {
         child.setParent(this); 
-        this.children.push(child);        
-    	this.chr.push({id:child.value});
+        this.children.push(child);
         return child;
     }
     public getChilden(){
@@ -112,18 +120,20 @@ module TSC
         html+="</ul>";
         document.getElementById("tree").innerHTML = html;
     }
-    public printTree(depth:number){
-        if(!depth)
+    public printTree(depth?:number){
+        if(depth===null)
             depth = 0;
-        document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML + 
-            "<div>" +this.tabs(depth) + this.value +"</div>";
+        this.nodeHTML(depth, "tree");
         for(var i=0; i<this.children.length; i++)
             this.children[i].printTree(depth+1);
     }
     public toString(){
     	return this.value.toUpperCase();
     }
-
+    public nodeHTML(depth:number, id?:string){
+    	document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML + 
+            "<div>" +this.tabs(depth) + this.type +"</div>";
+    }
 	}
     	
 }

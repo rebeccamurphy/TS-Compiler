@@ -1,6 +1,7 @@
 module TSC
 {
-	export class SemanticAnalysis {
+	export class SymbolTable {
+		/*
 		constructor() {
 			this.head = null;
     		this.currNode = head;
@@ -17,15 +18,15 @@ module TSC
 	            head.setParent(null);
 	            currentNode = head;
 	        }
-	        /*if(currentNode.getValue() >= 0)
+	        if(currentNode.getValue() >= 0)
 				put message about changing scope
-	        */
+	        
 		}
 		public scopeOut() {
 	        if(currentNode.getParent()) {
 	            currentNode = currentNode.getParent();
-	            /*message about changing scope*/
+	            //message about changing scope
 	        }
-		}
+		}*/
 	}
 }

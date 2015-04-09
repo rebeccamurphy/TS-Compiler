@@ -1,15 +1,29 @@
 var TSC;
 (function (TSC) {
     var TreeNode = (function () {
-        function TreeNode(value, parent, children) {
-            this.value = value;
+        function TreeNode(type, parent, value, children, item) {
+            this.type = type;
             this.parent = parent;
+            this.value = value;
             this.children = children;
+            this.item = item;
+            //for CST
+            this.type = type;
             this.value = value;
             this.parent = parent;
-            this.children = [];
+            this.item = null;
+            this.children = (children === null) ? [] : children;
             this.chr = [];
         }
+        /*
+        constructor(private value:any) {
+            //for symbol table
+            this.value = value;
+            this.parent = null;
+            this.item = null;
+            this.children =[];
+            this.chr = [];
+        }*/
         TreeNode.prototype.tabs = function (n) {
             var str = "";
             for (var i = 0; i < n; i++)
@@ -19,8 +33,20 @@ var TSC;
         TreeNode.prototype.equals = function (node) {
             return this.value === node.value && this.parent === this.parent;
         };
+        TreeNode.prototype.getType = function () {
+            return this.type;
+        };
         TreeNode.prototype.getValue = function () {
             return this.value;
+        };
+        TreeNode.prototype.setValue = function (val) {
+            this.value = val;
+        };
+        TreeNode.prototype.getItem = function () {
+            return this.item;
+        };
+        TreeNode.prototype.setItem = function (val) {
+            this.item = val;
         };
         TreeNode.prototype.setParent = function (parent) {
             this.parent = parent;
@@ -31,13 +57,18 @@ var TSC;
         TreeNode.prototype.addChild = function (child) {
             var ch = new TreeNode(child, this);
             this.children.push(ch);
-            this.chr.push({ id: child });
+            ;
+            return ch;
+        };
+        TreeNode.prototype.addChildWithValue = function (child, value) {
+            var ch = new TreeNode(child, this, value);
+            this.children.push(ch);
+            ;
             return ch;
         };
         TreeNode.prototype.addChildNode = function (child) {
             child.setParent(this);
             this.children.push(child);
-            this.chr.push({ id: child.value });
             return child;
         };
         TreeNode.prototype.getChilden = function () {
@@ -94,14 +125,17 @@ var TSC;
             document.getElementById("tree").innerHTML = html;
         };
         TreeNode.prototype.printTree = function (depth) {
-            if (!depth)
+            if (depth === null)
                 depth = 0;
-            document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML + "<div>" + this.tabs(depth) + this.value + "</div>";
+            this.nodeHTML(depth, "tree");
             for (var i = 0; i < this.children.length; i++)
                 this.children[i].printTree(depth + 1);
         };
         TreeNode.prototype.toString = function () {
             return this.value.toUpperCase();
+        };
+        TreeNode.prototype.nodeHTML = function (depth, id) {
+            document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML + "<div>" + this.tabs(depth) + this.type + "</div>";
         };
         return TreeNode;
     })();
