@@ -141,9 +141,9 @@ module TSC
 	            case '=':
 	                return TSC.Token.createToken(TokenType.EQUALSIGN,str,lineNum);
 	            case '==':
-	            	return TSC.Token.createToken(TokenType.EQUALS,str,lineNum);
+	            	return TSC.Token.createToken(TokenType.BOOLOP,str,lineNum);
 	            case '!=':
-	            	return TSC.Token.createToken(TokenType.NOTEQUALS,str,lineNum);
+	            	return TSC.Token.createToken(TokenType.BOOLOP,str,lineNum);
 	            case '$':
 	                return TSC.Token.createToken(TokenType.EOF,str,lineNum);
 	            case '+':

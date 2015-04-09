@@ -21,7 +21,7 @@ var TokenTypeString =['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIG
 'STR', 'BOOL', 'CHAR','EQUALS', 'NOTEQUALS','SPACE', 'FALSE', 'TRUE', 'ADD','EOF', 
 'QUOTE', 'NEWLINE', 'ID','DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
 var TokenTypeChar =['{', '}', '', '(', ')', '=', '', '', '', 
-'', '', '','==', '!==',' ', '', '', '+','$', 
+'', '', '','==', '!=',' ', '', '', '+','$', 
 '"', '\n', '','','', '', ''];
 
 var putMessage= function(msg){

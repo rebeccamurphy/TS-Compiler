@@ -209,16 +209,9 @@ var TSC;
                 this.checkToken(TokenType.LPAREN);
                 node.addChild(TokenType.LPAREN);
                 this.parseExpr(node);
-                if (_CurrentToken.type === TokenType.EQUALS) {
-                    this.checkToken(TokenType.EQUALS);
-                    node.addChild(TokenType.EQUALS);
-                    this.parseExpr(node);
-                    this.checkToken(TokenType.RPAREN);
-                    node.addChild(TokenType.RPAREN);
-                }
-                else if (_CurrentToken.type === TokenType.NOTEQUALS) {
-                    this.checkToken(TokenType.NOTEQUALS);
-                    node.addChild(TokenType.NOTEQUALS);
+                if (_CurrentToken.type === TokenType.BOOLOP) {
+                    node.addChild(TokenType.BOOLOP, _CurrentToken.value);
+                    this.checkToken(TokenType.BOOLOP);
                     this.parseExpr(node);
                     this.checkToken(TokenType.RPAREN);
                     node.addChild(TokenType.RPAREN);
