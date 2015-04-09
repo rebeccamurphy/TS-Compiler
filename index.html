@@ -77,10 +77,14 @@ O ::== + | -
             putMessage("Parse canceled because lexer error(s).")
         else
             _Parser.parse();
+        //make the cst
+        document.getElementById("CST").innerHTML= "";
+        _Parser.rootNode.printTree(0, "CST");
     }
 
 
     </script>
-    <div id="tree"></div>
+    <div id="CST"></div>
+    <div id="AST"></div>
 </body>
 </html>

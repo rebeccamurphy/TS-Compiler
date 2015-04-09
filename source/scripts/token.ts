@@ -40,9 +40,9 @@ module TSC
         	var tokenList =[];
         	switch (str){
         		case 'false':
-	            	return [TSC.Token.createToken(TokenType.FALSE,str,lineNum)];
+	            	return [TSC.Token.createToken(TokenType.BOOL,str,lineNum)];
 	            case 'true':
-	                return [TSC.Token.createToken(TokenType.TRUE, str,lineNum)];
+	                return [TSC.Token.createToken(TokenType.BOOL, str,lineNum)];
 	            case 'print':
 	            	return [TSC.Token.createToken(TokenType.PRINT,str,lineNum)];
 	            case 'while':
@@ -58,10 +58,10 @@ module TSC
 
 	        }
 	        if (str.indexOf('false') >-1){
-	        	tokenList.push(TSC.Token.createToken(TokenType.FALSE,'false',lineNum));
+	        	tokenList.push(TSC.Token.createToken(TokenType.BOOL,'false',lineNum));
 	        }
 	        else if (str.indexOf('true') >-1){
-	        	tokenList.push(TSC.Token.createToken(TokenType.TRUE,'true',lineNum));
+	        	tokenList.push(TSC.Token.createToken(TokenType.BOOL,'true',lineNum));
 	        }
 	        else if (str.indexOf('print') >-1){
 	        	tokenList.push(TSC.Token.createToken(TokenType.PRINT,'print',lineNum));

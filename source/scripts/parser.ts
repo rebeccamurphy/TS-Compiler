@@ -44,30 +44,31 @@ module TSC
 	        else
 	        	msg = _ErrorCount + " errors.";
 	        putMessage("Parsing found "+ msg);   
-            this.rootNode.printTree(0);
+            
 		}
 
 		//Program ::== Block 
 		public parseProgram(node:TreeNode) {
 			
-            this.rootNode = new TreeNode("PROGRAM", null);
+            this.rootNode = new TreeNode(TokenTypeString[TokenType.PROGRAM],null);
             node = this.rootNode;
         	this.parseBlock(node);
         	this.checkToken(TokenType.EOF);
-            node.addChildWithValue(TokenTypeString[TokenType.EOF], TokenTypeChar[TokenType.EOF]);
+            node.addChild(TokenType.EOF);
         	putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
     	public parseBlock(node:TreeNode){
-            node.addChild('BLOCK');
+            //debugger;
+            node.addChild("BLOCK");
             //set current node to be the new block node
             node = node.getNewestChild();
 
     		this.checkToken(TokenType.LCURLY); //expect block to start with {
-            node.addChildWithValue(TokenTypeString[TokenType.LCURLY], TokenTypeChar[TokenType.LCURLY]);
+            node.addChild(TokenType.LCURLY);
     		this.parseStatementList(node);
     		this.checkToken(TokenType.RCURLY); //expect block to end with }
-            node.addChildWithValue(TokenTypeString[TokenType.RCURLY], TokenTypeChar[TokenType.RCURLY]);
+            node.addChild(TokenType.RCURLY);
             
     	}
 
@@ -133,12 +134,12 @@ module TSC
             node = node.getNewestChild();
             
     		this.checkToken(TokenType.PRINT);
-            node.addChild("PRINT");
+            node.addChild(TokenType.PRINT);
     		this.checkToken(TokenType.LPAREN);
-            node.addChildWithValue(TokenTypeString[TokenType.LPAREN],TokenTypeChar[TokenType.LPAREN]);   
+            node.addChild(TokenType.LPAREN);   
     		this.parseExpr(node);
     		this.checkToken(TokenType.RPAREN);
-            node.addChildWithValue(TokenTypeString[TokenType.RPAREN], TokenTypeChar[TokenType.RPAREN]);
+            node.addChild(TokenType.RPAREN);
             
     	}
 
@@ -150,7 +151,7 @@ module TSC
     		this.parseID(node);
 
     		this.checkToken(TokenType.EQUALSIGN);
-            node.addChildWithValue(TokenTypeString[TokenType.EQUALSIGN], TokenTypeChar[TokenType.EQUALSIGN]);
+            node.addChild(TokenType.EQUALSIGN);
     		this.parseExpr(node);
     	}
     	
@@ -162,17 +163,17 @@ module TSC
     		switch (_CurrentToken.type){
     			case TokenType.STR:
     				this.checkToken(TokenType.STR);
-                    node.addChild(TokenTypeString[TokenType.STR]);           
+                    node.addChild(TokenType.STR);           
     				this.parseID(node);
     				break;
     			case TokenType.INT:
     				this.checkToken(TokenType.INT);
-                    node.addChild(TokenTypeString[TokenType.INT]);
+                    node.addChild(TokenType.INT);
     				this.parseID(node);
     				break;
     			case TokenType.BOOL:
+                    node.addChild(TokenType.BOOL, _CurrentToken.value);
     				this.checkToken(TokenType.BOOL);
-                    node.addChild(TokenTypeString[TokenType.BOOL]);
     				this.parseID(node);
     				break;
     			default:
@@ -187,7 +188,7 @@ module TSC
             node.addChild("WHILESTATEMENT");
             node = node.getNewestChild();
     		this.checkToken(TokenType.WHILE);
-            node.addChild(TokenTypeString[TokenType.WHILE]);
+            node.addChild(TokenType.WHILE);
     		this.parseBooleanExpr(node);
     		this.parseBlock(node);
     	}
@@ -197,7 +198,7 @@ module TSC
             node.addChild("IFSTATEMENT");
             node = node.getNewestChild();
     		this.checkToken(TokenType.IF);
-            node.addChild(TokenTypeString[TokenType.IF]);
+            node.addChild(TokenType.IF);
     		this.parseBooleanExpr(node);
     		this.parseBlock(node);
     	}
@@ -217,8 +218,7 @@ module TSC
     				this.parseStringExpr(node);
     				break;
     			case TokenType.LPAREN:
-    			case TokenType.TRUE:
-    			case TokenType.FALSE:
+    			case TokenType.BOOL:
     				this.parseBooleanExpr(node);
     				break;
     			case TokenType.ID:
@@ -233,32 +233,28 @@ module TSC
     	public parseBooleanExpr(node:TreeNode){    		
             node.addChild("BOOLEANEXPR");
             node = node.getNewestChild();
-    		if(_CurrentToken.type=== TokenType.TRUE){
+    		if(_CurrentToken.type=== TokenType.BOOL){
                 //TODO change tokens to bool type with value of true false
-    			this.checkToken(TokenType.TRUE);
-                node.addChild(TokenTypeString[TokenType.TRUE]);
-            }
-    		else if(_CurrentToken.type===TokenType.FALSE){
-    			this.checkToken(TokenType.FALSE);
-                node.addChild(TokenTypeString[TokenType.FALSE]);
+    			node.addChild(TokenType.BOOL, _CurrentToken.value);
+                this.checkToken(TokenType.BOOL);
             }
     		else {
     			this.checkToken(TokenType.LPAREN);
-                node.addChild(TokenTypeString[TokenType.LPAREN]);
+                node.addChild(TokenType.LPAREN);
     			this.parseExpr(node);
     			if (_CurrentToken.type ===TokenType.EQUALS){
     				this.checkToken(TokenType.EQUALS);
-                    node.addChildWithValue(TokenTypeString[TokenType.EQUALS], TokenTypeChar[TokenType.EQUALS]);
+                    node.addChild(TokenType.EQUALS);
     				this.parseExpr(node);
     				this.checkToken(TokenType.RPAREN);
-                    node.addChildWithValue(TokenTypeString[TokenType.RPAREN], TokenTypeChar[TokenType.RPAREN]);
+                    node.addChild(TokenType.RPAREN);
     			}
     			else if (_CurrentToken.type ===TokenType.NOTEQUALS){
     				this.checkToken(TokenType.NOTEQUALS);
-                    node.addChildWithValue(TokenTypeString[TokenType.NOTEQUALS], TokenTypeChar[TokenType.NOTEQUALS]);
+                    node.addChild(TokenType.NOTEQUALS);
     				this.parseExpr(node);
     				this.checkToken(TokenType.RPAREN);
-                    node.addChildWithValue(TokenTypeString[TokenType.RPAREN], TokenTypeChar[TokenType.RPAREN]);
+                    node.addChild(TokenType.RPAREN);
     			}			
     			else {
     				//when this is hit it means a boolean operator was expected but not found
@@ -275,11 +271,11 @@ module TSC
             node.addChild("INTEXPR");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
-                node.addChildWithValue(TokenTypeString[TokenType.DIGIT], _CurrentToken.value);
+                node.addChild(TokenType.DIGIT, _CurrentToken.value);
     			this.checkToken(TokenType.DIGIT);
                 if (_CurrentToken.type ===TokenType.ADD){
     				this.checkToken(TokenType.ADD);
-                    node.addChildWithValue(TokenTypeString[TokenType.ADD], TokenTypeChar[TokenType.ADD]);
+                    node.addChild(TokenType.ADD);
     				this.parseExpr(node);
     			}
     		}
@@ -294,16 +290,16 @@ module TSC
             node.addChild("STRINGEXPR");
             node = node.getNewestChild();
 			this.checkToken(TokenType.QUOTE);
-            node.addChild(TokenTypeString[TokenType.QUOTE]);
+            node.addChild(TokenType.QUOTE);
 			this.parseCharList(node);
 			this.checkToken(TokenType.QUOTE);
-            node.addChild(TokenTypeString[TokenType.QUOTE]);
+            node.addChild(TokenType.QUOTE);
 
 		}
 
 		//Id ::== char
 		public parseID(node:TreeNode){
-            node.addChildWithValue("ID",_CurrentToken.value );
+            node.addChild(TokenType.ID, _CurrentToken.value);
             node = node.getNewestChild();
 			this.checkToken(TokenType.ID);
 		}
@@ -317,12 +313,13 @@ module TSC
             node = node.getNewestChild();
 			switch (_CurrentToken.type){
 			    case TokenType.CHAR:
+                    node.addChild(TokenType.CHAR, _CurrentToken.value);
 			    	this.checkToken(TokenType.CHAR);
-                    node.addChild(TokenTypeString[TokenType.CHAR]);
+                    
 			        break;
 			    case TokenType.SPACE:
+                    node.addChild(TokenType.SPACE, _CurrentToken.value);
 			    	this.checkToken(TokenType.SPACE);
-                    node.addChild(TokenTypeString[TokenType.SPACE]);
 			    	break;
 			    default: 
 			    	//epsilon production no code boi

@@ -8,7 +8,7 @@ module TSC
         this.value = value;
         this.parent = parent;
         this.item = null;
-        this.children = (children===null)? []: children;
+        this.children = (children===undefined)? []: children;
         this.chr = [];
     }
     /*
@@ -51,16 +51,18 @@ module TSC
     public getParent(){
     	return this.parent;
     }
-    public addChild(child:string){
-    	var ch = new TreeNode(child, this);
-    	this.children.push(ch);;
-    	return ch;
+    public addChild(child:any, value?:string){
+        debugger;
+        if (typeof child ==="string")
+           var ch = new TreeNode(child, this, '');
+        else if (value===undefined)
+    	   var ch = new TreeNode(TokenTypeString[child], this, TokenTypeChar[child]);
+        else 
+            var ch = new TreeNode(TokenTypeString[child], this, value);
+        this.children.push(ch);
+        return ch;
     }
-    public addChildWithValue(child:string, value:any){
-    	var ch = new TreeNode(child, this, value);
-    	this.children.push(ch);;
-    	return ch;
-    }
+    
     public addChildNode(child:TreeNode) {
         child.setParent(this); 
         this.children.push(child);
@@ -90,49 +92,21 @@ module TSC
     		chr: rootTreeNode.chr
     	});
     }
-    public displayTree(rootNode:TreeNode){
-        debugger;
-        var currentNode = rootNode;
-        var children = rootNode.children;
-        var children2 =[];
-        var lastchild = rootNode.children[rootNode.children.length-1]
-        var htmlArray=[];
-        var html ="";
-        var level=0;
-        htmlArray.push(["<ul><li>" +currentNode.value +"</li>"]);
-        for (var i =0; i< children.length; i++){
-            currentNode = rootNode.children[i];
-            children2= currentNode.children;
-            htmlArray[++level] =htmlArray[level] += "<ul><li>" +currentNode.value +"</li><ul>";
-            while(children2.length !==0){
-                level++;
-                var x = children2.length;
-                for (var j =0; j<x; j++ ){
-                    var curr = children2.shift();
-                    htmlArray[level]=htmlArray[level] +"<li>"+curr.value +"</li>";
-                    children2 = children2.concat(curr.children);
-                }
-                htmlArray[level]= htmlArray[level]+"</ul>";
-            }
-        }
-        for (var b=0; b<htmlArray.length;b++)
-            html+=htmlArray[b];
-        html+="</ul>";
-        document.getElementById("tree").innerHTML = html;
-    }
-    public printTree(depth?:number){
+    
+    public printTree(depth?:number, id?:string){
         if(depth===null)
             depth = 0;
-        this.nodeHTML(depth, "tree");
+        this.nodeHTML(depth, id);
         for(var i=0; i<this.children.length; i++)
-            this.children[i].printTree(depth+1);
+            this.children[i].printTree(depth+1, id);
     }
     public toString(){
     	return this.value.toUpperCase();
     }
     public nodeHTML(depth:number, id?:string){
-    	document.getElementById("tree").innerHTML = document.getElementById("tree").innerHTML + 
-            "<div>" +this.tabs(depth) + this.type +"</div>";
+        var output = (this.value===''||this.value===undefined)? this.type : this.type +", <b>" +this.value + "</b>";
+    	document.getElementById(id).innerHTML = document.getElementById(id).innerHTML + 
+            "<div>" +this.tabs(depth) + output +"</div>";
     }
 	}
     	
