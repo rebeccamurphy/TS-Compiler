@@ -10,6 +10,7 @@ var _LexerError;
 var _Lexer;
 var _Parser;
 var _Token;
+var _ASTRoot = null;
 var TokenType;
 (function (TokenType) {
     TokenType[TokenType["LCURLY"] = 0] = "LCURLY";

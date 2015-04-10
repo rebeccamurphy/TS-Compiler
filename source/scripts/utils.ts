@@ -51,5 +51,16 @@ module TSC {
     public static insertAt (original, index, string) { 
         return original.substr(0, index) + string + original.substr(index);
         }
+    public static charsToString(node, str?){
+        //debugger;
+        if (str ===undefined){
+            str ='';
+        }
+        while (node.getChildren().length !==0){
+            str += node.getChildren()[0].getValue();
+            node = node.getChildren()[0];
+        }
+        return str;
+    }
     }
 }

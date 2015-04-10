@@ -80,7 +80,8 @@ O ::== + | -
         //make the cst
         document.getElementById("CST").innerHTML= "";
         _Parser.rootNode.printCST(0, "CST");
-        _Parser.rootNode.printAST(0, "AST");
+        _Parser.rootNode.makeAST(-1);
+        _ASTRoot.printAST(0, "AST");
     }
 
 
