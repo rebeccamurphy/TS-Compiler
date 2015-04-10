@@ -79,12 +79,15 @@ O ::== + | -
             _Parser.parse();
         //make the cst
         document.getElementById("CST").innerHTML= "";
-        _Parser.rootNode.printTree(0, "CST");
+        _Parser.rootNode.printCST(0, "CST");
+        _Parser.rootNode.printAST(0, "AST");
     }
 
 
     </script>
+    <h2>CST</h2>
     <div id="CST"></div>
+    <h2>AST</h2>
     <div id="AST"></div>
 </body>
 </html>

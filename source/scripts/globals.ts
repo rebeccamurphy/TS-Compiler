@@ -23,7 +23,7 @@ var TokenTypeString =['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIG
 var TokenTypeChar =['{', '}', '', '(', ')', '=', '', '', '', 
 '', '', '','==', '!=',' ', '', '', '+','$', 
 '"', '\n', '','','', '', ''];
-
+var ASTString = ['BLOCK', 'PRINTSTATMENT', 'ASSIGNMENTSTATEMENT', 'VARDECL', 'WHILESTATMENT', 'IFSTATEMENT'];
 var putMessage= function(msg){
     (<HTMLInputElement> document.getElementById("taOutput")).value += msg + "\n";
 }

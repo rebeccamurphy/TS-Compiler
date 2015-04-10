@@ -52,7 +52,7 @@ module TSC
     	return this.parent;
     }
     public addChild(child:any, value?:string){
-        debugger;
+        //debugger;
         if (typeof child ==="string")
            var ch = new TreeNode(child, this, '');
         else if (value===undefined)
@@ -93,12 +93,58 @@ module TSC
     	});
     }
     
-    public printTree(depth?:number, id?:string){
+    public printCST(depth?:number, id?:string){
         if(depth===null)
             depth = 0;
         this.nodeHTML(depth, id);
         for(var i=0; i<this.children.length; i++)
-            this.children[i].printTree(depth+1, id);
+            this.children[i].printCST(depth+1, id);
+    }
+    public printAST(depth?:number, id?:string){
+        debugger;
+        if(depth===null)
+            depth = 0;
+        switch(this.type){
+            case 'BLOCK':
+            case 'ASSIGNMENTSTATEMENT':
+            case 'VARDECL': 
+            case 'WHILE':
+            case 'IF':
+            case 'ID':
+            case 'DIGIT':
+            case 'CHAR':
+            case 'INT':
+            case 'STR':
+            case 'PRINT':
+            case 'BOOLOP':
+            case 'VARDECL':
+
+                this.nodeHTML(depth, id);
+        }
+
+        for(var i=0; i<this.children.length; i++){
+            switch(this.type){
+                case 'BLOCK':
+                case 'ASSIGNMENTSTATEMENT':
+                case 'VARDECL': 
+                case 'WHILE':
+                case 'IF':
+                case 'ID':
+                case 'DIGIT':
+                case 'CHAR':
+                case 'INT':
+                case 'STR':
+                case 'PRINT':
+                case 'BOOLOP':
+                case 'VARDECL':
+                    this.children[i].printAST(depth+1, id); 
+                    break;
+                default:
+                    this.children[i].printAST(depth, id); 
+                    
+            }
+        }
+
     }
     public toString(){
     	return this.value.toUpperCase();
