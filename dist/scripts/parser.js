@@ -15,14 +15,6 @@ var TSC;
             }
             return thisToken;
         };
-        Parser.prototype.getPrevToken = function () {
-            var thisToken;
-            if (_TokenIndex - 1 >= 0) {
-                // If we're not at EOF, then return the next token in the stream and advance the index.
-                thisToken = _Tokens[_TokenIndex - 1];
-            }
-            return thisToken;
-        };
         Parser.prototype.parse = function () {
             putMessage("Parsing [" + _TokenStr + "]");
             // A valid parse derives the G(oal) production, so begin there.
@@ -43,8 +35,8 @@ var TSC;
             this.rootNode = new TSC.TreeNode(TokenTypeString[TokenType.PROGRAM], null);
             node = this.rootNode;
             this.parseBlock(node);
-            this.checkToken(TokenType.EOF);
             node.addChild(TokenType.EOF);
+            this.checkToken(TokenType.EOF);
             putSuccess(this.part);
         };
         //Block ::== {StatementList}

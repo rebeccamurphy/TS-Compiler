@@ -82,6 +82,7 @@ O ::== + | -
         _Parser.rootNode.printCST(0, "CST");
         _Parser.rootNode.makeAST(-1);
         _ASTRoot.printAST(0, "AST");
+        _SemanticAnalysis = new SemanticAnalysis(_ASTRoot);
     }
 
 

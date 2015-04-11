@@ -14,8 +14,10 @@ var _LexerError;
 var _Lexer;
 var _Parser;
 var _Token;
+var _SemanticAnalysis;
 
 var _ASTRoot=null;
+var _SymbolTableRoot;
 
 enum TokenType {LCURLY, RCURLY, PRINT, LPAREN, RPAREN, EQUALSIGN, WHILE, IF, INT, STR, BOOL, CHAR,
 	EQUALS, NOTEQUALS,SPACE, FALSE, TRUE, ADD,EOF, QUOTE, NEWLINE, ID,DIGIT, TYPE, BOOLOP, NONE, PROGRAM};

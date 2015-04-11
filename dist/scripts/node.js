@@ -1,43 +1,34 @@
 var TSC;
 (function (TSC) {
     var Node = (function () {
-        function Node(token, parent, children) {
-            this.token = token;
-            this.parent = parent;
-            this.children = children;
-            this.token = token;
-            this.parent = parent;
-            this.children = [];
+        function Node(type, ID, line, declared, initialized, used) {
+            this.type = type;
+            this.ID = ID;
+            this.line = line;
+            this.declared = declared;
+            this.initialized = initialized;
+            this.used = used;
+            this.type = type;
+            this.ID = ID;
+            this.line = line;
+            this.declared = false;
+            this.initialized = false;
+            this.used = false;
         }
-        Node.prototype.getToken = function () {
-            return this.token;
+        Node.prototype.setDeclared = function () {
+            this.declared = true;
         };
-        Node.prototype.setParent = function (parent) {
-            this.parent = parent;
+        Node.prototype.setInitialized = function () {
+            this.initialized = true;
         };
-        Node.prototype.getParent = function () {
-            return this.parent;
+        Node.prototype.setUsed = function () {
+            this.used = true;
         };
-        Node.prototype.addChild = function (child) {
-            child.setParent(this);
-            this.children.push(child);
-            return child;
-        };
-        Node.prototype.getChilden = function () {
-            return this.children;
-        };
-        Node.prototype.getChild = function (token) {
-            //token or index don't ask
-            if (typeof token === "number")
-                return this.children[token];
-            else
-                for (var i = 0; i < this.children.length; i++) {
-                    if (this.children[i].token.equals(token))
-                        return this.children[i];
-                }
-        };
-        Node.prototype.toString = function () {
-            return this.token.type + ", " + this.token.value;
+        Node.prototype.equals = function (node) {
+            return this.type === node.type && this.ID === node.ID;
+            /*return this.type === node.type && this.ID === node.ID && this.line ===node.line &&
+                this.declared===node.declared &&this.initialized === node.initialized &&
+                this.used === node.used;*/
         };
         return Node;
     })();

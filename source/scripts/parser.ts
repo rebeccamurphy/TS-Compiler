@@ -19,18 +19,7 @@ module TSC
 	        }
 	        return thisToken;
     	}
-    	public getPrevToken() {
-    		var thisToken;
-	        if (_TokenIndex-1 >=0)
-	        {
-	            // If we're not at EOF, then return the next token in the stream and advance the index.
-	            thisToken = _Tokens[_TokenIndex-1];
-	            //putMessage("Current token:" + thisToken);
-	        }
-	        return thisToken;
-    	}
-		public parse() {
-			
+		public parse() {	
 	        putMessage("Parsing [" + _TokenStr + "]");
 	        // A valid parse derives the G(oal) production, so begin there.
 	        _CurrentToken = this.getNextToken();
@@ -53,9 +42,9 @@ module TSC
             this.rootNode = new TreeNode(TokenTypeString[TokenType.PROGRAM],null);
             node = this.rootNode;
         	this.parseBlock(node);
-        	this.checkToken(TokenType.EOF);
             node.addChild(TokenType.EOF);
-        	putSuccess(this.part);
+        	this.checkToken(TokenType.EOF);
+            putSuccess(this.part);
     	}
     	//Block ::== {StatementList}
     	public parseBlock(node:TreeNode){

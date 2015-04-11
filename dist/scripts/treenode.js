@@ -1,29 +1,19 @@
 var TSC;
 (function (TSC) {
     var TreeNode = (function () {
-        function TreeNode(type, parent, value, children, item) {
+        function TreeNode(type, parent, value, line, children) {
+            if (children === void 0) { children = []; }
             this.type = type;
             this.parent = parent;
             this.value = value;
+            this.line = line;
             this.children = children;
-            this.item = item;
             //for CST
             this.type = type;
-            this.value = value;
+            this.value = (value === undefined) ? '' : value;
             this.parent = parent;
-            this.item = null;
-            this.children = (children === undefined) ? [] : children;
-            this.chr = [];
+            this.line = (line === undefined) ? -1 : line;
         }
-        /*
-        constructor(private value:any) {
-            //for symbol table
-            this.value = value;
-            this.parent = null;
-            this.item = null;
-            this.children =[];
-            this.chr = [];
-        }*/
         TreeNode.prototype.tabs = function (n) {
             var str = "";
             for (var i = 0; i < n; i++)
@@ -42,12 +32,6 @@ var TSC;
         TreeNode.prototype.setValue = function (val) {
             this.value = val;
         };
-        TreeNode.prototype.getItem = function () {
-            return this.item;
-        };
-        TreeNode.prototype.setItem = function (val) {
-            this.item = val;
-        };
         TreeNode.prototype.setParent = function (parent) {
             this.parent = parent;
         };
@@ -59,9 +43,9 @@ var TSC;
             if (typeof child === "string")
                 var ch = new TreeNode(child, this, '');
             else if (value === undefined)
-                var ch = new TreeNode(TokenTypeString[child], this, TokenTypeChar[child]);
+                var ch = new TreeNode(TokenTypeString[child], this, TokenTypeChar[child], _CurrentToken.line);
             else
-                var ch = new TreeNode(TokenTypeString[child], this, value);
+                var ch = new TreeNode(TokenTypeString[child], this, value, _CurrentToken.line);
             this.children.push(ch);
             return ch;
         };
@@ -86,13 +70,6 @@ var TSC;
                         return this.children[i];
                 }
         };
-        TreeNode.prototype.createRoot = function (rootTreeNode) {
-            var tree = new TreeModel();
-            var root = tree.parse({
-                id: rootTreeNode.value,
-                chr: rootTreeNode.chr
-            });
-        };
         TreeNode.prototype.printCST = function (depth, id) {
             if (depth === null)
                 depth = 0;
@@ -111,28 +88,28 @@ var TSC;
                 if (this.type !== "PROGRAM") {
                     switch (this.children[i].type) {
                         case 'BLOCK':
-                            var temp = new TreeNode("BLOCK", null);
+                            var temp = new TreeNode("BLOCK", null, '', this.children[i].line);
                             currnode.addChildNode(temp);
                             currnode = temp;
                             this.children[i].makeAST(depth + 1, currnode);
                             break;
                         case 'ASSIGNMENTSTATEMENT':
-                            var temp = new TreeNode('ASSIGN', null);
+                            var temp = new TreeNode('ASSIGN', null, '', this.children[i].line);
                             temp.addChildNode(this.children[i].children[0]);
                             //if this works i can't defend myself
                             if (this.children[i].children[2].children[0].type === "INTEXPR" ||
-                                this.children[i].children[2].children[0].type === "BOOLEANEXP")
+                                this.children[i].children[2].children[0].type === "BOOLEANEXPR")
                                 temp.addChildNode(this.children[i].children[2].children[0].children[0]);
                             else {
                                 var charString = "";
                                 charString = TSC.Utils.charsToString(this.children[i].children[2].children[0].children[1]);
-                                temp.addChildNode(new TreeNode("STRING", null, charString));
+                                temp.addChildNode(new TreeNode("STRING", null, charString, this.children[i].line));
                             }
                             currnode.addChildNode(temp);
                             break;
                         case 'WHILESTATEMENT':
-                            var temp = new TreeNode('WHILE', null);
-                            var comp = new TreeNode('COMP', null, this.children[i].children[1].children[2].children[0]);
+                            var temp = new TreeNode('WHILE', null, '', this.children[i].line);
+                            var comp = new TreeNode('COMP', null, '', this.children[i].line);
                             comp.addChildNode(this.children[i].children[1].children[1].children[0]);
                             comp.addChildNode(this.children[i].children[1].children[3].children[0].children[0]);
                             temp.addChildNode(comp);
@@ -141,8 +118,8 @@ var TSC;
                             this.children[i].makeAST(depth + 1, currnode);
                             break;
                         case 'IFSTATMENT':
-                            var temp = new TreeNode('IF', null);
-                            var comp = new TreeNode('COMP', null, this.children[i].children[1].children[2].children[0]);
+                            var temp = new TreeNode('IF', null, '', this.children[i].line);
+                            var comp = new TreeNode('COMP', null, '', this.children[i].line);
                             comp.addChildNode(this.children[i].children[1].children[1].children[0]);
                             comp.addChildNode(this.children[i].children[1].children[3].children[0].children[0]);
                             temp.addChildNode(comp);
@@ -151,7 +128,7 @@ var TSC;
                             this.children[i].makeAST(depth + 1, currnode);
                             break;
                         case 'PRINTSTATEMENT':
-                            var temp = new TreeNode("PRINT", null);
+                            var temp = new TreeNode("PRINT", null, '', this.children[i].line);
                             var type = this.children[i].children[2].children[0]; //int, string, boolean, id
                             switch (type.type) {
                                 case "ID":
@@ -188,10 +165,6 @@ var TSC;
             for (var i = 0; i < this.children.length; i++)
                 this.children[i].printAST(depth + 1, id);
         };
-        /*
-        public toString(){
-            return this.value.toUpperCase();
-        }*/
         TreeNode.prototype.nodeHTML = function (depth, id) {
             var output = (this.value === '' || this.value === undefined) ? this.type : this.type + ", <b>" + this.value + "</b>";
             document.getElementById(id).innerHTML = document.getElementById(id).innerHTML +
