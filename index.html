@@ -9,34 +9,21 @@
 <body onload="init();">
     <h1>Bloop Compiler</h1>
     <hr>
-    <p>
-        . . . <em>a simple parser for a simple grammar</em>:
-    </p>
-    <pre>
-G ::== E
-E ::== D O E | D
-D ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
-O ::== + | -
-    </pre>
-    <!--
-    <div>
-        <img style="float:right;" src="dist/images/CompilerPhases.png" alt="Compiler Phases diagram" />
-    </div>    
-    -->
-    <div style="text-align:center;">
+        <div style="text-align:center;">
         <input type="button" id="btnCompile" value="Compile" onclick="btnCompile_click();"/>
     </div>
     <div>
 
         <div class="source">
-            <textarea id="taSourceCode"></textarea>
+            <textarea id='numbers'>
+            </textarea>
+            <textarea id='taSourceCode'>
+            </textarea>
+
             <textarea id="taOutput"></textarea>
         </div>
-        
     </div>
     <!-- Footer -->
-    <!-- Client-side code down here, per the YSlow advice. 
-    // (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
     <script type="text/javascript" src="dist/scripts/utils.js"></script>	
     <script type="text/javascript" src="dist/scripts/lexer.js"></script>    
     <script type="text/javascript" src="dist/scripts/globals.js"></script>  
@@ -46,18 +33,21 @@ O ::== + | -
     <script type="text/javascript" src="dist/scripts/treenode.js"></script> 
     <script type="text/javascript" src="dist/scripts/TreeModel-min.js"></script>	
 
-    
+    <!--Added Plugins-->
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
     <script type="text/javascript">
     
 
     function init() {
-
+        
         // Clear the message box.
         document.getElementById("taOutput").value = "";
+
         // Set the initial values for our globals.
         onDocumentLoad();
+
                 
     }
 

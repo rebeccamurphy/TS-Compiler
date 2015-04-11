@@ -47,8 +47,18 @@ h1{
 	width:100%;
 }
 #taSourceCode, #taOutput{
-	width:48%;
-	margin: 10px;
+	width:500px;
+	height:400px;
+	resize: none;
+}
+#numbers{
+	width: 20px;
+	height:400px;
+	overflow: hidden;
+	resize: none;
+}
+#linenum{
+	display:inline;
 	height:400px;
 }
 #taOutput{
