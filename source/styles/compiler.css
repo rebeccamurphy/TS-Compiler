@@ -58,6 +58,8 @@ h1{
 
 #taOutput{
 	margin: 0px 10px 0px 10px;
+	border: 1px solid;
+	border-color: rgb(169, 169, 169);
 }
 #numbers{
 	width: 30px;

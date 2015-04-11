@@ -7,13 +7,14 @@ var _CurrentToken;
 var _ErrorCount = 0;
 var _TokenStr = [];
 var _LexerError;
+var _Messenger;
 var _Lexer;
 var _Parser;
 var _Token;
 var _SemanticAnalysis;
 var _ASTRoot = null;
 var _SymbolTableRoot;
-var _Verbose = false;
+var _Verbose;
 var TokenType;
 (function (TokenType) {
     TokenType[TokenType["LCURLY"] = 0] = "LCURLY";
@@ -51,38 +52,33 @@ var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSI
 var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '',
     '', '', '', '==', '!=', ' ', '', '', '+', '$',
     '"', '\n', '', '', '', '', ''];
+var ErrorType;
+(function (ErrorType) {
+    ErrorType[ErrorType["Undeclared"] = 0] = "Undeclared";
+    ErrorType[ErrorType["Redeclared"] = 1] = "Redeclared";
+    ErrorType[ErrorType["TypeMismatchAssign"] = 2] = "TypeMismatchAssign";
+    ErrorType[ErrorType["TypeMismatchComp"] = 3] = "TypeMismatchComp";
+})(ErrorType || (ErrorType = {}));
+;
+var ErrorStr = ["Undeclared identifier", "Redeclared identifier", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
+var WarningType;
+(function (WarningType) {
+    WarningType[WarningType["Unused"] = 0] = "Unused";
+    WarningType[WarningType["Uninit"] = 1] = "Uninit";
+})(WarningType || (WarningType = {}));
+;
+var WarningStr = ["Unused Variable", "Uninitialized identifier"];
 var ASTString = ['BLOCK', 'PRINTSTATMENT', 'ASSIGNMENTSTATEMENT', 'VARDECL', 'WHILESTATMENT', 'IFSTATEMENT'];
-var putMessage = function (msg) {
-    document.getElementById("taOutput").value += msg + "\n";
-};
-var putError = function (line, part, msg) {
-    putMessage("(Line: " + line + ") " + part + " Error " + msg);
-    if (part === "Lexer")
-        _LexerError = true;
-};
-var putWarning = function (line, part, msg) {
-    putMessage("(Line: " + line + ") " + part + " Warning " + msg);
-};
-var putExpectingCorrect = function (line, part, expected, found) {
-    putMessage("(Line: " + line + ") " + part + " Expected " + expected + ", Found " + found);
-};
-var putExpectingWrong = function (line, part, expected, found) {
-    putMessage("(Line: " + line + ") " + part + " Error: Expected " + expected + ", Found " + found);
-};
-var putFailed = function (part) {
-    putMessage(part + ": Failed. Compilation has been terminated.");
-};
-var putSuccess = function (part) {
-    putMessage(part + ": Completed Successfully.");
-};
 var onDocumentLoad = function () {
     _LexerError = false;
     _Lexer = TSC.Lexer;
     _Parser = new TSC.Parser();
+    _Messenger = new TSC.Messenger("taOutput");
     _Token = TSC.Token;
     _Tokens = [];
     _TokenStr = [];
     _TokenIndex = 0;
     _CurrentToken = ' ';
     _ErrorCount = 0;
+    _Verbose = false;
 };

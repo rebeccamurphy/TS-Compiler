@@ -21,18 +21,25 @@ var TSC;
             return temp;
         };
         Token.addToken = function (token) {
+            if (_Verbose)
+                _Messenger.putMessage("Created Token: " + token.toString());
             _Tokens.push(token);
         };
         Token.createAndAddToken = function (type, str, lineNum) {
             var temp = TSC.Token.createToken(type, str, lineNum);
+            if (_Verbose)
+                _Messenger.putMessage("Created Token: " + temp.toString());
             _Tokens.push(temp);
         };
         Token.getAndAddToken = function (str, lineNum) {
             var temp = TSC.Token.getToken(str, lineNum);
             if (typeof temp === "string")
-                putError(lineNum, "Lexer", "[" + temp + "] Invalid token.");
-            else
+                _Messenger.putError(lineNum, "Lexer", "[" + temp + "] Invalid token.");
+            else {
+                if (_Verbose)
+                    _Messenger.putMessage("Created Token: " + temp.toString());
                 _Tokens.push(temp);
+            }
         };
         Token.getWordMatchToken = function (str, lineNum) {
             var tokenList = [];

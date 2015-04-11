@@ -62,5 +62,11 @@ module TSC {
         }
         return str;
     }
+    public static printArray(arr){
+        var str = "";
+        for (var i =0; i<arr.length; i++)
+            str+="<div>Token "+(i+1)+": " + arr[i].toString() +"</div>";
+        return str;
+    }
     }
 }

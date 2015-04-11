@@ -52,6 +52,12 @@ var TSC;
             }
             return str;
         };
+        Utils.printArray = function (arr) {
+            var str = "";
+            for (var i = 0; i < arr.length; i++)
+                str += "<div>Token " + (i + 1) + ": " + arr[i].toString() + "</div>";
+            return str;
+        };
         return Utils;
     })();
     TSC.Utils = Utils;

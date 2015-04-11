@@ -8,6 +8,9 @@ module TSC
         this.parent = parent;
         this.line = (line===undefined)? -1:line;
     }
+    public toString(){
+        return this.type +", " +this.value;
+    }
     private tabs(n) {
         var str = "";
         for(var i=0; i<n; i++)

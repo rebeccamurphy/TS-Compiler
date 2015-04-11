@@ -10,13 +10,14 @@ var TSC;
             if (_TokenIndex < _Tokens.length) {
                 // If we're not at EOF, then return the next token in the stream and advance the index.
                 thisToken = _Tokens[_TokenIndex];
-                putMessage("Current token:" + thisToken.toString());
+                if (_Verbose)
+                    _Messenger.putMessage("Current Token " + (_TokenIndex + 1) + ": " + thisToken.toString());
                 _TokenIndex++;
             }
             return thisToken;
         };
         Parser.prototype.parse = function () {
-            putMessage("Parsing [" + _TokenStr + "]");
+            _Messenger.putHeaderMessage("Parsing");
             // A valid parse derives the G(oal) production, so begin there.
             _CurrentToken = this.getNextToken();
             this.parseProgram(this.rootNode);
@@ -28,7 +29,7 @@ var TSC;
                 msg = _ErrorCount + " error.";
             else
                 msg = _ErrorCount + " errors.";
-            putMessage("Parsing found " + msg);
+            _Messenger.putHeaderMessage("Parsing found " + msg);
         };
         //Program ::== Block 
         Parser.prototype.parseProgram = function (node) {
@@ -37,7 +38,7 @@ var TSC;
             this.parseBlock(node);
             node.addChild(TokenType.EOF);
             this.checkToken(TokenType.EOF);
-            putSuccess(this.part);
+            _Messenger.putSuccess(this.part);
         };
         //Block ::== {StatementList}
         Parser.prototype.parseBlock = function (node) {
@@ -271,41 +272,43 @@ var TSC;
         };
         Parser.prototype.checkToken = function (tokenType) {
             if (_CurrentToken.type == tokenType) {
-                switch (tokenType) {
-                    case TokenType.CHAR:
-                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] +
-                            " a single character in range: a-z.", _CurrentToken.value);
-                        break;
-                    case TokenType.ID:
-                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] +
-                            " a single character in range: a-z.", _CurrentToken.value);
-                        break;
-                    case TokenType.TYPE:
-                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", " +
-                            TokenTypeChar[TokenType.STR] + ", or " + TokenTypeChar[TokenType.BOOL], _CurrentToken.value);
-                        break;
-                    case TokenType.BOOLOP:
-                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] + ", or "
-                            + TokenTypeChar[TokenType.NOTEQUALS], _CurrentToken.value);
-                        break;
-                    default:
-                        putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+                if (_Verbose) {
+                    switch (tokenType) {
+                        case TokenType.CHAR:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] +
+                                " a single character in range: a-z.", _CurrentToken.value);
+                            break;
+                        case TokenType.ID:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] +
+                                " a single character in range: a-z.", _CurrentToken.value);
+                            break;
+                        case TokenType.TYPE:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", " +
+                                TokenTypeChar[TokenType.STR] + ", or " + TokenTypeChar[TokenType.BOOL], _CurrentToken.value);
+                            break;
+                        case TokenType.BOOLOP:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] + ", or "
+                                + TokenTypeChar[TokenType.NOTEQUALS], _CurrentToken.value);
+                            break;
+                        default:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+                    }
                 }
             }
             else {
                 switch (tokenType) {
                     case TokenType.TYPE:
-                        putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", " +
+                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", " +
                             TokenTypeChar[TokenType.STR] + ", or " + TokenTypeChar[TokenType.BOOL], _CurrentToken.value);
                         break;
                     case TokenType.BOOLOP:
-                        putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] + ", or "
+                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] + ", or "
                             + TokenTypeChar[TokenType.NOTEQUALS], _CurrentToken.value);
                         break;
                     default:
-                        putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
+                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
                 }
-                putFailed(this.part);
+                _Messenger.putFailed(this.part);
                 throw new Error('Failed');
             }
             _CurrentToken = this.getNextToken();
