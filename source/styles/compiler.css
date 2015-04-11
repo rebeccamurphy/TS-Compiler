@@ -84,3 +84,9 @@ h1{
 .tab-content{
 	border: 0px 1px 1px 1px;
 }
+th{
+	padding: 10px!important;
+}
+td{
+	padding:10px!important;
+}

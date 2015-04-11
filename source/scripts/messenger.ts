@@ -24,7 +24,7 @@ module TSC
 				_LexerError = true;
 		}
 		else
-			this.putMessage("*****(Line: "+line +") " +part + " Error: " + ErrorStr[msg]+"*****");
+			this.putMessage("*****(Line: "+line +"), Error: " + ErrorStr[msg]+"*****");
 	}
 	public putWarning(line, part, msg:any){
 		if (typeof msg !=="number")
@@ -35,15 +35,15 @@ module TSC
 	public putExpectingCorrect(line, part, expected, found){
 		this.putMessage("(Line: "+line+") " +part + " Expected " +expected +", Found " + found);
 	}
-
-	public putExpectingWrong = function(line, part, expected, found){
+	public putExpectingWrong(line, part, expected, found){
 		this.putMessage("(Line: "+line+") " +part + " Error: Expected " +expected +", Found " + found);
 	}
 	public putFailed(part){
-		this.putMessage(part + ": Failed. Compilation has been terminated.");
+		this.putHeaderMessage(part + ": Failed. Compilation has been terminated.");
 	}
 	public putSuccess(part){
-		this.putMessage(part + ": Completed Successfully.");
+		this.putHeaderMessage(part + ": Completed Successfully.");
 	}
+
 	}
 }

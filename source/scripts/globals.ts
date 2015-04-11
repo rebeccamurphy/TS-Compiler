@@ -29,9 +29,9 @@ var TokenTypeChar =['{', '}', '', '(', ')', '=', '', '', '',
 '', '', '','==', '!=',' ', '', '', '+','$', 
 '"', '\n', '','','', '', ''];
 
-enum ErrorType {Undeclared, Redeclared, TypeMismatchAssign, TypeMismatchComp};
+enum ErrorType {Undeclared,UndeclaredUsed, Redeclared, TypeMismatchAssign, TypeMismatchComp};
 
-var ErrorStr = ["Undeclared identifier", "Redeclared identifier", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
+var ErrorStr = ["Undeclared identifier", "Undeclared identifier, but it is used.", "Redeclared identifier in same scope", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
 
 enum WarningType {Unused, Uninit };
 

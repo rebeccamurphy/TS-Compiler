@@ -1,13 +1,24 @@
 module TSC{
 	
 	export class Node{
-		constructor(private type:String, private ID:String,private line:number,private declared?:boolean, private initialized?:boolean, private used?:boolean) {
+		constructor(private type:String, private ID:String,public line:number,public declared?:boolean, public initialized?:boolean, public used?:boolean) {
 		    this.type = type;
 		    this.ID = ID;
 		    this.line =line;
 		    this.declared = false;
 		    this.initialized = false;
 		    this.used = false;
+		}
+		public toString(){
+			return "Type: "+ this.type+ ", ID: " +this.ID +", Line: " +this.line +
+				", Declared: " + this.declared +", Initialized: " + this.initialized +
+				", Used: " + this.used;
+
+		}
+		public toHTML(){
+			return "<td>"+ this.type+ "</td><td>" +this.ID +"</td><td>" +this.line +
+				"</td><td>" + this.declared +"</td><td>" + this.initialized +
+				"</td><td>" + this.used +"</td>";
 		}
 		public setDeclared(){
 			this.declared =true;

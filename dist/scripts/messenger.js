@@ -3,9 +3,6 @@ var TSC;
     var Messenger = (function () {
         function Messenger(ID) {
             this.ID = ID;
-            this.putExpectingWrong = function (line, part, expected, found) {
-                this.putMessage("(Line: " + line + ") " + part + " Error: Expected " + expected + ", Found " + found);
-            };
             this.ID = ID;
         }
         Messenger.prototype.putMessage = function (msg) {
@@ -27,7 +24,7 @@ var TSC;
                     _LexerError = true;
             }
             else
-                this.putMessage("*****(Line: " + line + ") " + part + " Error: " + ErrorStr[msg] + "*****");
+                this.putMessage("*****(Line: " + line + "), Error: " + ErrorStr[msg] + "*****");
         };
         Messenger.prototype.putWarning = function (line, part, msg) {
             if (typeof msg !== "number")
@@ -38,11 +35,14 @@ var TSC;
         Messenger.prototype.putExpectingCorrect = function (line, part, expected, found) {
             this.putMessage("(Line: " + line + ") " + part + " Expected " + expected + ", Found " + found);
         };
+        Messenger.prototype.putExpectingWrong = function (line, part, expected, found) {
+            this.putMessage("(Line: " + line + ") " + part + " Error: Expected " + expected + ", Found " + found);
+        };
         Messenger.prototype.putFailed = function (part) {
-            this.putMessage(part + ": Failed. Compilation has been terminated.");
+            this.putHeaderMessage(part + ": Failed. Compilation has been terminated.");
         };
         Messenger.prototype.putSuccess = function (part) {
-            this.putMessage(part + ": Completed Successfully.");
+            this.putHeaderMessage(part + ": Completed Successfully.");
         };
         return Messenger;
     })();

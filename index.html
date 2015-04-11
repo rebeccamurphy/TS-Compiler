@@ -32,6 +32,7 @@
     <script type="text/javascript" src="dist/scripts/semanticanalysis.js"></script> 
     <script type="text/javascript" src="dist/scripts/symboltable.js"></script> 
     <script type="text/javascript" src="dist/scripts/node.js"></script> 
+    <script type="text/javascript" src="dist/scripts/messenger.js"></script> 
 
     <!--Added Plugins-->
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -47,7 +48,8 @@
         $("#Tokens").innerHTML= "TBC";
         $("#CST").innerHTML= "TBC";
         $("#AST").innerHTML= "TBC";
-        $("#SymbolTable").innerHTML= "TBC";
+        $("#STTable").innerHTML="<tr><th>Scope</th><th>Type</th><th>ID</th><th>Line</th><th>Declared</th>"
+            +"<th>Initialized</th><th>Used</th></tr>";
 
         $("#taSourceCode").scroll(function(){
             $("#numbers").scrollTop( $("#taSourceCode").scrollTop());
@@ -86,7 +88,8 @@
         $("#AST")[0].innerHTML= "";
         _Messenger.putHeaderMessage("Printing AST...");
         _ASTRoot.printAST(0, "AST");
-        _SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot);
+        _SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot, "STTable");
+        _SemanticAnalysis.SemanticAnalysis();
     }
 
 
@@ -106,7 +109,20 @@
         <div role="tabpanel" class="tab-pane active" id="Tokens">TBC</div>
         <div role="tabpanel" class="tab-pane" id="CST">TBC</div>
         <div role="tabpanel" class="tab-pane" id="AST">TBC</div>
-        <div role="tabpanel" class="tab-pane" id="SymbolTable">TBC</div>
+        <div role="tabpanel" class="tab-pane" id="SymbolTable">
+            <table id="STTable">
+                <tr>
+                    <th>Scope</th>
+                    <th>Type</th>
+                    <th>ID</th>
+                    <th>Line</th>
+                    <th>Declared</th>
+                    <th>Initialized</th>
+                    <th>Used</th>
+                </tr>
+                TBC
+            </table>
+        </div>
     </div>
     </div>
 
