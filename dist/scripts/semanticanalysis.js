@@ -12,13 +12,18 @@ var TSC;
                 symbolTable = _SymbolTableRoot;
             }
             else
-                this.analysis(currNode, symbolTable);
+                symbolTable = this.analysis(currNode, symbolTable);
             for (var i = 0; i < currNode.getChildren().length; i++)
-                this.SemanticAnalysis(currNode.getChildren[i], symbolTable);
+                this.SemanticAnalysis(currNode.getChildren()[i], symbolTable);
         };
         SemanticAnalysis.prototype.analysis = function (currNode, symbolTable) {
             switch (currNode.type) {
                 case "BLOCK":
+                    //entering a newscopeso we add a new scope to symbol table
+                    var tempST = new TSC.SymbolTable();
+                    //this will probably be ok but apologizes to future me if its not
+                    tempST.setParent(symbolTable);
+                    symbolTable = tempST;
                     break;
                 case "VARDECL":
                     var valueChild = currNode.getChildren()[1];
@@ -36,6 +41,7 @@ var TSC;
                     var valueChild = currNode.getChildren()[1];
                     var typeChild = currNode.getChildren()[0];
                     var varInScope = symbolTable.findValueInScope(valueChild.value);
+                    var varInParentScope = symbolTable.findValueInParentScope(valueChild.value);
                     if (varInScope !== null) {
                         //so the variable has been declared...
                         //but does the type match?
@@ -49,10 +55,30 @@ var TSC;
                         else {
                         }
                     }
+                    else if (varInParentScope !== null) {
+                        //so the variable has been declared in the parent scope...
+                        //but does the type match?
+                        if ((varInParentScope.type === "INT" && valueChild.type === "DIGIT") ||
+                            (varInParentScope.type === "STRING" && valueChild.type === "STRING") ||
+                            (varInParentScope.type === "BOOL" && valueChild.type === "BOOL")) {
+                            //match!
+                            //so create a new instance of the variable for the symbol table
+                            var tempNode = new TSC.Node(typeChild.type, typeChild.value, typeChild.line);
+                            tempNode.setDeclared();
+                            tempNode.setInitialized();
+                            symbolTable.addNode(tempNode);
+                        }
+                    }
                     else {
                     }
                     break;
+                case "PRINT":
+                    var idChild = currNode.getChildren()[0];
+                    //varInScope = 
+                    //if ()
+                    break;
             }
+            return symbolTable;
         };
         return SemanticAnalysis;
     })();
