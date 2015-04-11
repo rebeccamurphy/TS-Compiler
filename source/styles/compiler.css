@@ -50,17 +50,35 @@ h1{
 	width:500px;
 	height:400px;
 	resize: none;
+	display: inline-block;
+}
+#taSourceCode{
+	margin: 0px 10px 0px 0px;
+}
+
+#taOutput{
+	margin: 0px 10px 0px 10px;
 }
 #numbers{
-	width: 20px;
+	width: 30px;
 	height:400px;
 	overflow: hidden;
 	resize: none;
+	font-family: monospace;
+	display: inline-block;
 }
 #linenum{
 	display:inline;
 	height:400px;
 }
-#taOutput{
-	float:right;
+.outer{
+	width: 100%;
+	text-align: center;
+	margin-top: 10px;
+}
+.container{
+	margin: 10px;
+}
+.tab-content{
+	border: 0px 1px 1px 1px;
 }
