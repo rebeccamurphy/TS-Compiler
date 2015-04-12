@@ -80,7 +80,7 @@ module TSC
             this.children[i].printCST(depth+1, id);
     }
     public makeAST(depth?:number, currnode?:TreeNode){
-        debugger;
+        //debugger;
         if (depth===-1 && this.type==="BLOCK"){
             _ASTRoot = new TreeNode("BLOCK", null);
             currnode = _ASTRoot
@@ -162,7 +162,7 @@ module TSC
         
     }
     public printAST(depth?:number, id?:string){
-        debugger;
+       //debugger;
         if(depth===null)
             depth = 0;
         this.nodeHTML(depth, id);

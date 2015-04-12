@@ -5,18 +5,28 @@ module TSC
 		    this.nodes = (nodes===undefined)? []:nodes;
 		    this.parent = (parent===undefined)?null:parent;
 		    this.scope = ++_SemanticAnalysis.currScope;
-		    this.children = children;
+		    this.children = (parent===undefined)?[]:children;
+		    
 		}
-		public print(ID){
-        	this.nodeHTML(ID);
+
+		public print(){
+        	this.nodeHTML();
         	for(var i=0; i<this.children.length; i++)
-            	this.children[i].print(ID);
+            	this.children[i].print();
 		}
-		public nodeHTML(ID){
+		public nodeHTML(){
 			var str = "";
-			for (var i=0; i<this.nodes.length; i++)
-				str+="<tr><td><b>" + this.scope +"</b></td>"+this.nodes[i].toHTML +"</tr>";
-			document.getElementById(ID).innerHTML = document.getElementById(ID).innerHTML + str;
+			for (var i=0; i<this.nodes.length; i++){
+				str+="<tr><td><b>" + this.scope +"</b></td>"+this.nodes[i].toHTML() +"</tr>";
+				//symbol table analysis warnings
+				if(this.nodes[i].declared && this.nodes[i].initialized &&!this.nodes[i].used)
+					_Messenger.putWarning(this.nodes[i].line, WarningType.UnusedDI)
+				else if (this.nodes[i].declared && !this.nodes[i].initialized)
+					_Messenger.putWarning(this.nodes[i].line, WarningType.Unused)
+				if (!this.nodes[i].initialized)
+					_Messenger.putWarning(this.nodes[i].line, WarningType.Uninit)
+			}
+			document.getElementById(_SemanticAnalysis.ID).innerHTML = document.getElementById(_SemanticAnalysis.ID).innerHTML + str;
 		}
 		public toString(){
 			if (this.parent!==null)
@@ -45,28 +55,33 @@ module TSC
 		public findValueInScope(id):any{
 			//find closest to recently declared
 			for(var i=this.nodes.length-1; i>=0;i--){
-				if (id === this.nodes[i]){
+				if (id === this.nodes[i].ID){
 					return this.nodes[i];
 				}
 			}
 			return null;
 		}
 		public findValueInParentScope(id):any{
+			debugger;
+			if (this===null || this.parent===null)
+				return null; 
 			//find closest to recently declared
 			for(var i=this.parent.nodes.length-1; i>=0;i--){
-				if (id === this.parent.nodes[i]){
+				if (id === this.parent.nodes[i].ID){
 					return this.parent.nodes[i];
 				}
 			}
-			return null;
+			this.parent.findValueInParentScope(id);
 		}	
 		public replace(node:Node){
+			if (this===null || this.parent===null)
+				return false;
 			for(var i =0; i<this.nodes.length; i++)
 				if (this.nodes[i].equals(node)){
 					this.nodes[i] = node;
 					return true;
 				}
-			return false;
+			this.parent.replace(node);
 		}
 	}
 }

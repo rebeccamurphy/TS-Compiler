@@ -29,13 +29,13 @@ var TokenTypeChar =['{', '}', '', '(', ')', '=', '', '', '',
 '', '', '','==', '!=',' ', '', '', '+','$', 
 '"', '\n', '','','', '', ''];
 
-enum ErrorType {Undeclared,UndeclaredUsed, Redeclared, TypeMismatchAssign, TypeMismatchComp};
+enum ErrorType {Undeclared, Redeclared, TypeMismatchAssign, TypeMismatchComp};
 
-var ErrorStr = ["Undeclared identifier", "Undeclared identifier, but it is used.", "Redeclared identifier in same scope", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
+var ErrorStr = ["Undeclared identifier", "Redeclared identifier in same scope", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
 
-enum WarningType {Unused, Uninit };
+enum WarningType {UnusedDI,Unused, Uninit };
 
-var WarningStr = ["Unused Variable", "Uninitialized identifier"];
+var WarningStr = ["Variable declared and initialized, but never used.","Variable never initialized", "Uninitialized variable"];
 
 var ASTString = ['BLOCK', 'PRINTSTATMENT', 'ASSIGNMENTSTATEMENT', 'VARDECL', 'WHILESTATMENT', 'IFSTATEMENT'];
 

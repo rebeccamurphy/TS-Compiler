@@ -81,7 +81,7 @@ var TSC;
                 this.children[i].printCST(depth + 1, id);
         };
         TreeNode.prototype.makeAST = function (depth, currnode) {
-            debugger;
+            //debugger;
             if (depth === -1 && this.type === "BLOCK") {
                 _ASTRoot = new TreeNode("BLOCK", null);
                 currnode = _ASTRoot;
@@ -161,7 +161,7 @@ var TSC;
             }
         };
         TreeNode.prototype.printAST = function (depth, id) {
-            debugger;
+            //debugger;
             if (depth === null)
                 depth = 0;
             this.nodeHTML(depth, id);

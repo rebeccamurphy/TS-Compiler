@@ -9,18 +9,26 @@ var TSC;
             this.nodes = (nodes === undefined) ? [] : nodes;
             this.parent = (parent === undefined) ? null : parent;
             this.scope = ++_SemanticAnalysis.currScope;
-            this.children = children;
+            this.children = (parent === undefined) ? [] : children;
         }
-        SymbolTable.prototype.print = function (ID) {
-            this.nodeHTML(ID);
+        SymbolTable.prototype.print = function () {
+            this.nodeHTML();
             for (var i = 0; i < this.children.length; i++)
-                this.children[i].print(ID);
+                this.children[i].print();
         };
-        SymbolTable.prototype.nodeHTML = function (ID) {
+        SymbolTable.prototype.nodeHTML = function () {
             var str = "";
-            for (var i = 0; i < this.nodes.length; i++)
-                str += "<tr><td><b>" + this.scope + "</b></td>" + this.nodes[i].toHTML + "</tr>";
-            document.getElementById(ID).innerHTML = document.getElementById(ID).innerHTML + str;
+            for (var i = 0; i < this.nodes.length; i++) {
+                str += "<tr><td><b>" + this.scope + "</b></td>" + this.nodes[i].toHTML() + "</tr>";
+                //symbol table analysis warnings
+                if (this.nodes[i].declared && this.nodes[i].initialized && !this.nodes[i].used)
+                    _Messenger.putWarning(this.nodes[i].line, WarningType.UnusedDI);
+                else if (this.nodes[i].declared && !this.nodes[i].initialized)
+                    _Messenger.putWarning(this.nodes[i].line, WarningType.Unused);
+                if (!this.nodes[i].initialized)
+                    _Messenger.putWarning(this.nodes[i].line, WarningType.Uninit);
+            }
+            document.getElementById(_SemanticAnalysis.ID).innerHTML = document.getElementById(_SemanticAnalysis.ID).innerHTML + str;
         };
         SymbolTable.prototype.toString = function () {
             if (this.parent !== null)
@@ -49,28 +57,33 @@ var TSC;
         SymbolTable.prototype.findValueInScope = function (id) {
             //find closest to recently declared
             for (var i = this.nodes.length - 1; i >= 0; i--) {
-                if (id === this.nodes[i]) {
+                if (id === this.nodes[i].ID) {
                     return this.nodes[i];
                 }
             }
             return null;
         };
         SymbolTable.prototype.findValueInParentScope = function (id) {
+            debugger;
+            if (this === null || this.parent === null)
+                return null;
             //find closest to recently declared
             for (var i = this.parent.nodes.length - 1; i >= 0; i--) {
-                if (id === this.parent.nodes[i]) {
+                if (id === this.parent.nodes[i].ID) {
                     return this.parent.nodes[i];
                 }
             }
-            return null;
+            this.parent.findValueInParentScope(id);
         };
         SymbolTable.prototype.replace = function (node) {
+            if (this === null || this.parent === null)
+                return false;
             for (var i = 0; i < this.nodes.length; i++)
                 if (this.nodes[i].equals(node)) {
                     this.nodes[i] = node;
                     return true;
                 }
-            return false;
+            this.parent.replace(node);
         };
         return SymbolTable;
     })();

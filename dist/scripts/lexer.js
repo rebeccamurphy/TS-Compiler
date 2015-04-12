@@ -41,7 +41,7 @@ var TSC;
                 if (currChar.match(/\n/)) {
                     if (inString) {
                         //newlines are not allowed in strings in this lang so throw and error
-                        _Messenger.putError(currentLine, this.part, "[" + currChar + "] Invalid character in string.");
+                        _Messenger.putError(currentLine, "[" + currChar + "] Invalid character in string.", this.part);
                     }
                     else {
                         if (!buffer.isEmpty()) {
@@ -66,7 +66,7 @@ var TSC;
                 if (currChar.match(/\{|\}|\(|\)|\$|\+/)) {
                     if (inString)
                         //characters are not valid in string so error
-                        _Messenger.putError(currentLine, this.part, "[" + currChar + "] Invalid character in string.");
+                        _Messenger.putError(currentLine, "[" + currChar + "] Invalid character in string.", this.part);
                     else {
                         if (!buffer.isEmpty()) {
                             //if we are not in a string, check to see if we've hit a token
@@ -91,7 +91,7 @@ var TSC;
                 if (currChar.match(/\!|\=/)) {
                     if (inString)
                         //TODO i keep using the same errors a lot so a class or enum could be cool
-                        _Messenger.putError(currentLine, this.part, "Invalid character in string.");
+                        _Messenger.putError(currentLine, "Invalid character in string.", this.part);
                     else {
                         // since ! can only mean != or an error, and 
                         // = can only mean == or =, empty the buffer before proceeding
@@ -106,7 +106,7 @@ var TSC;
                         }
                         else if (currChar === '!') {
                             //error! lone (!)
-                            _Messenger.putError(currentLine, this.part, "Invalid token.");
+                            _Messenger.putError(currentLine, "Invalid token.", this.part);
                         }
                         else {
                             //otherwise it must be '=' which is valid, so make a token and get this bb outta here

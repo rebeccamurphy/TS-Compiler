@@ -55,20 +55,20 @@ var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '',
 var ErrorType;
 (function (ErrorType) {
     ErrorType[ErrorType["Undeclared"] = 0] = "Undeclared";
-    ErrorType[ErrorType["UndeclaredUsed"] = 1] = "UndeclaredUsed";
-    ErrorType[ErrorType["Redeclared"] = 2] = "Redeclared";
-    ErrorType[ErrorType["TypeMismatchAssign"] = 3] = "TypeMismatchAssign";
-    ErrorType[ErrorType["TypeMismatchComp"] = 4] = "TypeMismatchComp";
+    ErrorType[ErrorType["Redeclared"] = 1] = "Redeclared";
+    ErrorType[ErrorType["TypeMismatchAssign"] = 2] = "TypeMismatchAssign";
+    ErrorType[ErrorType["TypeMismatchComp"] = 3] = "TypeMismatchComp";
 })(ErrorType || (ErrorType = {}));
 ;
-var ErrorStr = ["Undeclared identifier", "Undeclared identifier, but it is used.", "Redeclared identifier in same scope", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
+var ErrorStr = ["Undeclared identifier", "Redeclared identifier in same scope", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
 var WarningType;
 (function (WarningType) {
-    WarningType[WarningType["Unused"] = 0] = "Unused";
-    WarningType[WarningType["Uninit"] = 1] = "Uninit";
+    WarningType[WarningType["UnusedDI"] = 0] = "UnusedDI";
+    WarningType[WarningType["Unused"] = 1] = "Unused";
+    WarningType[WarningType["Uninit"] = 2] = "Uninit";
 })(WarningType || (WarningType = {}));
 ;
-var WarningStr = ["Unused Variable", "Uninitialized identifier"];
+var WarningStr = ["Variable declared and initialized, but never used.", "Variable never initialized", "Uninitialized variable"];
 var ASTString = ['BLOCK', 'PRINTSTATMENT', 'ASSIGNMENTSTATEMENT', 'VARDECL', 'WHILESTATMENT', 'IFSTATEMENT'];
 var onDocumentLoad = function () {
     _LexerError = false;

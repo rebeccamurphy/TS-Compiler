@@ -1,7 +1,8 @@
 module TSC{
 	
 	export class Node{
-		constructor(private type:String, private ID:String,public line:number,public declared?:boolean, public initialized?:boolean, public used?:boolean) {
+		constructor(private type:String, public ID:String,public line:number,
+			public declared?:boolean, public initialized?:boolean, public used?:boolean) {
 		    this.type = type;
 		    this.ID = ID;
 		    this.line =line;

@@ -10,27 +10,33 @@ var TSC;
         };
         Messenger.prototype.putHeaderMessage = function (msg) {
             if (_Verbose) {
-                this.putMessage("-------------------------");
+                this.putMessage("-----------------------------------------");
                 this.putMessage(msg);
-                this.putMessage("-------------------------");
+                this.putMessage("-----------------------------------------");
             }
             else
                 this.putMessage(msg);
         };
-        Messenger.prototype.putError = function (line, part, msg) {
+        Messenger.prototype.putError = function (line, msg, part) {
             if (typeof msg !== "number") {
-                this.putMessage("*****(Line: " + line + ") " + part + " Error: " + msg + "*****");
+                this.putMessage("*****(Line: " + line + ") Error: " + msg + "*****");
                 if (part === "Lexer")
                     _LexerError = true;
             }
-            else
+            else {
                 this.putMessage("*****(Line: " + line + "), Error: " + ErrorStr[msg] + "*****");
+                document.getElementById("Errors").innerHTML += "<div>(Line: " + line + ") Error: " + ErrorStr[msg] + "</div>";
+            }
         };
-        Messenger.prototype.putWarning = function (line, part, msg) {
-            if (typeof msg !== "number")
-                this.putMessage("***(Line: " + line + ") " + part + " Warning " + msg + "***");
-            else
-                this.putMessage("***(Line: " + line + ") " + part + " Warning " + WarningStr[msg] + "***");
+        Messenger.prototype.putWarning = function (line, msg) {
+            if (typeof msg !== "number") {
+                this.putMessage("***(Line: " + line + ") Warning: " + msg + "***");
+                document.getElementById("Warnings").innerHTML += "<div>(Line: " + line + ") Warning: " + msg + "</div>";
+            }
+            else {
+                this.putMessage("***(Line: " + line + ") Warning: " + WarningStr[msg] + "***");
+                document.getElementById("Warnings").innerHTML += "<div>(Line: " + line + ") Warning: " + WarningStr[msg] + "</div>";
+            }
         };
         Messenger.prototype.putExpectingCorrect = function (line, part, expected, found) {
             this.putMessage("(Line: " + line + ") " + part + " Expected " + expected + ", Found " + found);

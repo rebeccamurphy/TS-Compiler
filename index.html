@@ -42,12 +42,14 @@
     
 
     function init() {
-        
         // Clear the message box.
-        $("#taOutput").value = "";
+        document.getElementById("taOutput").innerHTML="";
         $("#Tokens").innerHTML= "TBC";
         $("#CST").innerHTML= "TBC";
         $("#AST").innerHTML= "TBC";
+        $("#Errors").innerHTML= "TBC";
+        $("#Warnings").innerHTML= "TBC";
+        
         $("#STTable").innerHTML="<tr><th>Scope</th><th>Type</th><th>ID</th><th>Line</th><th>Declared</th>"
             +"<th>Initialized</th><th>Used</th></tr>";
 
@@ -68,8 +70,9 @@
         // "compile" button between the two text areas, above.  
         // Note the <input> element's event handler: onclick="btnCompile_click();
         init();
-        debugger;
+        
         _Verbose = $("#verbose")[0].checked;
+        
         _Messenger.putHeaderMessage("Compilation Started...");
         // Grab the tokens from the lexer . . .
         _Lexer.lex();
@@ -87,9 +90,14 @@
         _Parser.rootNode.makeAST(-1);
         $("#AST")[0].innerHTML= "";
         _Messenger.putHeaderMessage("Printing AST...");
-        _ASTRoot.printAST(0, "AST");
+        _ASTRoot.printAST(0, "AST");    
+        $("#Errors")[0].innerHTML= "";
+        $("#Warnings")[0].innerHTML= "";
         _SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot, "STTable");
-        _SemanticAnalysis.SemanticAnalysis();
+        _SemanticAnalysis.SemanticAnalysis(_SemanticAnalysis.rootNode);
+        _Messenger.putHeaderMessage("Completed Semantic Analysis.");
+        _Messenger.putHeaderMessage("Printing Symbol Table.");
+        _SymbolTableRoot.print();
     }
 
 
@@ -101,7 +109,8 @@
             <li role="presentation"><a href="#CST" aria-controls="CST" role="tab" data-toggle="tab"><h2>CST</h2></a></li>
             <li role="presentation"><a href="#AST" aria-controls="AST" role="tab" data-toggle="tab"><h2>AST</h2></a></li>
             <li role="presentation" ><a href="#SymbolTable" aria-controls="SymbolTable" role="tab" data-toggle="tab"><h2>SymbolTable</h2></a></li>
-            
+            <li role="presentation"><a href="#Errors" aria-controls="Errors" role="tab" data-toggle="tab"><h2>Errors</h2></a></li>
+            <li role="presentation"><a href="#Warnings" aria-controls="Warnings" role="tab" data-toggle="tab"><h2>Warnings</h2></a></li>
         </ul>
     </div>
     
@@ -123,6 +132,9 @@
                 TBC
             </table>
         </div>
+        <div role="tabpanel" class="tab-pane" id="Errors">TBC</div>
+        <div role="tabpanel" class="tab-pane" id="Warnings">TBC</div>
+        
     </div>
     </div>
 
