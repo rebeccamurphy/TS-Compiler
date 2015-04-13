@@ -52,4 +52,7 @@ var onDocumentLoad = function() {
     _CurrentToken = ' ';
     _ErrorCount = 0;
     _Verbose = false;
+	_SymbolTableRoot =null;
+	_ASTRoot=null;
+
 };

@@ -44,13 +44,13 @@
     function init() {
         // Clear the message box.
         document.getElementById("taOutput").innerHTML="";
-        $("#Tokens").innerHTML= "TBC";
-        $("#CST").innerHTML= "TBC";
-        $("#AST").innerHTML= "TBC";
-        $("#Errors").innerHTML= "TBC";
-        $("#Warnings").innerHTML= "TBC";
+        $("#Tokens")[0].innerHTML= "TBC";
+        $("#CST")[0].innerHTML= "TBC";
+        $("#AST")[0].innerHTML= "TBC";
+        $("#Errors")[0].innerHTML= "TBC";
+        $("#Warnings")[0].innerHTML= "TBC";
         
-        $("#STTable").innerHTML="<tr><th>Scope</th><th>Type</th><th>ID</th><th>Line</th><th>Declared</th>"
+        $("#STTable")[0].innerHTML="<tr><th>Scope</th><th>Type</th><th>ID</th><th>Line</th><th>Declared</th>"
             +"<th>Initialized</th><th>Used</th></tr>";
 
         $("#taSourceCode").scroll(function(){

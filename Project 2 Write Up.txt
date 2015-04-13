@@ -1,0 +1,62 @@
+Project 2 Write Up
+-------------------
+
+Create	several	test	programs	that	cause	as	many	different	types	of	errors	as	you	can	in	order	to	thoroughly	test	your	code.	(Think	about	code	coverage).	Include	several	test cases that show	it	working	as	well.	Write	up	your	testing	results		(informally)	in	a	document	in	your	Git	repo.
+
+Correct Code:
+
+Test 1
+-------------------
+{
+int i 
+i = 1
+if (i == 1){
+	string i
+	i = "True"
+	print (i)
+}
+print (i)
+}$
+
+Test 2
+-------------------
+{
+	int i
+	i = 0
+	while (i!=10){
+		i = 1 +i
+		print(i)
+	}
+}
+
+Test 3
+--------------------
+{
+	string a
+	string b
+	a = "test"
+	b = ""
+
+	if (b!="test"){
+		b = "test"
+	}
+	if (b=="test"){
+		print (b)
+	}
+}
+
+Wrong Code:
+
+Test 1
+---------------------
+{
+	string a
+	int b
+	a = "1"
+	b = 1
+
+	if (b!==a){
+		b = "test"
+	}
+	print (b)
+}
