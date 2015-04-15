@@ -24,15 +24,16 @@ var TSC;
                     _LexerError = true;
             }
             else if (part === undefined) {
-                this.putMessage("*****(Line: " + line + "), Error: " + ErrorStr[msg] + "*****");
+                this.putMessage("*****(Line: " + line + ") Error: " + ErrorStr[msg] + "*****");
                 document.getElementById("Errors").innerHTML += "<div>(Line: " + line + ") Error: " + ErrorStr[msg] + "</div>";
             }
             else {
-                this.putMessage("*****(Line: " + line + "), Error: " + ErrorStr[msg] + "*****");
+                this.putMessage("*****(Line: " + line + ") Error: " + ErrorStr[msg] + "*****");
                 document.getElementById("Errors").innerHTML += "<div>(Line: " + line + ") ID: " + part + "  Error: " + ErrorStr[msg] + "</div>";
             }
         };
         Messenger.prototype.putWarning = function (line, msg) {
+            debugger;
             if (typeof msg !== "number") {
                 this.putMessage("***(Line: " + line + ") Warning: " + msg + "***");
                 document.getElementById("Warnings").innerHTML += "<div>(Line: " + line + ") Warning: " + msg + "</div>";

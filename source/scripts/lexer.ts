@@ -142,7 +142,7 @@ module TSC
   	                }
   	                _Token.getAndAddToken('$', currentLine); //add EOF token for the user
   	                //should eof be inserted in sourcecode or just as a token?
-  	                _Messenger.putWarning(currentLine, this.part, "EOF character not found. Inserting.");
+  	                _Messenger.putWarning(currentLine, "EOF character not found. Inserting.");
   	            }
 
   	            //if this character is in a string and hasn't yet been handled and is an alpha char

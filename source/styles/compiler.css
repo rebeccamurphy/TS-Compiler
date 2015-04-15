@@ -90,3 +90,6 @@ th{
 td{
 	padding:10px!important;
 }
+.tab-pane{
+	min-height: 500px;
+}

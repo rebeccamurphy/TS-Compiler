@@ -106,9 +106,9 @@ var TSC;
                             }
                             else if (this.children[i].children[2].children[0].type === "INTEXPR") {
                                 debugger;
-                                if (this.children[i].children[2].children[0].children[1].type === "ADD") {
+                                if (this.children[i].children[2].children[0].children[1] !== undefined) {
                                     //addition in assignment
-                                    temp2 = new TreeNode("ADD", null, "+");
+                                    var temp2 = new TreeNode("ADD", null, "+");
                                     temp2.addChildNode(this.children[i].children[2].children[0].children[0]);
                                     temp2.addChildNode(this.children[i].children[2].children[0].children[2].children[0].children[0]);
                                     temp.addChildNode(temp2);

@@ -203,24 +203,63 @@ module TSC
 			var idChild = currNode.getChildren()[0];
 			//TODO add check for addition in assignment
 			if (_Verbose)
-				_Messenger.putMessage("Checking assignment at Line: " +currNode.line);
+				_Messenger.putMessage("Checking assignment at Line: " +idChild.line);
 
-			if (idChild.type ==="ID" && valueChild.type==="ID")//two ids
+			if (valueChild.value ==="+"){
+				return this.incASSIGN(currNode, symbolTable);
+			}
+			else if (idChild.type ==="ID" && valueChild.type==="ID")//two ids
 				return this.twoIDASSIGN(idChild, valueChild, currNode, symbolTable);
-			else if()
+			else
 				return this.idValASSIGN(idChild, valueChild, currNode, symbolTable);
 			
 		}
+		private incASSIGN(currNode, symbolTable){
+			var varAssigned = currNode.getChildren()[0];
+			var temp = this.findVarType(varAssigned, symbolTable, true);
+			var varAssignedType = temp[0];
+			symbolTable = temp[1];
+			var left = currNode.getChildren()[1].getChildren()[0];
+			var right = currNode.getChildren()[1].getChildren()[1];
+			if (right.type ==="ID"){
+				//EX 1+ i
+				var temp2 = this.findVarType(right, symbolTable, right);
+				right = temp[0];
+				symbolTable = temp[1];
+			}
+			varAssignedType= (varAssignedType==="INT")? "DIGIT": varAssignedType;
+			if ((varAssignedType == left.type)&&(varAssignedType ==right.type)){
+				//EX 1+1
+				if (_Verbose)
+					_Messenger.putMessage("(Line:"+ varAssigned.line+") All types in assignment match.");	
+			}
+			else {
+				if (_Verbose)
+					_Messenger.putMessage("(Line:"+ varAssigned.line+") Type of variable: " + varAssignedType
+						+" Does not match: " + left.type +" and "+ right.type);
+				_Messenger.putError(varAssigned.line, ErrorType.TypeMismatchAssign);
+			}
+			return symbolTable;
+		}
 		private idValASSIGN(idChild, valueChild,currNode, symbolTable){
-			var varinScope = this.findVarType(idChild)
-			if ((varInScope.type ==="INT" && valueChild.type ==="DIGIT")||
-					(varInScope.type==="STR" && valueChild.type==="STRING")||
-					(varInScope.type==="BOOL" && valueChild.type==="BOOL")
+			debugger;
+			var temp = this.findVarType(idChild, symbolTable, true);
+			var varInScopeType = temp[0];
+			symbolTable = temp[1];
+			if ((varInScopeType==="INT" && valueChild.type ==="DIGIT")||
+					(varInScopeType==="STR" && valueChild.type==="STRING")||
+					(varInScopeType==="BOOL" && valueChild.type==="BOOL")
 					){
 					//match!
 					if (_Verbose)
 						_Messenger.putMessage("(" + idChild.value+ ", Line: " +idChild.line+
 					") Type Declaration matches assignment value.");
+			}
+
+			else {
+				_Messenger.putError(idChild.line, ErrorType.TypeMismatchAssign);
+			}
+			return symbolTable;
 		}
 		private twoIDASSIGN(idChild, valueChild,currNode, symbolTable){
 			var tempL =this.findVarType(idChild, symbolTable, true);
@@ -242,69 +281,20 @@ module TSC
 			else {
 				_Messenger.putError(idChild.line, ErrorType.TypeMismatchAssign);
 			}
-
+			return symbolTable;
 		}
 		private analyzePRINT(currNode, symbolTable){
 			debugger;
 			var idChild = currNode.getChildren()[0];
-			var varInScope = symbolTable.findValueInScope(idChild.value);
-			var varInParentScope = symbolTable.findValueInParentScope(idChild.value);
 			if (_Verbose)
 				_Messenger.putMessage("Checking (" +idChild.value+ ", Line: " +idChild.line+
 					") print statement");
-			if (varInScope!==null){
-				//so the variable has been declared...
-				//but does the type match?
-				if (_Verbose)
-					_Messenger.putMessage("ID has been declared in current scope.");
-				if (varInScope.initialized){
-					//var has value to print
-					if (_Verbose)
-						_Messenger.putMessage("ID has been initialized in current scope.");								
-					varInScope.setUsed();
-					symbolTable.replace(varInScope);
-				}
-				else{
-					//var has been declared in this scope but not initilized
-					if (_Verbose)
-						_Messenger.putWarning(idChild.line, "ID has not been initialized in current scope.");								
-					varInScope.setUsed();
-					symbolTable.replace(varInScope);	
-				}
-				
-			}
-			else if(varInParentScope!==null){
-				//so the variable has been declared in the parent scope...
-				//but does the type match?
-				if(_Verbose){
-					_Messenger.putMessage("ID has not been declared in current scope. Checking parent...");
-					_Messenger.putMessage("ID has been declared in parent scope.");
-				}
-				if (varInParentScope.initialized){
-					//var has value to print
-					if (_Verbose)
-						_Messenger.putMessage("ID has been initialized in parent scope.");								
-					varInParentScope.setUsed();
-					symbolTable.replace(varInParentScope);
-				}
-				else{
-					//var has been declared in this scope but not initilized
-					if (_Verbose)
-						_Messenger.putWarning(idChild.line, "ID has not been initialized in parent scope.");								
-					varInParentScope.setUsed();
-					symbolTable.replace(varInParentScope);	
-				}
-			}	
-			else{
-				//TODO
-				//ERROR
-				//undeclared identifier
-				_Messenger.putError(idChild.line, ErrorType.Undeclared);
-			}
+			symbolTable = this.findVarType(idChild,symbolTable)[1];
 			return symbolTable;
 		}
 
-		private findVarType(idChild, symbolTable, assign?){
+		private findVarType(idChild, symbolTable:SymbolTable, assign?){
+			debugger;
 			var type="";
 			var varInScope = symbolTable.findValueInScope(idChild.value);
 			var varInParentScope = symbolTable.findValueInParentScope(idChild.value);
@@ -312,7 +302,7 @@ module TSC
 			if (varInScope !== null){
 				type = varInScope.type;
 				if (_Verbose)
-					_Messenger.putMessage("Found" +varInScope.ID+" ID in current scope.");
+					_Messenger.putMessage("Found " +varInScope.ID+" ID in current scope.");
 
 				if (varInScope.initialized)
 					_Messenger.putWarning(idChild.line,varInScope.ID+" has not been initialized, but used in comparison.");
@@ -329,7 +319,7 @@ module TSC
 				if (!varInParentScope.initialized)
 					_Messenger.putWarning(idChild.line,varInParentScope.ID+" has not been initialized, but used in comparison.");
 				if (assign)
-					varInScope.setInitialized();
+					varInParentScope.setInitialized();
 				else
 					varInParentScope.setUsed();
 				symbolTable.replace(varInParentScope);

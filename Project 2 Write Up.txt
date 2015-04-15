@@ -66,10 +66,10 @@ different type comparison test
 {
 	string a
 	int b
-	a = "1"
+	a = "one"
 	b = 1
 
-	if (b!==a){
+	if (b!=a){
 		b = "test"
 	}
 	print (b)
