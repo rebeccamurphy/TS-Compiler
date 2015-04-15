@@ -22,7 +22,6 @@ var TSC;
             }
         };
         Lexer.tokenize = function (sourceCode) {
-            debugger;
             var currentLine = 1;
             var inString = false;
             var tokenized = false;
@@ -33,7 +32,7 @@ var TSC;
                 currChar = sourceCode[i];
                 //check if code had eof char before end 
                 if (currChar.match(/\$/) && i < sourceCode.length - 1) {
-                    _Messenger.putWarning(currentLine, this.part, "Code found after EOF character ($). Ignoring rest of code.");
+                    _Messenger.putWarning(currentLine, "Code found after EOF character ($). Ignoring rest of code.");
                     return; //return skips rest of code
                 }
                 //check if newline

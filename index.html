@@ -88,14 +88,14 @@
         _Parser.rootNode.printCST(0, "CST");
         _Messenger.putHeaderMessage("Creating AST...");
         _Parser.rootNode.makeAST(-1);
+        $("#Errors")[0].innerHTML= "";
+        $("#Warnings")[0].innerHTML= "";
+        //_SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot, "STTable");
+        //_SemanticAnalysis.SemanticAnalysis(_SemanticAnalysis.rootNode);
+        //_Messenger.putHeaderMessage("Completed Semantic Analysis.");
         $("#AST")[0].innerHTML= "";
         _Messenger.putHeaderMessage("Printing AST...");
         _ASTRoot.printAST(0, "AST");    
-        $("#Errors")[0].innerHTML= "";
-        $("#Warnings")[0].innerHTML= "";
-        _SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot, "STTable");
-        _SemanticAnalysis.SemanticAnalysis(_SemanticAnalysis.rootNode);
-        _Messenger.putHeaderMessage("Completed Semantic Analysis.");
         _Messenger.putHeaderMessage("Printing Symbol Table.");
         _SymbolTableRoot.print();
     }

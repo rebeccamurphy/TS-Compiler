@@ -45,10 +45,24 @@ Test 3
 	}
 }
 
+Test4
+------------------
+should only issue warnings
+{
+
+	string a
+	a = "test"
+	{
+		string a
+		print(a)
+	}
+}
+
 Wrong Code:
 
 Test 1
 ---------------------
+different type comparison test
 {
 	string a
 	int b
@@ -59,4 +73,16 @@ Test 1
 		b = "test"
 	}
 	print (b)
+}
+
+Test2
+------------------
+{
+
+	string a
+	a = "test"
+	{
+		string a
+		print(a)
+	}
 }

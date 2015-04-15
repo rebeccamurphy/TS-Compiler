@@ -88,6 +88,7 @@ var TSC;
                 depth = 0;
             }
             for (var i = 0; i < this.children.length; i++) {
+                //debugger;
                 if (this.type !== "PROGRAM") {
                     switch (this.children[i].type) {
                         case 'BLOCK':
@@ -100,10 +101,24 @@ var TSC;
                             var temp = new TreeNode('ASSIGN', null, '', this.children[i].line);
                             temp.addChildNode(this.children[i].children[0]);
                             //if this works i can't defend myself
-                            if (this.children[i].children[2].children[0].type === "INTEXPR" ||
-                                this.children[i].children[2].children[0].type === "BOOLEANEXPR")
+                            if (this.children[i].children[2].children[0].type === "BOOLEANEXPR") {
                                 temp.addChildNode(this.children[i].children[2].children[0].children[0]);
+                            }
+                            else if (this.children[i].children[2].children[0].type === "INTEXPR") {
+                                debugger;
+                                if (this.children[i].children[2].children[0].children[1].type === "ADD") {
+                                    //addition in assignment
+                                    temp2 = new TreeNode("ADD", null, "+");
+                                    temp2.addChildNode(this.children[i].children[2].children[0].children[0]);
+                                    temp2.addChildNode(this.children[i].children[2].children[0].children[2].children[0].children[0]);
+                                    temp.addChildNode(temp2);
+                                }
+                                else {
+                                    temp.addChildNode(this.children[i].children[2].children[0].children[0]);
+                                }
+                            }
                             else {
+                                //debugger;
                                 var charString = "";
                                 charString = TSC.Utils.charsToString(this.children[i].children[2].children[0].children[1]);
                                 temp.addChildNode(new TreeNode("STRING", null, charString, this.children[i].line));
@@ -112,19 +127,21 @@ var TSC;
                             break;
                         case 'WHILESTATEMENT':
                             var temp = new TreeNode('WHILE', null, '', this.children[i].line);
-                            var comp = new TreeNode('COMP', null, '', this.children[i].line);
+                            var comp = new TreeNode('COMP', null, this.children[i].children[1].children[2].getValue(), this.children[i].line);
+                            //WhileSTATEMENT     /boolexp    //expr      //id                    
                             comp.addChildNode(this.children[i].children[1].children[1].children[0]);
-                            comp.addChildNode(this.children[i].children[1].children[3].children[0].children[0]);
+                            comp.addChildNode(this.children[i].children[1].children[3].children[0]);
                             temp.addChildNode(comp);
                             currnode.addChildNode(temp);
                             //block
                             this.children[i].makeAST(depth + 1, currnode);
                             break;
-                        case 'IFSTATMENT':
+                        case 'IFSTATEMENT':
                             var temp = new TreeNode('IF', null, '', this.children[i].line);
-                            var comp = new TreeNode('COMP', null, '', this.children[i].line);
+                            var comp = new TreeNode('COMP', null, this.children[i].children[1].children[2].getValue(), this.children[i].line);
+                            //IFSTATEMENT     /boolexp    //expr      //id                    
                             comp.addChildNode(this.children[i].children[1].children[1].children[0]);
-                            comp.addChildNode(this.children[i].children[1].children[3].children[0].children[0]);
+                            comp.addChildNode(this.children[i].children[1].children[3].children[0]);
                             temp.addChildNode(comp);
                             currnode.addChildNode(temp);
                             //block

@@ -46,9 +46,9 @@ var TSC;
             if (str === undefined) {
                 str = '';
             }
-            while (node.getChildren().length !== 0) {
+            while (node !== undefined) {
                 str += node.getChildren()[0].getValue();
-                node = node.getChildren()[0];
+                node = node.getChildren()[1];
             }
             return str;
         };
