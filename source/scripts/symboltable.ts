@@ -17,7 +17,7 @@ module TSC
 		public nodeHTML(){
 			var str = "";
 			for (var i=0; i<this.nodes.length; i++){
-				str+="<tr><td><b>" + this.scope +"</b></td>"+this.nodes[i].toHTML() +"</tr>";
+				str+="<tr><td><b>" + this.scope +"</b></td>" +"<td>"+this.parent.scope +"</td>" +this.nodes[i].toHTML() +"</tr>";
 				//symbol table analysis warnings
 				if(this.nodes[i].declared && this.nodes[i].initialized &&!this.nodes[i].used)
 					_Messenger.putWarning(this.nodes[i].line, WarningType.UnusedDI)
