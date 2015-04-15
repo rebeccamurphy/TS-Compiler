@@ -23,7 +23,7 @@ module TSC
 					_Messenger.putWarning(this.nodes[i].line, WarningType.UnusedDI)
 				else if (this.nodes[i].declared && !this.nodes[i].initialized)
 					_Messenger.putWarning(this.nodes[i].line, WarningType.Unused)
-				if (!this.nodes[i].initialized)
+				else if (!this.nodes[i].initialized)
 					_Messenger.putWarning(this.nodes[i].line, WarningType.Uninit)
 			}
 			document.getElementById(_SemanticAnalysis.ID).innerHTML = document.getElementById(_SemanticAnalysis.ID).innerHTML + str;

@@ -22,11 +22,11 @@ var TSC;
                 str += "<tr><td><b>" + this.scope + "</b></td>" + this.nodes[i].toHTML() + "</tr>";
                 //symbol table analysis warnings
                 if (this.nodes[i].declared && this.nodes[i].initialized && !this.nodes[i].used)
-                    _Messenger.putWarning(this.nodes[i].line, WarningType.UnusedDI);
+                    _Messenger.putWarning(this.nodes[i].line, 0 /* UnusedDI */);
                 else if (this.nodes[i].declared && !this.nodes[i].initialized)
-                    _Messenger.putWarning(this.nodes[i].line, WarningType.Unused);
-                if (!this.nodes[i].initialized)
-                    _Messenger.putWarning(this.nodes[i].line, WarningType.Uninit);
+                    _Messenger.putWarning(this.nodes[i].line, 1 /* Unused */);
+                else if (!this.nodes[i].initialized)
+                    _Messenger.putWarning(this.nodes[i].line, 2 /* Uninit */);
             }
             document.getElementById(_SemanticAnalysis.ID).innerHTML = document.getElementById(_SemanticAnalysis.ID).innerHTML + str;
         };
@@ -55,7 +55,6 @@ var TSC;
             return this.parent;
         };
         SymbolTable.prototype.findValueInScope = function (id) {
-            //find closest to recently declared
             for (var i = this.nodes.length - 1; i >= 0; i--) {
                 if (id === this.nodes[i].ID) {
                     return this.nodes[i];
@@ -67,7 +66,6 @@ var TSC;
             debugger;
             if (this === null || this.parent === null)
                 return null;
-            //find closest to recently declared
             for (var i = this.parent.nodes.length - 1; i >= 0; i--) {
                 if (id === this.parent.nodes[i].ID) {
                     return this.parent.nodes[i];

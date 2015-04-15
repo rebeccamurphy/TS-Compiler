@@ -101,7 +101,18 @@ module TSC
                         temp.addChildNode(this.children[i].children[0]);
                         //if this works i can't defend myself
                         if (this.children[i].children[2].children[0].type==="BOOLEANEXPR"){
-                            temp.addChildNode(this.children[i].children[2].children[0].children[0]);
+                        	//check for boolean expr statement
+                        	debugger;
+                        	if (this.children[i].children[2].children[0].children[0].value === "("){
+                        		var temp2 = new TreeNode("COMP", null, this.children[i].children[2].children[0].children[2].value);
+                        		//left part of statement
+                        		temp2.addChildNode(this.children[i].children[2].children[0].children[1].children[0]);
+                        		//right part of statement
+                        		temp2.addChildNode( this.children[i].children[2].children[0].children[3].children[0].children[0]);
+                        		temp.addChildNode(temp2);
+                        	}
+                        	else
+                            	temp.addChildNode(this.children[i].children[2].children[0].children[0]);
                             
                         }
                         else if (this.children[i].children[2].children[0].type==="INTEXPR"){
