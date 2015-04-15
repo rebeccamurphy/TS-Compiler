@@ -217,7 +217,7 @@ module TSC
 			
 		}
 		private booleanCompASSIGN(currNode, symbolTable){
-			var temp = this.findVarType(currNode.getChildren()[0], symbolTable);
+			var temp = this.findVarType(currNode.getChildren()[0], symbolTable, true);
 			var idChildType = temp[0];
 			var symbolTable = temp[1];
 			temp = this.findVarType(currNode.getChildren()[1].getChildren()[0], symbolTable);
@@ -341,7 +341,7 @@ module TSC
 				if (_Verbose)
 					_Messenger.putMessage("Found " +varInScope.ID+" ID in current scope.");
 
-				if (!varInScope.initialized)
+				if (!varInScope.initialized && !assign)
 					_Messenger.putWarning(idChild.line,varInScope.ID+" has not been initialized, but used in comparison.");
 				if (assign)
 					varInScope.setInitialized();
@@ -353,7 +353,7 @@ module TSC
 				type = varInParentScope.type;
 				if (_Verbose)
 					_Messenger.putMessage("Found "+ varInParentScope.ID +" ID in parent scope.");
-				if (!varInParentScope.initialized)
+				if (!varInParentScope.initialized &&!assign)
 					_Messenger.putWarning(idChild.line,varInParentScope.ID+" has not been initialized, but used in comparison.");
 				if (assign)
 					varInParentScope.setInitialized();

@@ -86,3 +86,11 @@ Test2
 		print(a)
 	}
 }
+
+Test
+-------------------
+{
+boolean b
+b = true
+b = ( a == false)
+}

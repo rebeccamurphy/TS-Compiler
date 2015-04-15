@@ -25,7 +25,7 @@ var TSC;
                     _Messenger.putWarning(this.nodes[i].line, 0 /* UnusedDI */);
                 else if (this.nodes[i].declared && !this.nodes[i].initialized)
                     _Messenger.putWarning(this.nodes[i].line, 1 /* Unused */);
-                if (!this.nodes[i].initialized)
+                else if (!this.nodes[i].initialized)
                     _Messenger.putWarning(this.nodes[i].line, 2 /* Uninit */);
             }
             document.getElementById(_SemanticAnalysis.ID).innerHTML = document.getElementById(_SemanticAnalysis.ID).innerHTML + str;
