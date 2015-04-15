@@ -68,6 +68,8 @@ h1{
 	resize: none;
 	font-family: monospace;
 	display: inline-block;
+	text-align: right;
+	
 }
 #linenum{
 	display:inline;
