@@ -33,11 +33,11 @@ var TSC;
         };
         //Program ::== Block 
         Parser.prototype.parseProgram = function (node) {
-            this.rootNode = new TSC.TreeNode(TokenTypeString[TokenType.PROGRAM], null);
+            this.rootNode = new TSC.TreeNode(TokenTypeString[26 /* PROGRAM */], null);
             node = this.rootNode;
             this.parseBlock(node);
-            node.addChild(TokenType.EOF);
-            this.checkToken(TokenType.EOF);
+            node.addChild(18 /* EOF */);
+            this.checkToken(18 /* EOF */);
             _Messenger.putSuccess(this.part);
         };
         //Block ::== {StatementList}
@@ -46,23 +46,16 @@ var TSC;
             node.addChild("BLOCK");
             //set current node to be the new block node
             node = node.getNewestChild();
-            this.checkToken(TokenType.LCURLY); //expect block to start with {
-            node.addChild(TokenType.LCURLY);
+            this.checkToken(0 /* LCURLY */); //expect block to start with {
+            node.addChild(0 /* LCURLY */);
             this.parseStatementList(node);
-            this.checkToken(TokenType.RCURLY); //expect block to end with }
-            node.addChild(TokenType.RCURLY);
+            this.checkToken(1 /* RCURLY */); //expect block to end with }
+            node.addChild(1 /* RCURLY */);
         };
         //StatementList ::== Statement StatementList
         //				::== epsilon
         Parser.prototype.parseStatementList = function (node) {
-            if (_CurrentToken.type === TokenType.PRINT ||
-                _CurrentToken.type === TokenType.ID ||
-                _CurrentToken.type === TokenType.WHILE ||
-                _CurrentToken.type === TokenType.IF ||
-                _CurrentToken.type === TokenType.LCURLY ||
-                _CurrentToken.type === TokenType.INT ||
-                _CurrentToken.type === TokenType.STR ||
-                _CurrentToken.type === TokenType.BOOL) {
+            if (_CurrentToken.type === 2 /* PRINT */ || _CurrentToken.type === 21 /* ID */ || _CurrentToken.type === 6 /* WHILE */ || _CurrentToken.type === 7 /* IF */ || _CurrentToken.type === 0 /* LCURLY */ || _CurrentToken.type === 8 /* INT */ || _CurrentToken.type === 9 /* STR */ || _CurrentToken.type === 10 /* BOOL */) {
                 node.addChild("STATEMENTLIST");
                 node = node.getNewestChild();
                 this.parseStatement(node);
@@ -81,21 +74,21 @@ var TSC;
             node.addChild("STATEMENT");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
-                case TokenType.PRINT:
+                case 2 /* PRINT */:
                     this.parsePrintStatement(node);
                     break;
-                case TokenType.ID:
+                case 21 /* ID */:
                     this.parseAssignmentStatement(node);
                     break;
-                case TokenType.STR:
-                case TokenType.INT:
-                case TokenType.BOOL:
+                case 9 /* STR */:
+                case 8 /* INT */:
+                case 10 /* BOOL */:
                     this.parseVarDecl(node);
                     break;
-                case TokenType.WHILE:
+                case 6 /* WHILE */:
                     this.parseWhileStatement(node);
                     break;
-                case TokenType.IF:
+                case 7 /* IF */:
                     this.parseIfStatement(node);
                     break;
                 default:
@@ -106,21 +99,21 @@ var TSC;
         Parser.prototype.parsePrintStatement = function (node) {
             node.addChild("PRINTSTATEMENT");
             node = node.getNewestChild();
-            this.checkToken(TokenType.PRINT);
-            node.addChild(TokenType.PRINT);
-            this.checkToken(TokenType.LPAREN);
-            node.addChild(TokenType.LPAREN);
+            this.checkToken(2 /* PRINT */);
+            node.addChild(2 /* PRINT */);
+            this.checkToken(3 /* LPAREN */);
+            node.addChild(3 /* LPAREN */);
             this.parseExpr(node);
-            this.checkToken(TokenType.RPAREN);
-            node.addChild(TokenType.RPAREN);
+            this.checkToken(4 /* RPAREN */);
+            node.addChild(4 /* RPAREN */);
         };
         //AssignmentStatement ::== Id = Expr
         Parser.prototype.parseAssignmentStatement = function (node) {
             node.addChild("ASSIGNMENTSTATEMENT");
             node = node.getNewestChild();
             this.parseID(node);
-            this.checkToken(TokenType.EQUALSIGN);
-            node.addChild(TokenType.EQUALSIGN);
+            this.checkToken(5 /* EQUALSIGN */);
+            node.addChild(5 /* EQUALSIGN */);
             this.parseExpr(node);
         };
         //VarDecl  ::== type Id
@@ -128,32 +121,32 @@ var TSC;
             node.addChild("VARDECL");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
-                case TokenType.STR:
-                    this.checkToken(TokenType.STR);
-                    node.addChild(TokenType.STR);
+                case 9 /* STR */:
+                    this.checkToken(9 /* STR */);
+                    node.addChild(9 /* STR */);
                     this.parseID(node);
                     break;
-                case TokenType.INT:
-                    this.checkToken(TokenType.INT);
-                    node.addChild(TokenType.INT);
+                case 8 /* INT */:
+                    this.checkToken(8 /* INT */);
+                    node.addChild(8 /* INT */);
                     this.parseID(node);
                     break;
-                case TokenType.BOOL:
-                    node.addChild(TokenType.BOOL, _CurrentToken.value);
-                    this.checkToken(TokenType.BOOL);
+                case 10 /* BOOL */:
+                    node.addChild(10 /* BOOL */, _CurrentToken.value);
+                    this.checkToken(10 /* BOOL */);
                     this.parseID(node);
                     break;
                 default:
                     //when we hit this it means we were expecting a type and failed
-                    this.checkToken(TokenType.TYPE);
+                    this.checkToken(23 /* TYPE */);
             }
         };
         //WhileStatement ::== while BooleanExpr Block
         Parser.prototype.parseWhileStatement = function (node) {
             node.addChild("WHILESTATEMENT");
             node = node.getNewestChild();
-            this.checkToken(TokenType.WHILE);
-            node.addChild(TokenType.WHILE);
+            this.checkToken(6 /* WHILE */);
+            node.addChild(6 /* WHILE */);
             this.parseBooleanExpr(node);
             this.parseBlock(node);
         };
@@ -161,8 +154,8 @@ var TSC;
         Parser.prototype.parseIfStatement = function (node) {
             node.addChild("IFSTATEMENT");
             node = node.getNewestChild();
-            this.checkToken(TokenType.IF);
-            node.addChild(TokenType.IF);
+            this.checkToken(7 /* IF */);
+            node.addChild(7 /* IF */);
             this.parseBooleanExpr(node);
             this.parseBlock(node);
         };
@@ -174,17 +167,17 @@ var TSC;
             node.addChild("EXPR");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
-                case TokenType.DIGIT:
+                case 22 /* DIGIT */:
                     this.parseIntExpr(node);
                     break;
-                case TokenType.QUOTE:
+                case 19 /* QUOTE */:
                     this.parseStringExpr(node);
                     break;
-                case TokenType.LPAREN:
-                case TokenType.BOOL:
+                case 3 /* LPAREN */:
+                case 10 /* BOOL */:
                     this.parseBooleanExpr(node);
                     break;
-                case TokenType.ID:
+                case 21 /* ID */:
                     this.parseID(node);
             }
         };
@@ -193,26 +186,26 @@ var TSC;
         Parser.prototype.parseBooleanExpr = function (node) {
             node.addChild("BOOLEANEXPR");
             node = node.getNewestChild();
-            if (_CurrentToken.type === TokenType.BOOL) {
+            if (_CurrentToken.type === 10 /* BOOL */) {
                 //TODO change tokens to bool type with value of true false
-                node.addChild(TokenType.BOOL, _CurrentToken.value);
-                this.checkToken(TokenType.BOOL);
+                node.addChild(10 /* BOOL */, _CurrentToken.value);
+                this.checkToken(10 /* BOOL */);
             }
             else {
-                this.checkToken(TokenType.LPAREN);
-                node.addChild(TokenType.LPAREN);
+                this.checkToken(3 /* LPAREN */);
+                node.addChild(3 /* LPAREN */);
                 this.parseExpr(node);
-                if (_CurrentToken.type === TokenType.BOOLOP) {
-                    node.addChild(TokenType.BOOLOP, _CurrentToken.value);
-                    this.checkToken(TokenType.BOOLOP);
+                if (_CurrentToken.type === 24 /* BOOLOP */) {
+                    node.addChild(24 /* BOOLOP */, _CurrentToken.value);
+                    this.checkToken(24 /* BOOLOP */);
                     this.parseExpr(node);
-                    this.checkToken(TokenType.RPAREN);
-                    node.addChild(TokenType.RPAREN);
+                    this.checkToken(4 /* RPAREN */);
+                    node.addChild(4 /* RPAREN */);
                 }
                 else {
                     //when this is hit it means a boolean operator was expected but not found
-                    this.checkToken(TokenType.BOOLOP);
-                    node.addChild(TokenTypeString[TokenType.BOOLOP]);
+                    this.checkToken(24 /* BOOLOP */);
+                    node.addChild(TokenTypeString[24 /* BOOLOP */]);
                 }
             }
         };
@@ -221,34 +214,34 @@ var TSC;
         Parser.prototype.parseIntExpr = function (node) {
             node.addChild("INTEXPR");
             node = node.getNewestChild();
-            if (_CurrentToken.type === TokenType.DIGIT) {
-                node.addChild(TokenType.DIGIT, _CurrentToken.value);
-                this.checkToken(TokenType.DIGIT);
-                if (_CurrentToken.type === TokenType.ADD) {
-                    this.checkToken(TokenType.ADD);
-                    node.addChild(TokenType.ADD);
+            if (_CurrentToken.type === 22 /* DIGIT */) {
+                node.addChild(22 /* DIGIT */, _CurrentToken.value);
+                this.checkToken(22 /* DIGIT */);
+                if (_CurrentToken.type === 17 /* ADD */) {
+                    this.checkToken(17 /* ADD */);
+                    node.addChild(17 /* ADD */);
                     this.parseExpr(node);
                 }
             }
             else {
-                this.checkToken(TokenType.DIGIT);
+                this.checkToken(22 /* DIGIT */);
             }
         };
         //StringExpr ::== " CharList "    	
         Parser.prototype.parseStringExpr = function (node) {
             node.addChild("STRINGEXPR");
             node = node.getNewestChild();
-            this.checkToken(TokenType.QUOTE);
-            node.addChild(TokenType.QUOTE);
+            this.checkToken(19 /* QUOTE */);
+            node.addChild(19 /* QUOTE */);
             this.parseCharList(node);
-            this.checkToken(TokenType.QUOTE);
-            node.addChild(TokenType.QUOTE);
+            this.checkToken(19 /* QUOTE */);
+            node.addChild(19 /* QUOTE */);
         };
         //Id ::== char
         Parser.prototype.parseID = function (node) {
-            node.addChild(TokenType.ID, _CurrentToken.value);
+            node.addChild(21 /* ID */, _CurrentToken.value);
             node = node.getNewestChild();
-            this.checkToken(TokenType.ID);
+            this.checkToken(21 /* ID */);
         };
         //CharList	::== char CharList
         //			::== space CharList
@@ -257,38 +250,34 @@ var TSC;
             node.addChild("CHARLIST");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
-                case TokenType.CHAR:
-                    node.addChild(TokenType.CHAR, _CurrentToken.value);
-                    this.checkToken(TokenType.CHAR);
+                case 11 /* CHAR */:
+                    node.addChild(11 /* CHAR */, _CurrentToken.value);
+                    this.checkToken(11 /* CHAR */);
                     break;
-                case TokenType.SPACE:
-                    node.addChild(TokenType.SPACE, _CurrentToken.value);
-                    this.checkToken(TokenType.SPACE);
+                case 14 /* SPACE */:
+                    node.addChild(14 /* SPACE */, _CurrentToken.value);
+                    this.checkToken(14 /* SPACE */);
                     break;
                 default:
             }
-            if (_CurrentToken.type === TokenType.CHAR || _CurrentToken === TokenType.SPACE)
+            if (_CurrentToken.type === 11 /* CHAR */ || _CurrentToken === 14 /* SPACE */)
                 this.parseCharList(node);
         };
         Parser.prototype.checkToken = function (tokenType) {
             if (_CurrentToken.type == tokenType) {
                 if (_Verbose) {
                     switch (tokenType) {
-                        case TokenType.CHAR:
-                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] +
-                                " a single character in range: a-z.", _CurrentToken.value);
+                        case 11 /* CHAR */:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[21 /* ID */] + " a single character in range: a-z.", _CurrentToken.value);
                             break;
-                        case TokenType.ID:
-                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.ID] +
-                                " a single character in range: a-z.", _CurrentToken.value);
+                        case 21 /* ID */:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[21 /* ID */] + " a single character in range: a-z.", _CurrentToken.value);
                             break;
-                        case TokenType.TYPE:
-                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", " +
-                                TokenTypeChar[TokenType.STR] + ", or " + TokenTypeChar[TokenType.BOOL], _CurrentToken.value);
+                        case 23 /* TYPE */:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[8 /* INT */] + ", " + TokenTypeChar[9 /* STR */] + ", or " + TokenTypeChar[10 /* BOOL */], _CurrentToken.value);
                             break;
-                        case TokenType.BOOLOP:
-                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] + ", or "
-                                + TokenTypeChar[TokenType.NOTEQUALS], _CurrentToken.value);
+                        case 24 /* BOOLOP */:
+                            _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[12 /* EQUALS */] + ", or " + TokenTypeChar[13 /* NOTEQUALS */], _CurrentToken.value);
                             break;
                         default:
                             _Messenger.putExpectingCorrect(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);
@@ -297,13 +286,11 @@ var TSC;
             }
             else {
                 switch (tokenType) {
-                    case TokenType.TYPE:
-                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.INT] + ", " +
-                            TokenTypeChar[TokenType.STR] + ", or " + TokenTypeChar[TokenType.BOOL], _CurrentToken.value);
+                    case 23 /* TYPE */:
+                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[8 /* INT */] + ", " + TokenTypeChar[9 /* STR */] + ", or " + TokenTypeChar[10 /* BOOL */], _CurrentToken.value);
                         break;
-                    case TokenType.BOOLOP:
-                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[TokenType.EQUALS] + ", or "
-                            + TokenTypeChar[TokenType.NOTEQUALS], _CurrentToken.value);
+                    case 24 /* BOOLOP */:
+                        _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[12 /* EQUALS */] + ", or " + TokenTypeChar[13 /* NOTEQUALS */], _CurrentToken.value);
                         break;
                     default:
                         _Messenger.putExpectingWrong(_CurrentToken.line, this.part, TokenTypeChar[tokenType], _CurrentToken.value);

@@ -94,12 +94,11 @@
         _Messenger.putHeaderMessage("Creating AST...");
         _Parser.rootNode.makeAST(-1);
         _Messenger.putHeaderMessage("Printing AST...");
-        _ASTRoot.printAST(0, "AST");    
-        _Messenger.putHeaderMessage("Printing Symbol Table.");
+        _ASTRoot.printAST(0, "AST");
         _SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot, "STTable");
         _SemanticAnalysis.SemanticAnalysis(_SemanticAnalysis.rootNode);
         _Messenger.putHeaderMessage("Completed Semantic Analysis.");
-        
+        _Messenger.putHeaderMessage("Printing Symbol Table...");
         _SymbolTableRoot.print();
     }
 
@@ -132,7 +131,6 @@
                     <th>Initialized</th>
                     <th>Used</th>
                 </tr>
-                TBC
             </table>
         </div>
         <div role="tabpanel" class="tab-pane" id="Errors">TBC</div>

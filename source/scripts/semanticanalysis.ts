@@ -205,14 +205,48 @@ module TSC
 			if (_Verbose)
 				_Messenger.putMessage("Checking assignment at Line: " +idChild.line);
 
-			if (valueChild.value ==="+"){
+			if (valueChild.value ==="+"){ //increment assign
 				return this.incASSIGN(currNode, symbolTable);
 			}
+			else if (valueChild.type ==="COMP") //boolean comparison in assignment
+				return this.booleanCompASSIGN(currNode, symbolTable);
 			else if (idChild.type ==="ID" && valueChild.type==="ID")//two ids
 				return this.twoIDASSIGN(idChild, valueChild, currNode, symbolTable);
 			else
 				return this.idValASSIGN(idChild, valueChild, currNode, symbolTable);
 			
+		}
+		private booleanCompASSIGN(currNode, symbolTable){
+			var temp = this.findVarType(currNode.getChildren()[0], symbolTable);
+			var idChildType = temp[0];
+			var symbolTable = temp[1];
+			temp = this.findVarType(currNode.getChildren()[1].getChildren()[0], symbolTable);
+			var left = temp[0];
+			symbolTable = temp[1];
+			temp = this.findVarType(currNode.getChildren()[1].getChildren()[1], symbolTable);
+			var right = temp[0];
+			symbolTable = temp[1];
+			if (left!==right){
+				//put error cannot compare  mismatched type
+				//cannot assign mismatched types
+				_Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchComp);
+				_Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
+			}
+			else if (idChildType ===left &&idChildType===right){
+				//assignment matches
+				if(_Verbose)
+					_Messenger.putMessage("Assignment Types Match.");
+			}
+			else{
+				//assignment types dont match
+				_Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
+			}
+			//b ==b
+			//b==1
+			//1==b
+			//1 ==1
+
+
 		}
 		private incASSIGN(currNode, symbolTable){
 			var varAssigned = currNode.getChildren()[0];
@@ -295,6 +329,9 @@ module TSC
 
 		private findVarType(idChild, symbolTable:SymbolTable, assign?){
 			debugger;
+			if (idChild.type !=="ID"){
+				return [idChild.type, symbolTable];
+			}
 			var type="";
 			var varInScope = symbolTable.findValueInScope(idChild.value);
 			var varInParentScope = symbolTable.findValueInParentScope(idChild.value);
@@ -304,7 +341,7 @@ module TSC
 				if (_Verbose)
 					_Messenger.putMessage("Found " +varInScope.ID+" ID in current scope.");
 
-				if (varInScope.initialized)
+				if (!varInScope.initialized)
 					_Messenger.putWarning(idChild.line,varInScope.ID+" has not been initialized, but used in comparison.");
 				if (assign)
 					varInScope.setInitialized();
