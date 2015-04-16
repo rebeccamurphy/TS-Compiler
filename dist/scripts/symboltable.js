@@ -19,7 +19,8 @@ var TSC;
         SymbolTable.prototype.nodeHTML = function () {
             var str = "";
             for (var i = 0; i < this.nodes.length; i++) {
-                str += "<tr><td><b>" + this.scope + "</b></td>" + this.nodes[i].toHTML() + "</tr>";
+                var parent = (this.parent === null) ? "None" : this.parent.scope;
+                str += "<tr><td><b>" + this.scope + "</b></td>" + "<td>" + parent + "</td>" + this.nodes[i].toHTML() + "</tr>";
                 //symbol table analysis warnings
                 if (this.nodes[i].declared && this.nodes[i].initialized && !this.nodes[i].used)
                     _Messenger.putWarning(this.nodes[i].line, 0 /* UnusedDI */);
