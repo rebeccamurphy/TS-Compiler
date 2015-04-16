@@ -74,11 +74,21 @@ var TSC;
                 node.addChildNode(temp);
                 node = temp;
             }
-            for (var i = 0; i < this.children.length; i++) {
-                if (node.getNewestChild().type == "ADD")
-                    this.children[i].addChildren(node.getNewestChild());
-                else
-                    this.children[i].addChildren(node);
+            if (node.type !== "STRING") {
+                for (var i = 0; i < this.children.length; i++) {
+                    if (this.children[i + 1] !== undefined) {
+                        if (this.children[i + 1].type === "ADD") {
+                            this.children[i + 1].addChildren(node);
+                            this.children[i].addChildren(node.getNewestChild());
+                            this.children[i + 2].addChildren(node.getNewestChild());
+                            i += 2;
+                        }
+                        else
+                            this.children[i].addChildren(node);
+                    }
+                    else
+                        this.children[i].addChildren(node);
+                }
             }
         };
         TreeNode.prototype.getChildren = function () {
@@ -129,22 +139,13 @@ var TSC;
                             currnode.addChildNode(temp);
                             break;
                         case 'WHILESTATEMENT':
-                            var temp = new TreeNode('WHILE', null, '', this.children[i].line);
+                        case 'IFSTATEMENT':
+                            var str = (this.children[i].type === 'IFSTATEMENT') ? "IF" : "WHILE";
+                            var temp = new TreeNode(str, null, '', this.children[i].line);
                             var comp = new TreeNode('COMP', null, this.children[i].children[1].children[2].getValue(), this.children[i].line);
                             //WhileSTATEMENT     /boolexp    //expr      //id                    
-                            comp.addChildNode(this.children[i].children[1].children[1].children[0]);
-                            comp.addChildNode(this.children[i].children[1].children[3].children[0]);
-                            temp.addChildNode(comp);
-                            currnode.addChildNode(temp);
-                            //block
-                            this.children[i].makeAST(depth + 1, currnode);
-                            break;
-                        case 'IFSTATEMENT':
-                            var temp = new TreeNode('IF', null, '', this.children[i].line);
-                            var comp = new TreeNode('COMP', null, this.children[i].children[1].children[2].getValue(), this.children[i].line);
-                            //IFSTATEMENT     /boolexp    //expr      //id                    
-                            comp.addChildNode(this.children[i].children[1].children[1].children[0]);
-                            comp.addChildNode(this.children[i].children[1].children[3].children[0]);
+                            this.children[i].children[1].children[1].addChildren(comp);
+                            this.children[i].children[1].children[3].addChildren(comp);
                             temp.addChildNode(comp);
                             currnode.addChildNode(temp);
                             //block
@@ -153,20 +154,7 @@ var TSC;
                         case 'PRINTSTATEMENT':
                             var temp = new TreeNode("PRINT", null, '', this.children[i].line);
                             var type = this.children[i].children[2].children[0]; //int, string, boolean, id
-                            switch (type.type) {
-                                case "ID":
-                                    temp.addChildNode(type);
-                                    break;
-                                case "INTEXPR":
-                                case "BOOLEANEXP":
-                                    temp.addChildNode(type.children[0]);
-                                    break;
-                                case "STRINGEXPR":
-                                    var charString = "";
-                                    charString = TSC.Utils.charsToString(this.children[i].children[2].children[0]);
-                                    temp.addChildNode(new TreeNode("STRING", null, charString));
-                                    break;
-                            }
+                            this.children[i].addChildren(temp);
                             currnode.addChildNode(temp);
                             break;
                         case 'VARDECL':
@@ -190,7 +178,8 @@ var TSC;
         };
         TreeNode.prototype.nodeHTML = function (depth, id) {
             var output = (this.value === '' || this.value === undefined) ? this.type : this.type + ", <b>" + this.value + "</b>";
-            document.getElementById(id).innerHTML = document.getElementById(id).innerHTML + "<div>" + this.tabs(depth) + output + "</div>";
+            document.getElementById(id).innerHTML = document.getElementById(id).innerHTML +
+                "<div>" + this.tabs(depth) + output + "</div>";
         };
         return TreeNode;
     })();

@@ -63,17 +63,19 @@ var TSC;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
-                _Messenger.putMessage("Checking (" + valueChild.value + ", Line: " + valueChild.line + ") declaration");
+                _Messenger.putMessage("Checking (" + valueChild.value + ", Line: " + valueChild.line +
+                    ") declaration");
             var varInScope = symbolTable.findValueInScope(valueChild.value);
             if (varInScope === null) {
                 var temp = new TSC.Node(idChild.type, valueChild.value, idChild.line);
                 temp.setDeclared();
                 if (_Verbose)
-                    _Messenger.putMessage("(" + valueChild.value + ", Line: " + valueChild.line + ") Declared properly");
+                    _Messenger.putMessage("(" + valueChild.value + ", Line: " + valueChild.line +
+                        ") Declared properly");
                 symbolTable.addNode(temp);
             }
             else {
-                _Messenger.putError(idChild.line, 1 /* Redeclared */);
+                _Messenger.putError(idChild.line, ErrorType.Redeclared);
             }
             return symbolTable;
         };
@@ -96,13 +98,15 @@ var TSC;
                 _Messenger.putMessage("Checking Comparison at Line: " + currNode.line);
             if (_Verbose)
                 _Messenger.putMessage("Comparing two values.");
-            if ((idChild.type === "DIGIT" && valueChild.type === "DIGIT") || (idChild.type === "STRING" && valueChild.type === "STRING") || (idChild.type === "BOOL" && valueChild.type === "BOOL")) {
+            if ((idChild.type === "DIGIT" && valueChild.type === "DIGIT") ||
+                (idChild.type === "STRING" && valueChild.type === "STRING") ||
+                (idChild.type === "BOOL" && valueChild.type === "BOOL")) {
                 //match!
                 if (_Verbose)
                     _Messenger.putMessage("(Line: " + idChild.line + ") Type Comparison has matching types.");
             }
             else {
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             return symbolTable;
         };
@@ -129,17 +133,17 @@ var TSC;
             else if (leftVarType == "" && rightVarType == "") {
                 if (_Verbose)
                     _Messenger.putWarning(idChild.line, "Neither variable has been declared so they are uncomparable.");
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             else if (leftVarType == "") {
                 if (_Verbose)
                     _Messenger.putWarning(idChild.line, idChild.ID + " has not been declared so it is not comparable.");
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             else if (rightVarType == "") {
                 if (_Verbose)
                     _Messenger.putWarning(valueChild.line, valueChild.ID + " has not been declared so it is not comparable.");
-                _Messenger.putErrorv(valueChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putErrorv(valueChild.line, ErrorType.TypeMismatchComp);
             }
             return symbolTable;
         };
@@ -164,7 +168,7 @@ var TSC;
                 symbolTable.replace(varInScope);
             }
             else {
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             return symbolTable;
         };
@@ -174,15 +178,21 @@ var TSC;
             //TODO add check for addition in assignment
             if (_Verbose)
                 _Messenger.putMessage("Checking assignment at Line: " + idChild.line);
-            if (valueChild.value === "+") {
+            var temp = this.findVarType(idChild, symbolTable, true);
+            var idType = temp[0];
+            symbolTable = temp[1];
+            symbolTable = this.checkType(idType, currNode, symbolTable);
+            /*
+            if (valueChild.value ==="+"){ //increment assign
                 return this.incASSIGN(currNode, symbolTable);
             }
-            else if (valueChild.type === "COMP")
+            else if (valueChild.type ==="COMP") //boolean comparison in assignment
                 return this.booleanCompASSIGN(currNode, symbolTable);
-            else if (idChild.type === "ID" && valueChild.type === "ID")
+            else if (idChild.type ==="ID" && valueChild.type==="ID")//two ids
                 return this.twoIDASSIGN(idChild, valueChild, currNode, symbolTable);
             else
                 return this.idValASSIGN(idChild, valueChild, currNode, symbolTable);
+            */
         };
         SemanticAnalysis.prototype.booleanCompASSIGN = function (currNode, symbolTable) {
             var temp = this.findVarType(currNode.getChildren()[0], symbolTable, true);
@@ -197,8 +207,8 @@ var TSC;
             if (left !== right) {
                 //put error cannot compare  mismatched type
                 //cannot assign mismatched types
-                _Messenger.putError(currNode.getChildren()[0].line, 3 /* TypeMismatchComp */);
-                _Messenger.putError(currNode.getChildren()[0].line, 2 /* TypeMismatchAssign */);
+                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchComp);
+                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
             }
             else if (idChildType === left && idChildType === right) {
                 //assignment matches
@@ -207,79 +217,19 @@ var TSC;
             }
             else {
                 //assignment types dont match
-                _Messenger.putError(currNode.getChildren()[0].line, 2 /* TypeMismatchAssign */);
+                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
             }
             //b ==b
             //b==1
             //1==b
             //1 ==1
         };
-        SemanticAnalysis.prototype.incASSIGN = function (currNode, symbolTable) {
-            var varAssigned = currNode.getChildren()[0];
-            var temp = this.findVarType(varAssigned, symbolTable, true);
-            var varAssignedType = temp[0];
-            symbolTable = temp[1];
-            var left = currNode.getChildren()[1].getChildren()[0];
-            var right = currNode.getChildren()[1].getChildren()[1];
-            if (right.type === "ID") {
-                //EX 1+ i
-                var temp2 = this.findVarType(right, symbolTable, right);
-                right = temp[0];
-                symbolTable = temp[1];
-            }
-            varAssignedType = (varAssignedType === "INT") ? "DIGIT" : varAssignedType;
-            if ((varAssignedType == left.type) && (varAssignedType == right.type)) {
-                //EX 1+1
-                if (_Verbose)
-                    _Messenger.putMessage("(Line:" + varAssigned.line + ") All types in assignment match.");
-            }
-            else {
-                if (_Verbose)
-                    _Messenger.putMessage("(Line:" + varAssigned.line + ") Type of variable: " + varAssignedType + " Does not match: " + left.type + " and " + right.type);
-                _Messenger.putError(varAssigned.line, 2 /* TypeMismatchAssign */);
-            }
-            return symbolTable;
-        };
-        SemanticAnalysis.prototype.idValASSIGN = function (idChild, valueChild, currNode, symbolTable) {
-            debugger;
-            var temp = this.findVarType(idChild, symbolTable, true);
-            var varInScopeType = temp[0];
-            symbolTable = temp[1];
-            if ((varInScopeType === "INT" && valueChild.type === "DIGIT") || (varInScopeType === "STR" && valueChild.type === "STRING") || (varInScopeType === "BOOL" && valueChild.type === "BOOL")) {
-                //match!
-                if (_Verbose)
-                    _Messenger.putMessage("(" + idChild.value + ", Line: " + idChild.line + ") Type Declaration matches assignment value.");
-            }
-            else {
-                _Messenger.putError(idChild.line, 2 /* TypeMismatchAssign */);
-            }
-            return symbolTable;
-        };
-        SemanticAnalysis.prototype.twoIDASSIGN = function (idChild, valueChild, currNode, symbolTable) {
-            var tempL = this.findVarType(idChild, symbolTable, true);
-            var leftVarType = tempL[0];
-            symbolTable = tempL[1];
-            var tempR = this.findVarType(valueChild, symbolTable, true);
-            var rightVarType = tempR[0];
-            symbolTable = tempR[1];
-            if (_Verbose)
-                _Messenger.putMessage("Assigning one ID to another ID.");
-            if (leftVarType === rightVarType) {
-                if (_Verbose)
-                    _Messenger.putMessage("Assignment types match.");
-                if (!idChild.initialized)
-                    _Messenger.putWarning(idChild.line, valueChild.ID + " has not been assigned a value. So the assignment is pointless.");
-            }
-            else {
-                _Messenger.putError(idChild.line, 2 /* TypeMismatchAssign */);
-            }
-            return symbolTable;
-        };
         SemanticAnalysis.prototype.analyzePRINT = function (currNode, symbolTable) {
             debugger;
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
-                _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line + ") print statement");
+                _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line +
+                    ") print statement");
             symbolTable = this.findVarType(idChild, symbolTable)[1];
             return symbolTable;
         };
@@ -316,9 +266,34 @@ var TSC;
                 symbolTable.replace(varInParentScope);
             }
             else {
-                _Messenger.putError(idChild.line, 0 /* Undeclared */, idChild.ID);
+                _Messenger.putError(idChild.line, ErrorType.Undeclared, idChild.ID);
             }
             return [type, symbolTable];
+        };
+        SemanticAnalysis.prototype.checkType = function (type, node, symbolTable) {
+            debugger;
+            if (node.type == "ID" || node.type == "DIGIT" || node.type == "BOOL" || node.type === "STRING") {
+                if (node.type === "ID") {
+                    var temp = this.findVarType(node, symbolTable);
+                    var nodeType = temp[0];
+                    var symbolTable = temp[1];
+                }
+                else {
+                    var nodeType = null;
+                    nodeType = (node.type === "DIGIT") ? "INT" : node.type;
+                    nodeType = (node.type === "STRING" && nodeType === null) ? "STR" : nodeType;
+                }
+                if (type !== nodeType) {
+                    _Messenger.putError(node.line, ErrorType.TypeMismatch);
+                }
+                else if (_Verbose) {
+                    _Messenger.putMessage("(Line: " + node.line + ") " + node.value + " Matches type: " + type);
+                }
+            }
+            for (var i = 0; i < node.children.length; i++) {
+                this.checkType(type, node.children[i], symbolTable);
+            }
+            return symbolTable;
         };
         return SemanticAnalysis;
     })();

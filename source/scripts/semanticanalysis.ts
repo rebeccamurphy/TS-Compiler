@@ -45,7 +45,7 @@ module TSC
 				case "PRINT":
 					return this.analyzePRINT(currNode, symbolTable);
 				case "WHILE":
-				case "IF":
+				case "IF"://iftrue
 					return this.analyzeIFWHILE(currNode, symbolTable);
 			}
 			return symbolTable;
@@ -204,7 +204,12 @@ module TSC
 			//TODO add check for addition in assignment
 			if (_Verbose)
 				_Messenger.putMessage("Checking assignment at Line: " +idChild.line);
-
+			var temp = this.findVarType(idChild, symbolTable, true);
+			var idType = temp[0];
+			symbolTable = temp[1];
+			symbolTable = this.checkType(idType, currNode, symbolTable)
+			
+			/*
 			if (valueChild.value ==="+"){ //increment assign
 				return this.incASSIGN(currNode, symbolTable);
 			}
@@ -214,7 +219,7 @@ module TSC
 				return this.twoIDASSIGN(idChild, valueChild, currNode, symbolTable);
 			else
 				return this.idValASSIGN(idChild, valueChild, currNode, symbolTable);
-			
+			*/
 		}
 		private booleanCompASSIGN(currNode, symbolTable){
 			var temp = this.findVarType(currNode.getChildren()[0], symbolTable, true);
@@ -247,75 +252,6 @@ module TSC
 			//1 ==1
 
 
-		}
-		private incASSIGN(currNode, symbolTable){
-			var varAssigned = currNode.getChildren()[0];
-			var temp = this.findVarType(varAssigned, symbolTable, true);
-			var varAssignedType = temp[0];
-			symbolTable = temp[1];
-			var left = currNode.getChildren()[1].getChildren()[0];
-			var right = currNode.getChildren()[1].getChildren()[1];
-			if (right.type ==="ID"){
-				//EX 1+ i
-				var temp2 = this.findVarType(right, symbolTable, right);
-				right = temp[0];
-				symbolTable = temp[1];
-			}
-			varAssignedType= (varAssignedType==="INT")? "DIGIT": varAssignedType;
-			if ((varAssignedType == left.type)&&(varAssignedType ==right.type)){
-				//EX 1+1
-				if (_Verbose)
-					_Messenger.putMessage("(Line:"+ varAssigned.line+") All types in assignment match.");	
-			}
-			else {
-				if (_Verbose)
-					_Messenger.putMessage("(Line:"+ varAssigned.line+") Type of variable: " + varAssignedType
-						+" Does not match: " + left.type +" and "+ right.type);
-				_Messenger.putError(varAssigned.line, ErrorType.TypeMismatchAssign);
-			}
-			return symbolTable;
-		}
-		private idValASSIGN(idChild, valueChild,currNode, symbolTable){
-			debugger;
-			var temp = this.findVarType(idChild, symbolTable, true);
-			var varInScopeType = temp[0];
-			symbolTable = temp[1];
-			if ((varInScopeType==="INT" && valueChild.type ==="DIGIT")||
-					(varInScopeType==="STR" && valueChild.type==="STRING")||
-					(varInScopeType==="BOOL" && valueChild.type==="BOOL")
-					){
-					//match!
-					if (_Verbose)
-						_Messenger.putMessage("(" + idChild.value+ ", Line: " +idChild.line+
-					") Type Declaration matches assignment value.");
-			}
-
-			else {
-				_Messenger.putError(idChild.line, ErrorType.TypeMismatchAssign);
-			}
-			return symbolTable;
-		}
-		private twoIDASSIGN(idChild, valueChild,currNode, symbolTable){
-			var tempL =this.findVarType(idChild, symbolTable, true);
-			var leftVarType = tempL[0];
-			symbolTable = tempL[1];
-			var tempR =this.findVarType(valueChild, symbolTable, true);
-			var rightVarType = tempR[0];
-			symbolTable = tempR[1];
-
-			if (_Verbose)
-				_Messenger.putMessage("Assigning one ID to another ID.");
-
-			if (leftVarType===rightVarType){
-				if (_Verbose)
-					_Messenger.putMessage("Assignment types match.");
-				if (!idChild.initialized)
-					_Messenger.putWarning(idChild.line, valueChild.ID +" has not been assigned a value. So the assignment is pointless.");
-			}
-			else {
-				_Messenger.putError(idChild.line, ErrorType.TypeMismatchAssign);
-			}
-			return symbolTable;
 		}
 		private analyzePRINT(currNode, symbolTable){
 			debugger;
@@ -366,6 +302,31 @@ module TSC
 			}
 
 			return [type, symbolTable];
+		}
+		private checkType(type, node, symbolTable){
+			debugger;
+			if (node.type =="ID"||node.type =="DIGIT" ||node.type =="BOOL"||node.type==="STRING"){
+				if (node.type ==="ID"){
+					var temp = this.findVarType(node, symbolTable);
+					var nodeType = temp[0];
+					var symbolTable = temp[1];
+				}
+				else{ 
+					var nodeType = null;
+					nodeType = (node.type==="DIGIT") ? "INT" :node.type;
+					nodeType = (node.type==="STRING" && nodeType===null) ? "STR":nodeType;	
+				}
+				if (type !== nodeType){
+					_Messenger.putError(node.line, ErrorType.TypeMismatch);
+				}
+				else if (_Verbose){
+					_Messenger.putMessage("(Line: "+ node.line+") "+ node.value +" Matches type: " +type);	
+				}
+			}
+			for(var i=0; i<node.children.length; i++){
+				this.checkType(type, node.children[i], symbolTable);
+			}
+			return symbolTable;
 		}
 	}
 }

@@ -165,7 +165,7 @@ module TSC
 
                 this.prevToken = (_Tokens.length>0&&!tokenized) ? _Tokens[_Tokens.length-1]: new Token(TokenType.NONE, '', currentLine);
                 if (this.prevToken.type ===TokenType.EQUALSIGN && buffer.get().match(/[0-9]/)){
-                	_Token.getAndAddToken(buffer.flush());
+                	_Token.getAndAddToken(buffer.flush(), currentLine);
                 }
 
                 else {//check longest match 
@@ -179,7 +179,7 @@ module TSC
 	            }
 	            if (!inString && !buffer.isEmpty()){
                 	while (!_Token.testForToken(buffer.get())){
-                		_Token.getAndAddToken(buffer.pop());
+                		_Token.getAndAddToken(buffer.pop(), currentLine);
                 	}
 
                 }

@@ -46,17 +46,22 @@ var TokenType;
     TokenType[TokenType["PROGRAM"] = 26] = "PROGRAM";
 })(TokenType || (TokenType = {}));
 ;
-var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF', 'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
-var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '', '', '', '', '==', '!=', ' ', '', '', '+', '$', '"', '\n', '', '', '', '', ''];
+var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT',
+    'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF',
+    'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
+var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '',
+    '', '', '', '==', '!=', ' ', '', '', '+', '$',
+    '"', '\n', '', '', '', '', ''];
 var ErrorType;
 (function (ErrorType) {
     ErrorType[ErrorType["Undeclared"] = 0] = "Undeclared";
     ErrorType[ErrorType["Redeclared"] = 1] = "Redeclared";
-    ErrorType[ErrorType["TypeMismatchAssign"] = 2] = "TypeMismatchAssign";
-    ErrorType[ErrorType["TypeMismatchComp"] = 3] = "TypeMismatchComp";
+    ErrorType[ErrorType["TypeMismatch"] = 2] = "TypeMismatch";
+    ErrorType[ErrorType["TypeMismatchAssign"] = 3] = "TypeMismatchAssign";
+    ErrorType[ErrorType["TypeMismatchComp"] = 4] = "TypeMismatchComp";
 })(ErrorType || (ErrorType = {}));
 ;
-var ErrorStr = ["Undeclared identifier", "Redeclared identifier in same scope", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
+var ErrorStr = ["Undeclared identifier", "Redeclared identifier in same scope", "Type Mismatched", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
 var WarningType;
 (function (WarningType) {
     WarningType[WarningType["UnusedDI"] = 0] = "UnusedDI";
