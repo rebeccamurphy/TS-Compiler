@@ -57,6 +57,30 @@ var TSC;
             this.children.push(child);
             return child;
         };
+        TreeNode.prototype.addChildren = function (node) {
+            debugger;
+            var temp = null;
+            if (this.type === "DIGIT" || this.type == "CHARLIST" || this.type == "BOOL" || this.type === "ADD" || this.type === "BOOLOP" || this.type == "ID") {
+                if (this.type == "CHARLIST") {
+                    var str = TSC.Utils.charsToString(this);
+                    temp = new TreeNode("STRING", null, str, this.line);
+                }
+                else if (this.type === "BOOLOP") {
+                    temp = new TreeNode("COMP", null, this.value, this.line);
+                }
+                else {
+                    temp = new TreeNode(this.type, null, this.value, this.line);
+                }
+                node.addChildNode(temp);
+                node = temp;
+            }
+            for (var i = 0; i < this.children.length; i++) {
+                if (node.getNewestChild().type == "ADD")
+                    this.children[i].addChildren(node.getNewestChild());
+                else
+                    this.children[i].addChildren(node);
+            }
+        };
         TreeNode.prototype.getChildren = function () {
             return this.children;
         };
@@ -99,40 +123,9 @@ var TSC;
                             break;
                         case 'ASSIGNMENTSTATEMENT':
                             var temp = new TreeNode('ASSIGN', null, '', this.children[i].line);
-                            temp.addChildNode(this.children[i].children[0]);
-                            //if this works i can't defend myself
-                            if (this.children[i].children[2].children[0].type === "BOOLEANEXPR") {
-                                debugger;
-                                if (this.children[i].children[2].children[0].children[0].value === "(") {
-                                    var temp2 = new TreeNode("COMP", null, this.children[i].children[2].children[0].children[2].value);
-                                    //left part of statement
-                                    temp2.addChildNode(this.children[i].children[2].children[0].children[1].children[0]);
-                                    //right part of statement
-                                    temp2.addChildNode(this.children[i].children[2].children[0].children[3].children[0].children[0]);
-                                    temp.addChildNode(temp2);
-                                }
-                                else
-                                    temp.addChildNode(this.children[i].children[2].children[0].children[0]);
-                            }
-                            else if (this.children[i].children[2].children[0].type === "INTEXPR") {
-                                debugger;
-                                if (this.children[i].children[2].children[0].children[1] !== undefined) {
-                                    //addition in assignment
-                                    var temp2 = new TreeNode("ADD", null, "+");
-                                    temp2.addChildNode(this.children[i].children[2].children[0].children[0]);
-                                    temp2.addChildNode(this.children[i].children[2].children[0].children[2].children[0].children[0]);
-                                    temp.addChildNode(temp2);
-                                }
-                                else {
-                                    temp.addChildNode(this.children[i].children[2].children[0].children[0]);
-                                }
-                            }
-                            else {
-                                //debugger;
-                                var charString = "";
-                                charString = TSC.Utils.charsToString(this.children[i].children[2].children[0].children[1]);
-                                temp.addChildNode(new TreeNode("STRING", null, charString, this.children[i].line));
-                            }
+                            //id
+                            //temp.addChildNode(this.children[i].children[0]);
+                            this.children[i].addChildren(temp);
                             currnode.addChildNode(temp);
                             break;
                         case 'WHILESTATEMENT':
