@@ -63,17 +63,19 @@ var TSC;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
-                _Messenger.putMessage("Checking (" + valueChild.value + ", Line: " + valueChild.line + ") declaration");
+                _Messenger.putMessage("Checking (" + valueChild.value + ", Line: " + valueChild.line +
+                    ") declaration");
             var varInScope = symbolTable.findValueInScope(valueChild.value);
             if (varInScope === null) {
                 var temp = new TSC.Node(idChild.type, valueChild.value, idChild.line);
                 temp.setDeclared();
                 if (_Verbose)
-                    _Messenger.putMessage("(" + valueChild.value + ", Line: " + valueChild.line + ") Declared properly");
+                    _Messenger.putMessage("(" + valueChild.value + ", Line: " + valueChild.line +
+                        ") Declared properly");
                 symbolTable.addNode(temp);
             }
             else {
-                _Messenger.putError(idChild.line, 1 /* Redeclared */);
+                _Messenger.putError(idChild.line, ErrorType.Redeclared);
             }
             return symbolTable;
         };
@@ -96,13 +98,15 @@ var TSC;
                 _Messenger.putMessage("Checking Comparison at Line: " + currNode.line);
             if (_Verbose)
                 _Messenger.putMessage("Comparing two values.");
-            if ((idChild.type === "DIGIT" && valueChild.type === "DIGIT") || (idChild.type === "STRING" && valueChild.type === "STRING") || (idChild.type === "BOOL" && valueChild.type === "BOOL")) {
+            if ((idChild.type === "DIGIT" && valueChild.type === "DIGIT") ||
+                (idChild.type === "STRING" && valueChild.type === "STRING") ||
+                (idChild.type === "BOOL" && valueChild.type === "BOOL")) {
                 //match!
                 if (_Verbose)
                     _Messenger.putMessage("(Line: " + idChild.line + ") Type Comparison has matching types.");
             }
             else {
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             return symbolTable;
         };
@@ -129,17 +133,17 @@ var TSC;
             else if (leftVarType == "" && rightVarType == "") {
                 if (_Verbose)
                     _Messenger.putWarning(idChild.line, "Neither variable has been declared so they are uncomparable.");
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             else if (leftVarType == "") {
                 if (_Verbose)
                     _Messenger.putWarning(idChild.line, idChild.ID + " has not been declared so it is not comparable.");
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             else if (rightVarType == "") {
                 if (_Verbose)
                     _Messenger.putWarning(valueChild.line, valueChild.ID + " has not been declared so it is not comparable.");
-                _Messenger.putErrorv(valueChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putErrorv(valueChild.line, ErrorType.TypeMismatchComp);
             }
             return symbolTable;
         };
@@ -164,7 +168,7 @@ var TSC;
                 symbolTable.replace(varInScope);
             }
             else {
-                _Messenger.putError(idChild.line, 3 /* TypeMismatchComp */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
             }
             return symbolTable;
         };
@@ -197,8 +201,8 @@ var TSC;
             if (left !== right) {
                 //put error cannot compare  mismatched type
                 //cannot assign mismatched types
-                _Messenger.putError(currNode.getChildren()[0].line, 3 /* TypeMismatchComp */);
-                _Messenger.putError(currNode.getChildren()[0].line, 2 /* TypeMismatchAssign */);
+                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchComp);
+                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
             }
             else if (idChildType === left && idChildType === right) {
                 //assignment matches
@@ -207,7 +211,7 @@ var TSC;
             }
             else {
                 //assignment types dont match
-                _Messenger.putError(currNode.getChildren()[0].line, 2 /* TypeMismatchAssign */);
+                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
             }
             //b ==b
             //b==1
@@ -235,8 +239,9 @@ var TSC;
             }
             else {
                 if (_Verbose)
-                    _Messenger.putMessage("(Line:" + varAssigned.line + ") Type of variable: " + varAssignedType + " Does not match: " + left.type + " and " + right.type);
-                _Messenger.putError(varAssigned.line, 2 /* TypeMismatchAssign */);
+                    _Messenger.putMessage("(Line:" + varAssigned.line + ") Type of variable: " + varAssignedType
+                        + " Does not match: " + left.type + " and " + right.type);
+                _Messenger.putError(varAssigned.line, ErrorType.TypeMismatchAssign);
             }
             return symbolTable;
         };
@@ -245,13 +250,16 @@ var TSC;
             var temp = this.findVarType(idChild, symbolTable, true);
             var varInScopeType = temp[0];
             symbolTable = temp[1];
-            if ((varInScopeType === "INT" && valueChild.type === "DIGIT") || (varInScopeType === "STR" && valueChild.type === "STRING") || (varInScopeType === "BOOL" && valueChild.type === "BOOL")) {
+            if ((varInScopeType === "INT" && valueChild.type === "DIGIT") ||
+                (varInScopeType === "STR" && valueChild.type === "STRING") ||
+                (varInScopeType === "BOOL" && valueChild.type === "BOOL")) {
                 //match!
                 if (_Verbose)
-                    _Messenger.putMessage("(" + idChild.value + ", Line: " + idChild.line + ") Type Declaration matches assignment value.");
+                    _Messenger.putMessage("(" + idChild.value + ", Line: " + idChild.line +
+                        ") Type Declaration matches assignment value.");
             }
             else {
-                _Messenger.putError(idChild.line, 2 /* TypeMismatchAssign */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchAssign);
             }
             return symbolTable;
         };
@@ -271,7 +279,7 @@ var TSC;
                     _Messenger.putWarning(idChild.line, valueChild.ID + " has not been assigned a value. So the assignment is pointless.");
             }
             else {
-                _Messenger.putError(idChild.line, 2 /* TypeMismatchAssign */);
+                _Messenger.putError(idChild.line, ErrorType.TypeMismatchAssign);
             }
             return symbolTable;
         };
@@ -279,7 +287,8 @@ var TSC;
             debugger;
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
-                _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line + ") print statement");
+                _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line +
+                    ") print statement");
             symbolTable = this.findVarType(idChild, symbolTable)[1];
             return symbolTable;
         };
@@ -316,7 +325,7 @@ var TSC;
                 symbolTable.replace(varInParentScope);
             }
             else {
-                _Messenger.putError(idChild.line, 0 /* Undeclared */, idChild.ID);
+                _Messenger.putError(idChild.line, ErrorType.Undeclared, idChild.ID);
             }
             return [type, symbolTable];
         };

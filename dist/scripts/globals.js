@@ -46,8 +46,12 @@ var TokenType;
     TokenType[TokenType["PROGRAM"] = 26] = "PROGRAM";
 })(TokenType || (TokenType = {}));
 ;
-var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF', 'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
-var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '', '', '', '', '==', '!=', ' ', '', '', '+', '$', '"', '\n', '', '', '', '', ''];
+var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT',
+    'STR', 'BOOL', 'CHAR', 'EQUALS', 'NOTEQUALS', 'SPACE', 'FALSE', 'TRUE', 'ADD', 'EOF',
+    'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
+var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '',
+    '', '', '', '==', '!=', ' ', '', '', '+', '$',
+    '"', '\n', '', '', '', '', ''];
 var ErrorType;
 (function (ErrorType) {
     ErrorType[ErrorType["Undeclared"] = 0] = "Undeclared";
