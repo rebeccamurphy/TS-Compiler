@@ -59,9 +59,11 @@ var ErrorType;
     ErrorType[ErrorType["TypeMismatch"] = 2] = "TypeMismatch";
     ErrorType[ErrorType["TypeMismatchAssign"] = 3] = "TypeMismatchAssign";
     ErrorType[ErrorType["TypeMismatchComp"] = 4] = "TypeMismatchComp";
+    ErrorType[ErrorType["ImpossibleBool"] = 5] = "ImpossibleBool";
 })(ErrorType || (ErrorType = {}));
 ;
-var ErrorStr = ["Undeclared identifier", "Redeclared identifier in same scope", "Type Mismatched", "Type Mismatched during Assignment", "Type Mismatched during Comparison"];
+var ErrorStr = ["Undeclared identifier", "Redeclared identifier in same scope", "Type Mismatched", "Type Mismatched during Assignment", "Type Mismatched during Comparison",
+    "Boolean expressions with more than 2 comparisons need to start with a boolean to be valid."];
 var WarningType;
 (function (WarningType) {
     WarningType[WarningType["UnusedDI"] = 0] = "UnusedDI";

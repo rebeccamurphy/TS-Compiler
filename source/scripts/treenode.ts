@@ -145,7 +145,8 @@ module TSC
                     case 'IFSTATEMENT':
                         var str = (this.children[i].type==='IFSTATEMENT')? "IF" :"WHILE";
                         var temp =new TreeNode(str, null,'', this.children[i].line);
-                        if (this.children[i].children[1].children[0]){
+                        debugger;
+                        if (this.children[i].children[1].children[0].type !=="LPAREN"){
                             //where case with if true/false
                             temp.addChildNode(this.children[i].children[1].children[0]);
                         }

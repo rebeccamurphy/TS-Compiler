@@ -3,6 +3,8 @@ var TSC;
     var SemanticAnalysis = (function () {
         function SemanticAnalysis(rootNode, ID) {
             this.rootNode = rootNode;
+            this.numComps = 0;
+            this.firstType = "";
             this.rootNode = rootNode;
             this.currScope = -1;
             this.ID = ID;
@@ -80,14 +82,15 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
-            //debugger;
+            debugger;
             if (currNode.getChildren()[0].type === "COMP") {
                 var left = currNode.getChildren()[0].getChildren()[0];
                 var compChild = currNode.getChildren()[0];
                 var right = currNode.getChildren()[0].getChildren()[1];
                 if (_Verbose)
                     _Messenger.putMessage("Checking comparison at Line: " + left.line);
-                symbolTable = this.checkType("BOOL", compChild, symbolTable);
+                this.firstType = left.type;
+                symbolTable = this.checkType("BOOL", currNode, symbolTable);
             }
             //else dont do anything because type was already checked in parser
         };
@@ -170,9 +173,14 @@ var TSC;
                 else if (_Verbose) {
                     _Messenger.putMessage("(Line: " + node.line + ") " + node.value + " Matches type: " + type);
                 }
+                if (this.firstType !== "BOOL" && this.numComps >= 2) {
+                    _Messenger.putError(node.line, ErrorType.ImpossibleBool);
+                    this.firstType = "BOOL";
+                }
             }
             for (var i = 0; i < node.children.length; i++) {
                 if (node.children[i].type === "COMP") {
+                    this.numComps++;
                     if (node.children[i].children[0].type == "ADD" || node.children[i].children[0].type == "DIGIT") {
                         if (_Verbose)
                             _Messenger.putMessage("Comparing DIGIT...");
