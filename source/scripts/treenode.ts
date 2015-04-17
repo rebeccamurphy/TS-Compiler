@@ -145,11 +145,17 @@ module TSC
                     case 'IFSTATEMENT':
                         var str = (this.children[i].type==='IFSTATEMENT')? "IF" :"WHILE";
                         var temp =new TreeNode(str, null,'', this.children[i].line);
-                        var comp = new TreeNode('COMP',null, this.children[i].children[1].children[2].getValue(),this.children[i].line);
-                                            //WhileSTATEMENT     /boolexp    //expr      //id                    
-                        this.children[i].children[1].children[1].addChildren(comp);
-                        this.children[i].children[1].children[3].addChildren(comp);
-                        temp.addChildNode(comp);
+                        if (this.children[i].children[1].children[0]){
+                            //where case with if true/false
+                            temp.addChildNode(this.children[i].children[1].children[0]);
+                        }
+                        else {
+                            var comp = new TreeNode('COMP',null, this.children[i].children[1].children[2].getValue(),this.children[i].line);
+                                                //WhileSTATEMENT     /boolexp    //expr      //id                    
+                            this.children[i].children[1].children[1].addChildren(comp);
+                            this.children[i].children[1].children[3].addChildren(comp);
+                            temp.addChildNode(comp);
+                        }
                         currnode.addChildNode(temp);
                         //block
                         this.children[i].makeAST(depth+1, currnode); 

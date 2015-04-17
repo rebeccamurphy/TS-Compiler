@@ -81,96 +81,15 @@ var TSC;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
             //debugger;
-            var idChild = currNode.getChildren()[0].getChildren()[0];
-            var compChild = currNode.getChildren()[0];
-            var valueChild = currNode.getChildren()[0].getChildren()[1];
-            if (idChild.type === "ID" && valueChild !== "ID")
-                return this.varValueIFWHILE(idChild, valueChild, currNode, symbolTable);
-            else if (idChild.type !== "ID" && valueChild === "ID")
-                return this.varValueIFWHILE(valueChild, idChild, currNode, symbolTable);
-            else if (idChild.type !== "ID" && valueChild !== "ID")
-                return this.twoValueIFWHILE(valueChild, idChild, currNode, symbolTable);
-            else
-                return this.twovarIFWHILE(valueChild, idChild, currNode, symbolTable);
-        };
-        SemanticAnalysis.prototype.twoValueIFWHILE = function (idChild, valueChild, currNode, symbolTable) {
-            if (_Verbose)
-                _Messenger.putMessage("Checking Comparison at Line: " + currNode.line);
-            if (_Verbose)
-                _Messenger.putMessage("Comparing two values.");
-            if ((idChild.type === "DIGIT" && valueChild.type === "DIGIT") ||
-                (idChild.type === "STRING" && valueChild.type === "STRING") ||
-                (idChild.type === "BOOL" && valueChild.type === "BOOL")) {
-                //match!
+            if (currNode.getChildren()[0].type === "COMP") {
+                var left = currNode.getChildren()[0].getChildren()[0];
+                var compChild = currNode.getChildren()[0];
+                var right = currNode.getChildren()[0].getChildren()[1];
                 if (_Verbose)
-                    _Messenger.putMessage("(Line: " + idChild.line + ") Type Comparison has matching types.");
+                    _Messenger.putMessage("Checking comparison at Line: " + left.line);
+                symbolTable = this.checkType("BOOL", compChild, symbolTable);
             }
-            else {
-                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
-            }
-            return symbolTable;
-        };
-        SemanticAnalysis.prototype.twovarIFWHILE = function (idChild, valueChild, currNode, symbolTable) {
-            if (_Verbose)
-                _Messenger.putMessage("Checking Comparison at Line: " + currNode.line);
-            if (_Verbose)
-                _Messenger.putMessage("Comparing two IDs");
-            var tempL = this.findVarType(idChild, symbolTable);
-            var leftVarType = tempL[0];
-            symbolTable = tempL[1];
-            var tempR = this.findVarType(valueChild, symbolTable);
-            var rightVarType = tempR[0];
-            symbolTable = tempR[1];
-            if (_Verbose)
-                _Messenger.putMessage("Checking Comparison at Line: " + currNode.line);
-            if (_Verbose)
-                _Messenger.putMessage("Comparing two IDs");
-            if (leftVarType === rightVarType) {
-                //match!
-                if (_Verbose)
-                    _Messenger.putMessage("(Line: " + idChild.line + ") Type Comparison has matching types.");
-            }
-            else if (leftVarType == "" && rightVarType == "") {
-                if (_Verbose)
-                    _Messenger.putWarning(idChild.line, "Neither variable has been declared so they are uncomparable.");
-                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
-            }
-            else if (leftVarType == "") {
-                if (_Verbose)
-                    _Messenger.putWarning(idChild.line, idChild.ID + " has not been declared so it is not comparable.");
-                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
-            }
-            else if (rightVarType == "") {
-                if (_Verbose)
-                    _Messenger.putWarning(valueChild.line, valueChild.ID + " has not been declared so it is not comparable.");
-                _Messenger.putErrorv(valueChild.line, ErrorType.TypeMismatchComp);
-            }
-            return symbolTable;
-        };
-        SemanticAnalysis.prototype.varValueIFWHILE = function (idChild, valueChild, currNode, symbolTable) {
-            var varInScope = symbolTable.findValueInScope(idChild.value);
-            var varInParentScope = symbolTable.findValueInParentScope(idChild.value);
-            if (_Verbose)
-                _Messenger.putMessage("Checking Comparison at Line: " + currNode.line);
-            if (_Verbose)
-                _Messenger.putMessage("Comparing an ID and value.");
-            var temp = this.findVarType(idChild, symbolTable);
-            var varType = temp[0];
-            symbolTable = temp[1];
-            if (varType === valueChild.type) {
-                //match!
-                if (_Verbose)
-                    _Messenger.putMessage("(Line: " + idChild.line + ") Type Comparison has matching types.");
-                if (!varInScope.initialized)
-                    _Messenger.putWarning(idChild.line, "ID has not been initialized, but used in comparison.");
-                //so create a new instance of the variable for the symbol table
-                varInScope.setUsed();
-                symbolTable.replace(varInScope);
-            }
-            else {
-                _Messenger.putError(idChild.line, ErrorType.TypeMismatchComp);
-            }
-            return symbolTable;
+            //else dont do anything because type was already checked in parser
         };
         SemanticAnalysis.prototype.analyzeASSIGN = function (currNode, symbolTable) {
             debugger;
