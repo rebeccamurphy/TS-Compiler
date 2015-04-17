@@ -5,14 +5,16 @@ var TSC;
         function Parser() {
             this.part = 'Parser';
         }
-        Parser.prototype.getNextToken = function () {
+        Parser.prototype.getNextToken = function (check) {
+            if (check === void 0) { check = false; }
             var thisToken = EOF; // Let's assume that we're at the EOF.
             if (_TokenIndex < _Tokens.length) {
                 // If we're not at EOF, then return the next token in the stream and advance the index.
                 thisToken = _Tokens[_TokenIndex];
-                if (_Verbose)
+                if (_Verbose && !check)
                     _Messenger.putMessage("Current Token " + (_TokenIndex + 1) + ": " + thisToken.toString());
-                _TokenIndex++;
+                if (!check)
+                    _TokenIndex++;
             }
             return thisToken;
         };
@@ -171,6 +173,7 @@ var TSC;
         //		::== BooleanExpr
         //		::== Id
         Parser.prototype.parseExpr = function (node) {
+            debugger;
             node.addChild("EXPR");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
@@ -186,6 +189,7 @@ var TSC;
                     break;
                 case TokenType.ID:
                     this.parseID(node);
+                    break;
             }
         };
         //BooleanExpr	::== (Expr boolOp Expr)
@@ -219,6 +223,7 @@ var TSC;
         //IntExpr	::== digit intop Expr
         //			::== digit
         Parser.prototype.parseIntExpr = function (node) {
+            debugger;
             node.addChild("INTEXPR");
             node = node.getNewestChild();
             if (_CurrentToken.type === TokenType.DIGIT) {
@@ -227,6 +232,9 @@ var TSC;
                 if (_CurrentToken.type === TokenType.ADD) {
                     this.checkToken(TokenType.ADD);
                     node.addChild(TokenType.ADD);
+                    if (_CurrentToken.type === TokenType.ADD) {
+                        this.checkToken(TokenType.DIGIT);
+                    }
                     this.parseExpr(node);
                 }
             }

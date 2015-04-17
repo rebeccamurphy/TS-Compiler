@@ -9,14 +9,15 @@ module TSC
 
 		}
         
-	    public getNextToken() :any {
+	    public getNextToken(check=false) :any {
 	        var thisToken = EOF;    // Let's assume that we're at the EOF.
 	        if (_TokenIndex < _Tokens.length){
 	            // If we're not at EOF, then return the next token in the stream and advance the index.
 	            thisToken = _Tokens[_TokenIndex];
-                if(_Verbose)
+                if(_Verbose &&!check)
 	               _Messenger.putMessage("Current Token "+(_TokenIndex+1)+": " + thisToken.toString());
-	            _TokenIndex++;
+                if (!check)
+	               _TokenIndex++;
 	        }
 	        return thisToken;
     	}
@@ -198,12 +199,12 @@ module TSC
     	//		::== BooleanExpr
     	//		::== Id
     	public parseExpr(node:TreeNode){
-    		
+    		debugger;
             node.addChild("EXPR");
             node = node.getNewestChild();
     		switch(_CurrentToken.type){
     			case TokenType.DIGIT:
-    				this.parseIntExpr(node);
+                	this.parseIntExpr(node);
     				break;
     			case TokenType.QUOTE:
     				this.parseStringExpr(node);
@@ -214,8 +215,9 @@ module TSC
     				break;
     			case TokenType.ID:
     				this.parseID(node);
-
+                    break;    
     		}
+
     	}
 
 
@@ -252,7 +254,7 @@ module TSC
     	//IntExpr	::== digit intop Expr
     	//			::== digit
     	public parseIntExpr(node:TreeNode){
-    		
+    		debugger;
             node.addChild("INTEXPR");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
@@ -261,7 +263,10 @@ module TSC
                 if (_CurrentToken.type ===TokenType.ADD){
     				this.checkToken(TokenType.ADD);
                     node.addChild(TokenType.ADD);
-    				this.parseExpr(node);
+                    if (_CurrentToken.type===TokenType.ADD){
+                        this.checkToken(TokenType.DIGIT);
+                    }
+                    this.parseExpr(node);
     			}
     		}
     		else {

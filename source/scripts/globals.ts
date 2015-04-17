@@ -27,7 +27,7 @@ var TokenTypeString =['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIG
 'QUOTE', 'NEWLINE', 'ID','DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
 var TokenTypeChar =['{', '}', '', '(', ')', '=', '', '', '', 
 '', '', '','==', '!=',' ', '', '', '+','$', 
-'"', '\n', '','','', '', ''];
+'"', '\n', '','0-9','', '', ''];
 
 enum ErrorType {Undeclared, Redeclared,TypeMismatch, TypeMismatchAssign, TypeMismatchComp};
 

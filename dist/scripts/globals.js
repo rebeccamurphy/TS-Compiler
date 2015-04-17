@@ -51,7 +51,7 @@ var TokenTypeString = ['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSI
     'QUOTE', 'NEWLINE', 'ID', 'DIGIT', 'TYPE', 'BOOLOP', 'NONE', 'PROGRAM'];
 var TokenTypeChar = ['{', '}', '', '(', ')', '=', '', '', '',
     '', '', '', '==', '!=', ' ', '', '', '+', '$',
-    '"', '\n', '', '', '', '', ''];
+    '"', '\n', '', '0-9', '', '', ''];
 var ErrorType;
 (function (ErrorType) {
     ErrorType[ErrorType["Undeclared"] = 0] = "Undeclared";

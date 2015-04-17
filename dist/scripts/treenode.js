@@ -77,7 +77,7 @@ var TSC;
             if (node.type !== "STRING") {
                 for (var i = 0; i < this.children.length; i++) {
                     if (this.children[i + 1] !== undefined) {
-                        if (this.children[i + 1].type === "ADD") {
+                        if (this.children[i + 1].type === "ADD" || this.children[i + 1].type === "BOOLOP") {
                             this.children[i + 1].addChildren(node);
                             this.children[i].addChildren(node.getNewestChild());
                             this.children[i + 2].addChildren(node.getNewestChild());
