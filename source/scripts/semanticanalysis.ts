@@ -232,7 +232,7 @@ module TSC
 			
 			if (varInScope !== null){
 				type = varInScope.type;
-				if (_Verbose)
+				if (_Verbose &&!assign)
 					_Messenger.putMessage("Found " +varInScope.ID+" ID in current scope.");
 
 				if (!varInScope.initialized && !assign)
@@ -245,7 +245,7 @@ module TSC
 			}
 			else if (varInParentScope !==null){
 				type = varInParentScope.type;
-				if (_Verbose)
+				if (_Verbose &&!assign)
 					_Messenger.putMessage("Found "+ varInParentScope.ID +" ID in parent scope.");
 				if (!varInParentScope.initialized &&!assign)
 					_Messenger.putWarning(idChild.line,varInParentScope.ID+" has not been initialized, but used in comparison.");
@@ -275,6 +275,8 @@ module TSC
 					nodeType = (node.type==="STRING" && nodeType===null) ? "STR":nodeType;	
 				}
 				if (type !== nodeType){
+					if (_Verbose)
+						_Messenger.putMessage("(Line: " +node.line +") "+ node.value + " does not match type " + type);
 					_Messenger.putError(node.line, ErrorType.TypeMismatch);
 				}
 				else if (_Verbose){
@@ -290,7 +292,6 @@ module TSC
 						this.checkType(type, node.children[i], symbolTable);
 					}
 					else{
-						this.checkType(type, node.children[i], symbolTable);
 						if (_Verbose)
 							_Messenger.putMessage("Comparing " +node.children[i].children[0].type +"...");
 						type = node.children[i].children[0].type;

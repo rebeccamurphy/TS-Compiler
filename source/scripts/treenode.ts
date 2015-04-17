@@ -60,7 +60,7 @@ module TSC
         if (this.type ==="DIGIT"|| this.type=="CHARLIST"|| this.type=="BOOL"||this.type==="ADD" ||this.type==="BOOLOP"||this.type=="ID"){
             if (this.type=="CHARLIST"){
                 var str = TSC.Utils.charsToString(this);
-                temp = new TreeNode("STRING", null, str, this.line)
+                temp = new TreeNode("STRING", null, str, this.children[0].line)
             }
             else if (this.type==="BOOLOP"){
                 temp = new TreeNode("COMP", null, this.value, this.line)
