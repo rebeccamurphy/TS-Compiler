@@ -33,7 +33,7 @@ var TSC;
             }
         };
         Messenger.prototype.putWarning = function (line, msg) {
-            debugger;
+            //debugger;
             if (typeof msg !== "number") {
                 this.putMessage("***(Line: " + line + ") Warning: " + msg + "***");
                 document.getElementById("Warnings").innerHTML += "<div>(Line: " + line + ") Warning: " + msg + "</div>";

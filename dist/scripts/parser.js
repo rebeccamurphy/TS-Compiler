@@ -44,7 +44,7 @@ var TSC;
         };
         //Block ::== {StatementList}
         Parser.prototype.parseBlock = function (node) {
-            //debugger;
+            ////debugger;
             node.addChild("BLOCK");
             //set current node to be the new block node
             node = node.getNewestChild();
@@ -173,7 +173,7 @@ var TSC;
         //		::== BooleanExpr
         //		::== Id
         Parser.prototype.parseExpr = function (node) {
-            debugger;
+            //debugger;
             node.addChild("EXPR");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
@@ -223,7 +223,7 @@ var TSC;
         //IntExpr	::== digit intop Expr
         //			::== digit
         Parser.prototype.parseIntExpr = function (node) {
-            debugger;
+            //debugger;
             node.addChild("INTEXPR");
             node = node.getNewestChild();
             if (_CurrentToken.type === TokenType.DIGIT) {

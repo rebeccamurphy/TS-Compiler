@@ -38,7 +38,7 @@ module TSC
     }
 
     public addChild(child:any, value?:string){
-        //debugger;
+        ////debugger;
         if (typeof child ==="string")
            var ch = new TreeNode(child, this, '');
         else if (value===undefined)
@@ -55,7 +55,7 @@ module TSC
         return child;
     }
     public addChildren(node){
-        debugger;
+        //debugger;
         var temp = null;
         if (this.type ==="DIGIT"|| this.type=="CHARLIST"|| this.type=="BOOL"||this.type==="ADD" ||this.type==="BOOLOP"||this.type=="ID"){
             if (this.type=="CHARLIST"){
@@ -118,14 +118,14 @@ module TSC
             this.children[i].printCST(depth+1, id);
     }
     public makeAST(depth?:number, currnode?:TreeNode){
-        //debugger;
+        ////debugger;
         if (depth===-1 && this.type==="BLOCK"){
             _ASTRoot = new TreeNode("BLOCK", null);
             currnode = _ASTRoot
             depth=0;
         }
         for(var i=0; i<this.children.length; i++){
-            //debugger;
+            ////debugger;
             if (this.type!=="PROGRAM"){
                 switch(this.children[i].type){
                     case 'BLOCK':
@@ -173,7 +173,7 @@ module TSC
         
     }
     public printAST(depth?:number, id?:string){
-       //debugger;
+       ////debugger;
         if(depth===null)
             depth = 0;
         this.nodeHTML(depth, id);

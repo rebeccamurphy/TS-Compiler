@@ -8,7 +8,7 @@ var TSC;
             this.ID = ID;
         }
         SemanticAnalysis.prototype.SemanticAnalysis = function (currNode, symbolTable) {
-            debugger;
+            //debugger;
             if (this.currScope === -1) {
                 _Messenger.putHeaderMessage("Starting Semantic Analysis...");
                 _SymbolTableRoot = new TSC.SymbolTable();
@@ -32,7 +32,7 @@ var TSC;
             }
         };
         SemanticAnalysis.prototype.analysis = function (currNode, symbolTable) {
-            debugger;
+            //debugger;
             switch (currNode.type) {
                 case "BLOCK":
                     return this.analyzeBLOCK(currNode, symbolTable);
@@ -49,7 +49,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeBLOCK = function (currNode, symbolTable) {
-            debugger;
+            //debugger;
             //entering a newscopeso we add a new scope to symbol table
             var tempST = new TSC.SymbolTable();
             //this will probably be ok but apologizes to future me if its not
@@ -59,7 +59,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeVARDECL = function (currNode, symbolTable) {
-            debugger;
+            //debugger;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
@@ -80,7 +80,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
-            debugger;
+            //debugger;
             var idChild = currNode.getChildren()[0].getChildren()[0];
             var compChild = currNode.getChildren()[0];
             var valueChild = currNode.getChildren()[0].getChildren()[1];
@@ -173,6 +173,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeASSIGN = function (currNode, symbolTable) {
+            debugger;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             //TODO add check for addition in assignment
@@ -182,50 +183,9 @@ var TSC;
             var idType = temp[0];
             symbolTable = temp[1];
             symbolTable = this.checkType(idType, currNode, symbolTable);
-            /*
-            if (valueChild.value ==="+"){ //increment assign
-                return this.incASSIGN(currNode, symbolTable);
-            }
-            else if (valueChild.type ==="COMP") //boolean comparison in assignment
-                return this.booleanCompASSIGN(currNode, symbolTable);
-            else if (idChild.type ==="ID" && valueChild.type==="ID")//two ids
-                return this.twoIDASSIGN(idChild, valueChild, currNode, symbolTable);
-            else
-                return this.idValASSIGN(idChild, valueChild, currNode, symbolTable);
-            */
-        };
-        SemanticAnalysis.prototype.booleanCompASSIGN = function (currNode, symbolTable) {
-            var temp = this.findVarType(currNode.getChildren()[0], symbolTable, true);
-            var idChildType = temp[0];
-            var symbolTable = temp[1];
-            temp = this.findVarType(currNode.getChildren()[1].getChildren()[0], symbolTable);
-            var left = temp[0];
-            symbolTable = temp[1];
-            temp = this.findVarType(currNode.getChildren()[1].getChildren()[1], symbolTable);
-            var right = temp[0];
-            symbolTable = temp[1];
-            if (left !== right) {
-                //put error cannot compare  mismatched type
-                //cannot assign mismatched types
-                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchComp);
-                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
-            }
-            else if (idChildType === left && idChildType === right) {
-                //assignment matches
-                if (_Verbose)
-                    _Messenger.putMessage("Assignment Types Match.");
-            }
-            else {
-                //assignment types dont match
-                _Messenger.putError(currNode.getChildren()[0].line, ErrorType.TypeMismatchAssign);
-            }
-            //b ==b
-            //b==1
-            //1==b
-            //1 ==1
         };
         SemanticAnalysis.prototype.analyzePRINT = function (currNode, symbolTable) {
-            debugger;
+            //debugger;
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
                 _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line +
@@ -234,7 +194,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.findVarType = function (idChild, symbolTable, assign) {
-            debugger;
+            //debugger;
             if (idChild.type !== "ID") {
                 return [idChild.type, symbolTable];
             }
@@ -291,7 +251,23 @@ var TSC;
                 }
             }
             for (var i = 0; i < node.children.length; i++) {
-                this.checkType(type, node.children[i], symbolTable);
+                if (node.children[i].type === "COMP") {
+                    if (node.children[i].children[0].type == "ADD" || node.children[i].children[0].type == "DIGIT") {
+                        if (_Verbose)
+                            _Messenger.putMessage("Comparing DIGIT...");
+                        type = "INT";
+                        this.checkType(type, node.children[i], symbolTable);
+                    }
+                    else {
+                        this.checkType(type, node.children[i], symbolTable);
+                        if (_Verbose)
+                            _Messenger.putMessage("Comparing " + node.children[i].children[0].type + "...");
+                        type = node.children[i].children[0].type;
+                        this.checkType(type, node.children[i], symbolTable);
+                    }
+                }
+                else
+                    this.checkType(type, node.children[i], symbolTable);
             }
             return symbolTable;
         };

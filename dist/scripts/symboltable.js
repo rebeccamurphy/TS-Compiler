@@ -65,7 +65,7 @@ var TSC;
             return null;
         };
         SymbolTable.prototype.findValueInParentScope = function (id) {
-            debugger;
+            //debugger;
             if (this === null || this.parent === null)
                 return null;
             //find closest to recently declared
