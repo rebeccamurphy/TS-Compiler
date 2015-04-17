@@ -188,7 +188,7 @@ var TSC;
                     else if (node.children[i].children[0].type !== "COMP") {
                         if (_Verbose)
                             _Messenger.putMessage("Comparing " + node.children[i].children[0].type + "...");
-                        type = node.children[i].children[0].type;
+                        type = (node.children[i].children[0].type === "ID") ? type : node.children[i].children[0].type;
                         this.checkType(type, node.children[i], symbolTable);
                     }
                     else
