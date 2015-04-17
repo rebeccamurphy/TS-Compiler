@@ -91,6 +91,7 @@ var TSC;
                     _Messenger.putMessage("Checking comparison at Line: " + left.line);
                 this.firstType = left.type;
                 symbolTable = this.checkType("BOOL", currNode, symbolTable);
+                this.numComps = 0;
             }
             //else dont do anything because type was already checked in parser
         };
@@ -163,19 +164,16 @@ var TSC;
                 else {
                     var nodeType = null;
                     nodeType = (node.type === "DIGIT") ? "INT" : node.type;
-                    nodeType = (node.type === "STRING" && nodeType === null) ? "STR" : nodeType;
+                    nodeType = (node.type === "STRING") ? "STR" : nodeType;
                 }
                 if (type !== nodeType) {
-                    if (_Verbose)
+                    if (_Verbose) {
                         _Messenger.putMessage("(Line: " + node.line + ") " + node.value + " does not match type " + type);
+                    }
                     _Messenger.putError(node.line, ErrorType.TypeMismatch);
                 }
                 else if (_Verbose) {
                     _Messenger.putMessage("(Line: " + node.line + ") " + node.value + " Matches type: " + type);
-                }
-                if (this.firstType !== "BOOL" && this.numComps >= 2) {
-                    _Messenger.putError(node.line, ErrorType.ImpossibleBool);
-                    this.firstType = "BOOL";
                 }
             }
             for (var i = 0; i < node.children.length; i++) {
@@ -187,12 +185,20 @@ var TSC;
                         type = "INT";
                         this.checkType(type, node.children[i], symbolTable);
                     }
-                    else {
+                    else if (node.children[i].children[0].type !== "COMP") {
                         if (_Verbose)
                             _Messenger.putMessage("Comparing " + node.children[i].children[0].type + "...");
                         type = node.children[i].children[0].type;
                         this.checkType(type, node.children[i], symbolTable);
                     }
+                    else
+                        this.checkType(type, node.children[i], symbolTable);
+                }
+                else if (node.children[i + 1] !== undefined) {
+                    if (node.children[i + 1].type === "COMP")
+                        this.checkType("BOOL", node.children[i], symbolTable);
+                    else
+                        this.checkType(type, node.children[i], symbolTable);
                 }
                 else
                     this.checkType(type, node.children[i], symbolTable);
