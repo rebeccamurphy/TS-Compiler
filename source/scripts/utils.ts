@@ -52,11 +52,11 @@ module TSC {
         return original.substr(0, index) + string + original.substr(index);
         }
     public static charsToString(node, str?){
-        ////debugger;
+        debugger;
         if (str ===undefined){
             str ='';
         }
-        while (node!==undefined){
+        while (node!==undefined && node.getChildren().length!==0){
             str += node.getChildren()[0].getValue();
             node = node.getChildren()[1];
         }

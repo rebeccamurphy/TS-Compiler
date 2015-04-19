@@ -298,7 +298,7 @@ module TSC
 		//			::== space CharList
 		//			::== epsilon
 		public parseCharList(node:TreeNode){
-			debugger;
+			//debugger;
             node.addChild("CHARLIST");
             node = node.getNewestChild();
 			switch (_CurrentToken.type){

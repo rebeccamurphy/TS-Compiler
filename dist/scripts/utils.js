@@ -42,11 +42,11 @@ var TSC;
             return original.substr(0, index) + string + original.substr(index);
         };
         Utils.charsToString = function (node, str) {
-            ////debugger;
+            debugger;
             if (str === undefined) {
                 str = '';
             }
-            while (node !== undefined) {
+            while (node !== undefined && node.getChildren().length !== 0) {
                 str += node.getChildren()[0].getValue();
                 node = node.getChildren()[1];
             }

@@ -262,7 +262,7 @@ var TSC;
         //			::== space CharList
         //			::== epsilon
         Parser.prototype.parseCharList = function (node) {
-            debugger;
+            //debugger;
             node.addChild("CHARLIST");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
