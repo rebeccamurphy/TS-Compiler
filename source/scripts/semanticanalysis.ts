@@ -131,7 +131,7 @@ module TSC
 			var type="";
 			var varInScope = symbolTable.findValueInScope(idChild.value);
 			var varInParentScope = symbolTable.findValueInParentScope(idChild.value);
-			
+			var varInParentScope = (varInParentScope===undefined)? _varInParentScope: varInParentScope;
 			if (varInScope !== null){
 				type = varInScope.type;
 				if (_Verbose &&!assign)

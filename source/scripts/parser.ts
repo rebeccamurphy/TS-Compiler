@@ -298,14 +298,13 @@ module TSC
 		//			::== space CharList
 		//			::== epsilon
 		public parseCharList(node:TreeNode){
-			
+			debugger;
             node.addChild("CHARLIST");
             node = node.getNewestChild();
 			switch (_CurrentToken.type){
 			    case TokenType.CHAR:
                     node.addChild(TokenType.CHAR, _CurrentToken.value);
-			    	this.checkToken(TokenType.CHAR);
-                    
+			    	this.checkToken(TokenType.CHAR);                    
 			        break;
 			    case TokenType.SPACE:
                     node.addChild(TokenType.SPACE, _CurrentToken.value);
@@ -314,7 +313,7 @@ module TSC
 			    default: 
 			    	//epsilon production no code boi
 			}
-			if (_CurrentToken.type ===TokenType.CHAR ||_CurrentToken ===TokenType.SPACE )
+			if (_CurrentToken.type ===TokenType.CHAR ||_CurrentToken.type ===TokenType.SPACE )
 				this.parseCharList(node);
 		}
 		

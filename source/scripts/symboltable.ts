@@ -63,12 +63,13 @@ module TSC
 			return null;
 		}
 		public findValueInParentScope(id):any{
-			//debugger;
+			debugger;
 			if (this===null || this.parent===null)
 				return null; 
 			//find closest to recently declared
 			for(var i=this.parent.nodes.length-1; i>=0;i--){
 				if (id === this.parent.nodes[i].ID){
+					_varInParentScope = this.parent.nodes[i];
 					return this.parent.nodes[i];
 				}
 			}

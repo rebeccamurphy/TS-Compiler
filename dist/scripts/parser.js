@@ -262,6 +262,7 @@ var TSC;
         //			::== space CharList
         //			::== epsilon
         Parser.prototype.parseCharList = function (node) {
+            debugger;
             node.addChild("CHARLIST");
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
@@ -275,7 +276,7 @@ var TSC;
                     break;
                 default:
             }
-            if (_CurrentToken.type === TokenType.CHAR || _CurrentToken === TokenType.SPACE)
+            if (_CurrentToken.type === TokenType.CHAR || _CurrentToken.type === TokenType.SPACE)
                 this.parseCharList(node);
         };
         Parser.prototype.checkToken = function (tokenType) {
