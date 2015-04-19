@@ -113,11 +113,14 @@ var TSC;
             if (_Verbose)
                 _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line +
                     ") print statement");
-            symbolTable = this.findVarType(idChild, symbolTable)[1];
+            var temp = this.findVarType(idChild, symbolTable, true);
+            var type = temp[0];
+            symbolTable = temp[1];
+            symbolTable = this.checkType(type, currNode, symbolTable);
             return symbolTable;
         };
         SemanticAnalysis.prototype.findVarType = function (idChild, symbolTable, assign) {
-            //debugger;
+            debugger;
             if (idChild.type !== "ID") {
                 return [idChild.type, symbolTable];
             }
@@ -125,12 +128,13 @@ var TSC;
             var varInScope = symbolTable.findValueInScope(idChild.value);
             var varInParentScope = symbolTable.findValueInParentScope(idChild.value);
             var varInParentScope = (varInParentScope === undefined) ? _varInParentScope : varInParentScope;
+            _varInParentScope = null;
             if (varInScope !== null) {
                 type = varInScope.type;
                 if (_Verbose && !assign)
                     _Messenger.putMessage("Found " + varInScope.ID + " ID in current scope.");
                 if (!varInScope.initialized && !assign)
-                    _Messenger.putWarning(idChild.line, varInScope.ID + " has not been initialized, but used in comparison.");
+                    _Messenger.putWarning(idChild.line, varInScope.ID + " has not been initialized, but used in statement.");
                 if (assign)
                     varInScope.setInitialized();
                 else
@@ -142,14 +146,14 @@ var TSC;
                 if (_Verbose && !assign)
                     _Messenger.putMessage("Found " + varInParentScope.ID + " ID in parent scope.");
                 if (!varInParentScope.initialized && !assign)
-                    _Messenger.putWarning(idChild.line, varInParentScope.ID + " has not been initialized, but used in comparison.");
+                    _Messenger.putWarning(idChild.line, varInParentScope.ID + " has not been initialized, but used in statement.");
                 if (assign)
                     varInParentScope.setInitialized();
                 else
                     varInParentScope.setUsed();
                 symbolTable.replace(varInParentScope);
             }
-            else {
+            else if (!assign) {
                 _Messenger.putError(idChild.line, ErrorType.Undeclared, idChild.ID);
             }
             return [type, symbolTable];

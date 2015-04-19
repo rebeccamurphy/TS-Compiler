@@ -15,7 +15,7 @@ var _SemanticAnalysis;
 var _ASTRoot = null;
 var _SymbolTableRoot;
 var _Verbose;
-var _varInParentScope;
+var _varInParentScope = null;
 var TokenType;
 (function (TokenType) {
     TokenType[TokenType["LCURLY"] = 0] = "LCURLY";

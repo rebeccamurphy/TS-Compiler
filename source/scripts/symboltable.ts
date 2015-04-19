@@ -69,7 +69,7 @@ module TSC
 			//find closest to recently declared
 			for(var i=this.parent.nodes.length-1; i>=0;i--){
 				if (id === this.parent.nodes[i].ID){
-					_varInParentScope = this.parent.nodes[i];
+					_varInParentScope = (_varInParentScope===null)? this.parent.nodes[i]: _varInParentScope;
 					return this.parent.nodes[i];
 				}
 			}
