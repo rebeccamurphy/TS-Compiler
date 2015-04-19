@@ -219,12 +219,6 @@ var TSC;
                     else
                         this.checkType(type, node.children[i], symbolTable);
                 }
-                else if (node.children[i + 1] !== undefined) {
-                    if (node.children[i + 1].type === "COMP")
-                        this.checkType("BOOL", node.children[i], symbolTable);
-                    else
-                        this.checkType(type, node.children[i], symbolTable);
-                }
                 else
                     this.checkType(type, node.children[i], symbolTable);
             }
