@@ -94,8 +94,15 @@ module TSC
 				var right = currNode.getChildren()[0].getChildren()[1];
 				if (_Verbose)
 					_Messenger.putMessage("Checking comparison at Line: " +left.line);
-				this.firstType=left.type;
-				symbolTable = this.checkType("BOOL", currNode, symbolTable);
+				//this.firstType=left.type;
+				var type = left.type;
+				if (left.type =="ID"){
+					var temp = this.findVarType(left, symbolTable, true);
+					type = temp[0];
+					symbolTable = temp[1];
+				}
+
+				symbolTable = this.checkType(type, currNode, symbolTable);
 				this.numComps =0;
 			}
 			//else dont do anything because type was already checked in parser
@@ -209,7 +216,17 @@ module TSC
 					else if (node.children[i].children[0].type!=="COMP"){
 						if (_Verbose)
 							_Messenger.putMessage("Comparing " +node.children[i].children[0].type +"...");
+
 						type = (node.children[i].children[0].type==="ID")?type:node.children[i].children[0].type ;
+						type = (type==="DIGIT") ? "INT" :type;
+						type = (type==="STRING") ? "STR":type;	
+						
+						if (type==="BOOL"&&node.children[i].children[0].type==="ID"){
+							//type shouldnt be for bool it should be for id type									
+							var temp = this.findVarType(node.children[i].children[0], symbolTable, true);
+							var nodeType = temp[0];
+							type=nodeType;
+						}
 						this.checkType(type, node.children[i], symbolTable);
 					}
 					else
