@@ -58,7 +58,7 @@ var TSC;
             return child;
         };
         TreeNode.prototype.addChildren = function (node) {
-            debugger;
+            // debugger;
             var temp = null;
             if (this.type === "DIGIT" || this.type == "CHARLIST" || this.type == "BOOL" || this.type === "ADD" || this.type === "BOOLOP" || this.type == "ID") {
                 if (this.type == "CHARLIST") {

@@ -108,14 +108,20 @@ var TSC;
             symbolTable = this.checkType(idType, currNode, symbolTable);
         };
         SemanticAnalysis.prototype.analyzePRINT = function (currNode, symbolTable) {
-            //debugger;
+            debugger;
             var idChild = currNode.getChildren()[0];
+            if (idChild.type === "ADD")
+                idChild = currNode.getChildren()[0].getChildren()[0];
             if (_Verbose)
                 _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line +
                     ") print statement");
             var temp = this.findVarType(idChild, symbolTable, true);
             var type = temp[0];
             symbolTable = temp[1];
+            if (type === "DIGIT")
+                type = "INT";
+            else if (type === "STRING")
+                type = "STR";
             symbolTable = this.checkType(type, currNode, symbolTable);
             return symbolTable;
         };
@@ -164,7 +170,7 @@ var TSC;
                 if (node.type === "ID") {
                     var temp = this.findVarType(node, symbolTable);
                     var nodeType = temp[0];
-                    var symbolTable = temp[1];
+                    symbolTable = temp[1];
                 }
                 else {
                     var nodeType = null;
