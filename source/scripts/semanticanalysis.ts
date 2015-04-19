@@ -128,7 +128,7 @@ module TSC
 			if (_Verbose)
 				_Messenger.putMessage("Checking (" +idChild.value+ ", Line: " +idChild.line+
 					") print statement");
-			var temp = this.findVarType(idChild,symbolTable, true);
+			var temp = this.findVarType(idChild,symbolTable, false);
 			var type = temp[0];
 			symbolTable = temp[1];
 			if (type ==="DIGIT")
@@ -233,13 +233,13 @@ module TSC
 						this.checkType(type, node.children[i], symbolTable);
 				
 				}	
-				/*		
+						
 				else if (node.children[i+1]!==undefined){
 					if (node.children[i+1].type==="COMP")
 						this.checkType("BOOL", node.children[i], symbolTable);
 					else
 						this.checkType(type, node.children[i], symbolTable);
-				}*/
+				}
 				else
 					this.checkType(type, node.children[i], symbolTable);
 			}
