@@ -117,25 +117,26 @@ module TSC
 			var temp = this.findVarType(idChild, symbolTable, true);
 			var idType = temp[0];
 			symbolTable = temp[1];
-			symbolTable = this.checkType(idType, currNode, symbolTable)
+			symbolTable = this.checkType(idType, currNode, symbolTable, true)
 			
 		}
 		private analyzePRINT(currNode, symbolTable){
 			debugger;
 			var idChild = currNode.getChildren()[0];
+			var valueChild = currNode.getChildren()[1];
 			if (idChild.type==="ADD")
 				idChild = currNode.getChildren()[0].getChildren()[0];
 			if (_Verbose)
 				_Messenger.putMessage("Checking (" +idChild.value+ ", Line: " +idChild.line+
 					") print statement");
-			var temp = this.findVarType(idChild,symbolTable, false);
+			var temp = this.findVarType(idChild,symbolTable, true);
 			var type = temp[0];
 			symbolTable = temp[1];
 			if (type ==="DIGIT")
 				type = "INT";
 			else if (type ==="STRING")
 				type= "STR";
-			symbolTable= this.checkType(type, currNode, symbolTable);
+			symbolTable= this.checkType(type,valueChild,  symbolTable);
 			return symbolTable;
 		}
 
@@ -180,7 +181,7 @@ module TSC
 
 			return [type, symbolTable];
 		}
-		private checkType(type, node, symbolTable){
+		private checkType(type, node, symbolTable, assign?){
 			debugger;
 			if (node.type =="ID"||node.type =="DIGIT" ||node.type =="BOOL"||node.type==="STRING"){
 				if (node.type ==="ID"){

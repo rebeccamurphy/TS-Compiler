@@ -68,5 +68,34 @@ module TSC {
             str+="<div>Token "+(i+1)+": " + arr[i].toString() +"</div>";
         return str;
     }
+    public static dec2hex (numDec){
+        return numDec.toString(16).toUpperCase();    
+    }
+
+    public static hex2dec(numHex){
+        return parseInt(numHex, 16);
+    }
+
+    public static str2hex(name:string){
+        
+        var hexStr ="";
+        for(var i =0; i< name.length; i++){
+            var temp = TSC.Utils.dec2hex(name.charCodeAt(i));
+            temp = new Array(2-temp.length).join('0')+temp;
+            hexStr+=temp;
+        }
+        return hexStr;
+    }
+    
+    public static hex2str(hexName:string){
+        var str ="";
+        var hexArray = hexName.match(/.{1,2}/g);
+        for (var i=0; i<hexArray.length; i++){
+            var charFromHex =String.fromCharCode(this.hex2dec(hexArray[i]));
+            str+=charFromHex;
+        }
+        return str;
+    }
+
     }
 }

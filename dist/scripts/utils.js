@@ -58,6 +58,30 @@ var TSC;
                 str += "<div>Token " + (i + 1) + ": " + arr[i].toString() + "</div>";
             return str;
         };
+        Utils.dec2hex = function (numDec) {
+            return numDec.toString(16).toUpperCase();
+        };
+        Utils.hex2dec = function (numHex) {
+            return parseInt(numHex, 16);
+        };
+        Utils.str2hex = function (name) {
+            var hexStr = "";
+            for (var i = 0; i < name.length; i++) {
+                var temp = TSC.Utils.dec2hex(name.charCodeAt(i));
+                temp = new Array(2 - temp.length).join('0') + temp;
+                hexStr += temp;
+            }
+            return hexStr;
+        };
+        Utils.hex2str = function (hexName) {
+            var str = "";
+            var hexArray = hexName.match(/.{1,2}/g);
+            for (var i = 0; i < hexArray.length; i++) {
+                var charFromHex = String.fromCharCode(this.hex2dec(hexArray[i]));
+                str += charFromHex;
+            }
+            return str;
+        };
         return Utils;
     })();
     TSC.Utils = Utils;
