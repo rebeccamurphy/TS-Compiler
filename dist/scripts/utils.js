@@ -73,6 +73,9 @@ var TSC;
             }
             return hexStr;
         };
+        Utils.toHexStr = function (num) {
+            return ("00" + num.toString(16).toUpperCase()).substr(-2);
+        };
         Utils.hex2str = function (hexName) {
             var str = "";
             var hexArray = hexName.match(/.{1,2}/g);

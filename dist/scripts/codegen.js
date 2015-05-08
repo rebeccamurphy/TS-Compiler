@@ -43,40 +43,99 @@ var TSC;
             if (this.errors > 0)
                 return;
             _Messenger.put("Backpatching temporary variables in static memory.");
-            this.populateStaticArea();
+            this.populateStaticTable();
             if (this.errors > 0)
                 return;
-            _messenger.put("Backpatching temporary jump locations.");
+            _Messenger.put("Backpatching temporary jump locations.");
             if (this.errors > 0)
                 return;
             this.fillInJumps();
             this.fillInGUI();
-            return codeTable;
+            return this.codeTable;
         };
-        CodeGen.prototype.addToStaticTable = function (varName, scope, type, pointer) {
+        CodeGen.prototype.addToStaticTable = function (varName, scope, type, address) {
             var tempName = "T" + this.staticTable.length;
-            _Messenger.putMessage("Adding item " + varName + "@" + scope.getText() + " as " + tempName + "XX to static table.");
+            _Messenger.putMessage("Adding item " + varName + "@" + scope + " as " + tempName + "XX to static table.");
             this.staticTable.push({
                 temp: tempName,
                 id: varName,
-                scope: scope.getText(),
-                offset: this.tempStatics.length,
+                scope: scope,
+                offset: this.staticTable.length,
                 type: type,
-                pointer: pointer === true
+                address: address === true
             });
             return tempName;
         };
         CodeGen.prototype.getFromStaticTable = function (id, scope) {
             for (var i = 0; i < this.staticTable.length; i++)
-                if (this.staticTable[i].id === id && this.staticsTable[i].scope === this.scope.getText())
-                    return tempStatics[i];
-            return false;
+                if (this.staticTable[i].id === id && this.staticTable[i].scope === scope)
+                    return this.staticTable[i];
+            return null;
         };
-        CodeGen.prototype.addtoJumpTable = function (temp, jumpAdd) {
+        CodeGen.prototype.addtoJumpTable = function (temp, distance) {
+            if (temp) {
+                for (var i = 0; i < this.jumpTable.length; i++) {
+                    if (this.jumpTable[i].temp === temp)
+                        this.jumpTable[i].distance = distance;
+                }
+            }
+            else {
+                this.jumpTable.push({
+                    temp: "J" + this.jumpTable.length,
+                    distance: "?"
+                });
+                if (_Verbose)
+                    _Messenger.putMessage("Adding item " + ("J" + (this.jumpTable.length - 1)) + " to static table.");
+                return "J" + (this.jumpTable.length - 1);
+            }
         };
-        CodeGen.prototype.getFromJumpTable = function () {
+        CodeGen.prototype.getFromJumpTable = function (id, scope) {
+            for (var i = 0; i < this.jumpTable.length; i++) {
+                if (this.jumpTable[i].id === id && this.jumpTable.scope === scope)
+                    return this.jumpTable[i];
+            }
+            return null;
+        };
+        CodeGen.prototype.addToHeap = function (str) {
+            if (_Verbose)
+                _Messenger.putMessage("Adding string to heap.");
+            //check if string exists in heap
+            for (var i = this.currentHeapLocation; i < this.maxByteSize - 1; i++) {
+                if (TSC.Utils.toHexStr(str.charCodeAt(0)) === this.codeTable[i]) {
+                    var compArr = [];
+                    for (var z = i; this.codeTable[z] !== "00"; z++)
+                        compArr.push(this.codeTable[z]);
+                    if (compArr.length === str.length) {
+                        var matches = true;
+                        for (var x = 0; x < compArr.length; x++) {
+                            if (compArr[x] !== TSC.Utils.toHexStr(str.charCodeAt(x))) {
+                                matches = false;
+                                break;
+                            }
+                        }
+                        if (matches) {
+                            if (_Verbose) {
+                                _Messenger.putMessage("String already exists in heap.");
+                                _Messenger.putMessage("Returning existing string location: " + TSC.Utils.toHexStr(i));
+                            }
+                            return TSC.Utils.toHexStr(i);
+                        }
+                    }
+                }
+            }
+            this.currentHeapLocation -= (str.length + 1) - (this.currentHeapLocation === (this.maxByteSize - 1) ? 1 : 0); //move up in the heap
+            //write string to the heap
+            for (var i = this.currentHeapLocation; i < this.currentHeapLocation + str.length; i++)
+                this.codeTable[i] = TSC.Utils.toHexStr(str.charCodeAt(i - this.currentHeapLocation));
+            //add terminating character
+            this.codeTable[this.currentHeapLocation + str.length] = "00";
+            if (_Verbose)
+                _Messenger.putMessage("String added at location: " + TSC.Utils.toHexStr(this.currentHeapLocation));
+            return TSC.Utils.toHexStr(this.currentHeapLocation);
         };
         CodeGen.prototype.populateCodeTable = function (node) {
+        };
+        CodeGen.prototype.populateStaticTable = function () {
         };
         return CodeGen;
     })();

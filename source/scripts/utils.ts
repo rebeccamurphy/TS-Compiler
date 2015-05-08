@@ -87,6 +87,9 @@ module TSC {
         return hexStr;
     }
     
+    public static toHexStr(num) {
+        return ("00"+num.toString(16).toUpperCase()).substr(-2);
+    }
     public static hex2str(hexName:string){
         var str ="";
         var hexArray = hexName.match(/.{1,2}/g);
