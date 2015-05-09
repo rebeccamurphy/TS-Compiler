@@ -85,6 +85,10 @@ var TSC;
             }
             return str;
         };
+        Utils.createHexIndex = function (numDec) {
+            var numHex = this.dec2hex(numDec);
+            return "0x" + Array(3 - (numHex.length - 1)).join("0") + numHex;
+        };
         return Utils;
     })();
     TSC.Utils = Utils;

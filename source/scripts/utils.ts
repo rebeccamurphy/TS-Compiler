@@ -99,6 +99,10 @@ module TSC {
         }
         return str;
     }
+    public static createHexIndex(numDec){
+        var numHex = this.dec2hex(numDec);
+        return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
+    }
 
     }
 }

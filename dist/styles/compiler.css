@@ -95,3 +95,7 @@ td{
 .tab-pane{
 	min-height: 500px;
 }
+#Code{
+	padding:5px!important;
+	font-family: monospace;
+}
