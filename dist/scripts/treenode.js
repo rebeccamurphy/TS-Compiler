@@ -16,7 +16,7 @@ var TSC;
         }
         TreeNode.prototype.toString = function () {
             var s = (this.scope === -1) ? "" : this.scope;
-            return this.type + ", " + this.value + " " + this.scope;
+            return this.type + ", " + this.value;
         };
         TreeNode.prototype.tabs = function (n) {
             var str = "";

@@ -14,7 +14,7 @@ module TSC
     }
     public toString(){
         var s = (this.scope===-1)? "" : this.scope;
-        return this.type +", " +this.value +" "+ this.scope;
+        return this.type +", " +this.value;
     }
     private tabs(n) {
         var str = "";
