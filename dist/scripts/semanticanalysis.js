@@ -75,6 +75,7 @@ var TSC;
                     _Messenger.putMessage("(" + valueChild.value + ", Line: " + valueChild.line +
                         ") Declared properly");
                 symbolTable.addNode(temp);
+                currNode.scope = symbolTable.scope;
             }
             else {
                 _Messenger.putError(idChild.line, ErrorType.Redeclared);

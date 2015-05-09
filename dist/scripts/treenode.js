@@ -1,21 +1,22 @@
 var TSC;
 (function (TSC) {
     var TreeNode = (function () {
-        function TreeNode(type, parent, value, line, children) {
-            if (children === void 0) { children = []; }
+        function TreeNode(type, parent, value, line) {
             this.type = type;
             this.parent = parent;
             this.value = value;
             this.line = line;
-            this.children = children;
             //for CST
             this.type = type;
             this.value = (value === undefined) ? '' : value;
             this.parent = parent;
             this.line = (line === undefined) ? -1 : line;
+            this.children = [];
+            this.scope = -1;
         }
         TreeNode.prototype.toString = function () {
-            return this.type + ", " + this.value;
+            var s = (this.scope === -1) ? "" : this.scope;
+            return this.type + ", " + this.value + " " + this.scope;
         };
         TreeNode.prototype.tabs = function (n) {
             var str = "";
@@ -31,6 +32,9 @@ var TSC;
         };
         TreeNode.prototype.getValue = function () {
             return this.value;
+        };
+        TreeNode.prototype.getLine = function () {
+            return this.line;
         };
         TreeNode.prototype.setValue = function (val) {
             this.value = val;

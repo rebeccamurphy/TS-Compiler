@@ -1,15 +1,20 @@
 module TSC
 {
 	export class TreeNode {
-	constructor(private type:string, private parent:TreeNode, private value?:any, private line?:number, private children =  []) {
+        private children;
+        public scope;
+	constructor(private type:string, private parent:TreeNode, private value?:any, private line?:number) {
         //for CST
         this.type = type;
         this.value = (value===undefined)? '':value;
         this.parent = parent;
         this.line = (line===undefined)? -1:line;
+        this.children =[];
+        this.scope =-1;
     }
     public toString(){
-        return this.type +", " +this.value;
+        var s = (this.scope===-1)? "" : this.scope;
+        return this.type +", " +this.value +" "+ this.scope;
     }
     private tabs(n) {
         var str = "";
@@ -25,6 +30,9 @@ module TSC
     }
     public getValue(){
         return this.value;
+    }
+    public getLine(){
+        return this.line;
     }
     public setValue(val:any){
         this.value = val;

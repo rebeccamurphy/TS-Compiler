@@ -44,6 +44,16 @@ var TSC;
         SymbolTable.prototype.getChildren = function () {
             return this.children;
         };
+        SymbolTable.prototype.findScope = function (node, treeNode) {
+            for (var i = 0; i < node.nodes.length; i++) {
+                if (treeNode.getValue() === node.nodes[i].ID && treeNode.getLine() === node.nodes[i].line
+                    && treeNode.getType() === node.nodes[i].type)
+                    return node.scope;
+            }
+            for (var i = 0; i < node.children.length; i++) {
+                this.findScope(node.children[i], treeNode);
+            }
+        };
         SymbolTable.prototype.addChild = function (ST) {
             if (_Verbose)
                 _Messenger.putMessage("Creating new scope in Symbol Table: " + ST.toString());

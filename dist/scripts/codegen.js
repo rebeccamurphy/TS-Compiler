@@ -28,6 +28,7 @@ var TSC;
             this.tempVarMemRef2;
             this.depth = 0;
             this.errors = 0;
+            this.line = 0;
         }
         CodeGen.prototype.gen = function () {
             _Messenger.putHeaderMessage("<h3>Generating 6502a code...</h3>");
@@ -49,8 +50,8 @@ var TSC;
             _Messenger.put("Backpatching temporary jump locations.");
             if (this.errors > 0)
                 return;
-            this.fillInJumps();
-            this.fillInGUI();
+            //this.fillInJumps();
+            //this.fillInGUI();
             return this.codeTable;
         };
         CodeGen.prototype.addToStaticTable = function (varName, scope, type, address) {
@@ -133,7 +134,77 @@ var TSC;
                 _Messenger.putMessage("String added at location: " + TSC.Utils.toHexStr(this.currentHeapLocation));
             return TSC.Utils.toHexStr(this.currentHeapLocation);
         };
+        CodeGen.prototype.addCell = function (opC) {
+            _Messenger.putMessage("Adding byte: " + opC);
+            this.codeTable[this.currentMemLocation++] = opC;
+            if (this.currentMemLocation >= this.currentHeapLocation) {
+                _Messenger.putError(this.line, "Out of memory. Code area has overflowed into the heap.");
+                this.errors += 1;
+                return;
+            }
+        };
         CodeGen.prototype.populateCodeTable = function (node) {
+            switch (node.getType()) {
+                case "BLOCK":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                case "PRINT":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    this.line = node.getChildren()[0].getLine();
+                    this.printCode(node.getChildren()[0]);
+                    break;
+                case "ASSIGN":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                case "VARDECL":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                case "WHILE":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                case "IF":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                case "ADD":
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                case "COMP":
+                    //== && !=
+                    if (_Verbose)
+                        _Messenger.putMessage("Generating code for " + node.toString());
+                    break;
+                default:
+                    break;
+            }
+            for (var i = 0; i < node.getChildren().length; i++)
+                this.populateCodeTable(node.getChildren()[i]);
+        };
+        CodeGen.prototype.printCode = function (node) {
+            switch (node.getType()) {
+                case "ID":
+                    var itemInStaticTable = this.getFromStaticTable(node.getValue(), node.scope);
+                    this.addCell(this.opCode.loadYFromMemory);
+                    this.addCell(itemInStaticTable.temp);
+                    this.addCell("XX");
+                    this.addCell(this.opCode.loadXWithConstant);
+                    this.addCell((itemInStaticTable.type === "string") ? "02" : "01");
+                    this.addCell(this.opCode.sysCall);
+                    break;
+                case "BOOL":
+                    break;
+                case "STRING":
+                    break;
+                default:
+                    console.log('no match');
+                    break;
+            }
         };
         CodeGen.prototype.populateStaticTable = function () {
         };
