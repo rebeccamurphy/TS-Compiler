@@ -48,10 +48,14 @@ module TSC
 			for (var i=0; i<this.codeTable.length; i++){
 			    if (i % 8 ===0){
 			        rowID="rowID"+(i/8);
-			        output += "</tr><tr id="+rowID+"><td> <b>" + TSC.Utils.createHexIndex(i) + " </td>";
+			        output += "</tr><tr id="+rowID+"><td id='dataID" + i + "'>" + this.codeTable[i] + '</td>';
 			    }
 			    else
 			    	output += "<td id='dataID" + i + "'>" + this.codeTable[i] + '</td>';
+			    if (this.codeTable[i]=="00" &&this.currHeapLoc==this.maxByteSize-1 && i>=this.currMemLoc)
+			    	//nothing store on heap
+			    	break;
+
 			}
 			output += "</tr>"
 			document.getElementById("CodeTable").innerHTML = output;
@@ -70,20 +74,22 @@ module TSC
 	        this.populateCodeTable(_ASTRoot);
 	        if( this.errors> 0)
 	            return;
-	        _Messenger.put("Backpatching temporary variables in static memory.");
+	        _Messenger.putMessage("Backpatching temporary variables in static memory.");
 	        this.populateStaticTable();
 	        if(this.errors > 0)
 	            return;
-	        _Messenger.put("Backpatching temporary jump locations.");
+	        _Messenger.putMessage("Backpatching temporary jump locations.");
 	        if(this.errors > 0)
 	            return;
 	        this.fillInJumps();
-	        //this.fillInGUI();
+	        _Messenger.putHeaderMessage("Code Generation Complete. Errors: " + this.errors);
+	        this.displayCode();
 
 	        return this.codeTable;
 
 			}
 		public addToStaticTable(varName, scope, type, address) {
+			debugger;
 	        var tempName = "T"+this.staticTable.length;
 	        _Messenger.putMessage("Adding item " + varName + "@" + scope + " as " + tempName + "XX to static table.");
 	        this.staticTable.push({
@@ -170,6 +176,7 @@ module TSC
 	        return TSC.Utils.toHexStr(this.currHeapLoc);
         }
         public addCell(opC:string) {
+        	debugger;
         	_Messenger.putMessage("Adding byte: " + opC);
         	this.codeTable[this.currMemLoc++] = opC; 
         	
@@ -335,10 +342,11 @@ module TSC
 
     	}
     	public assignCode(node:TreeNode){
+    		debugger;
     		var id = node.getChildren()[0];
     		var val = node.getChildren()[1];
     		var typeOfAssign = val.getType();
-    		var staticEntry = this.getFromStaticTable(id.value,id.scope).temp;
+    		var staticEntry = this.getFromStaticTable(id.value,id.scope);
             var type = staticEntry.type;
     		switch(typeOfAssign){
     			case "ID":
@@ -347,12 +355,15 @@ module TSC
                     this.addCell("XX");
     				break;
     			case "DIGIT":
+            		this.addCell(this.opCode.loadAccWithConstant);
     				this.addCell(TSC.Utils.toHexStr(val.getValue()));
     				break;
     			case "BOOL":
+            		this.addCell(this.opCode.loadAccWithConstant);
     				this.addCell("0" + ((val.getValue() === "true") ? "1":"0"));
     				break;
     			case "STRING":
+            		this.addCell(this.opCode.loadAccWithConstant);
     				this.addCell(this.addToHeap(val.getValue()));
     				break;
     			default:
@@ -379,10 +390,11 @@ module TSC
     	}
 
     	public varDeclCode(node:TreeNode){
-    		var type = node.getChild(0).getType();
-            var val = node.getChild(1);
+    		debugger;
+    		var type = node.getChildren()[0].getType();
+            var val = node.getChildren()[1];
 
-            if(type === "string") {
+            if(type === "STRING") {
                 this.addToStaticTable(val.getValue(), val.scope, type, true);
                 return;
             }
@@ -415,7 +427,7 @@ module TSC
             this.addCell(this.opCode.branchNotEqual); //if false, branch away from while loop
             this.addCell(tempJump); //the location after the while loop (temp jump location)
             var lastLoc = this.currMemLoc; //save the memory location after the comparison
-            this.populateCodeTable(node.getChild(1)); //the code in the while block
+            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
             this.addCell(this.opCode.loadXWithConstant); //put a 01 in X reg to make branchNotEqual happen after comparison
             this.addCell("01");
             this.addCell(this.opCode.compareByteToX);
@@ -427,6 +439,7 @@ module TSC
             
     	}
     	public ifCode(node:TreeNode){
+    		debugger;
     		var tempJump= this.addToJumpTable(); //create a temp jump location
 
             //in case of 'true' or 'false'
@@ -438,12 +451,12 @@ module TSC
                 this.addCell(TSC.Utils.toHexStr(this.maxByteSize-1));
                 this.addCell("00");
             } else
-                this.populateCodeTable(node.getChild(0)); //do the comparison; fill z flag
+                this.populateCodeTable(node.getChildren()[0]); //do the comparison; fill z flag
 
             this.addCell(this.opCode.branchNotEqual); //if false, branch
             this.addCell(tempJump); //the location after the if statement to branch to (temp jump location)
             var lastLoc = this.currMemLoc; //store our current location in memory
-            this.populateCodeTable(node.getChild(1)); //the code in the if statement
+            this.populateCodeTable(node.getNextChild()); //gets the block
             this.addToJumpTable(tempJump,TSC.Utils.toHexStr(this.currMemLoc-lastLoc)); //fill in temp jump location with real location
     	}
     	public recursiveAdd(node:TreeNode) {
@@ -595,7 +608,7 @@ module TSC
 	                //deal with addition
 	                //ARG ONE
 	                //do addition and store in acc
-	                this.populateCodeTable(node.getChild(0));
+	                this.populateCodeTable(node.getChildren()[0]);
 	                //store that val in temp mem
 	                this.addCell(this.opCode.storeAccInMemory);
 	                this.addCell(this.getFromStaticTable("temp2", -1).temp);
@@ -607,7 +620,7 @@ module TSC
 
 	                //ARG2
 	                //do addition and store in acc for Arg2
-	                this.populateCodeTable(node.getChild(1));
+	                this.populateCodeTable(node.getChildren()[1]);
 	                //store that in temp mem
 	                this.addCell(this.opCode.storeAccInMemory);
 	                this.addCell(this.getFromStaticTable("temp2", -1).temp);

@@ -42,19 +42,7 @@ module TSC
 		public getChildren(){
 			return this.children;
 		}
-		public findScope(node:SymbolTable, treeNode:TreeNode){
-			for(var i=0; i<node.nodes.length; i++){
-            		
-				if (treeNode.getValue()===node.nodes[i].ID &&treeNode.getLine()===node.nodes[i].line 
-					&& treeNode.getType()===node.nodes[i].type)
-					return node.scope;
-			}
-			
-        	for(var i=0; i<node.children.length; i++){
-            	this.findScope(node.children[i], treeNode);	
-        	}
-            
-		}
+		
 		public addChild(ST:SymbolTable){
 			if (_Verbose)
 				_Messenger.putMessage("Creating new scope in Symbol Table: "+ST.toString());
@@ -76,7 +64,7 @@ module TSC
 			return null;
 		}
 		public findValueInParentScope(id):any{
-			debugger;
+			;
 			if (this===null || this.parent===null)
 				return null; 
 			//find closest to recently declared

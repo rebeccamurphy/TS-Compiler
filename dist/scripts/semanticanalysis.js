@@ -10,7 +10,7 @@ var TSC;
             this.ID = ID;
         }
         SemanticAnalysis.prototype.SemanticAnalysis = function (currNode, symbolTable) {
-            //debugger;
+            //;
             if (this.currScope === -1) {
                 _Messenger.putHeaderMessage("Starting Semantic Analysis...");
                 _SymbolTableRoot = new TSC.SymbolTable();
@@ -34,7 +34,7 @@ var TSC;
             }
         };
         SemanticAnalysis.prototype.analysis = function (currNode, symbolTable) {
-            //debugger;
+            //;
             switch (currNode.type) {
                 case "BLOCK":
                     return this.analyzeBLOCK(currNode, symbolTable);
@@ -51,7 +51,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeBLOCK = function (currNode, symbolTable) {
-            //debugger;
+            //;
             //entering a newscopeso we add a new scope to symbol table
             var tempST = new TSC.SymbolTable();
             //this will probably be ok but apologizes to future me if its not
@@ -61,7 +61,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeVARDECL = function (currNode, symbolTable) {
-            //debugger;
+            //;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
@@ -75,7 +75,6 @@ var TSC;
                     _Messenger.putMessage("(" + valueChild.value + ", Line: " + valueChild.line +
                         ") Declared properly");
                 symbolTable.addNode(temp);
-                currNode.scope = symbolTable.scope;
             }
             else {
                 _Messenger.putError(idChild.line, ErrorType.Redeclared);
@@ -83,7 +82,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
-            debugger;
+            ;
             if (currNode.getChildren()[0].type === "COMP") {
                 var left = currNode.getChildren()[0].getChildren()[0];
                 var compChild = currNode.getChildren()[0];
@@ -103,7 +102,7 @@ var TSC;
             //else dont do anything because type was already checked in parser
         };
         SemanticAnalysis.prototype.analyzeASSIGN = function (currNode, symbolTable) {
-            debugger;
+            ;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             //TODO add check for addition in assignment
@@ -115,7 +114,7 @@ var TSC;
             symbolTable = this.checkType(idType, currNode, symbolTable, true);
         };
         SemanticAnalysis.prototype.analyzePRINT = function (currNode, symbolTable) {
-            debugger;
+            ;
             var idChild = currNode.getChildren()[0];
             var valueChild = currNode.getChildren()[1];
             if (idChild.type === "ADD")
@@ -123,18 +122,18 @@ var TSC;
             if (_Verbose)
                 _Messenger.putMessage("Checking (" + idChild.value + ", Line: " + idChild.line +
                     ") print statement");
-            var temp = this.findVarType(idChild, symbolTable, true);
+            var temp = this.findVarType(idChild, symbolTable, false);
             var type = temp[0];
             symbolTable = temp[1];
             if (type === "DIGIT")
                 type = "INT";
             else if (type === "STRING")
                 type = "STR";
-            symbolTable = this.checkType(type, valueChild, symbolTable);
+            symbolTable = this.checkType(type, currNode, symbolTable);
             return symbolTable;
         };
         SemanticAnalysis.prototype.findVarType = function (idChild, symbolTable, assign) {
-            debugger;
+            ;
             if (idChild.type !== "ID") {
                 return [idChild.type, symbolTable];
             }
@@ -173,7 +172,7 @@ var TSC;
             return [type, symbolTable];
         };
         SemanticAnalysis.prototype.checkType = function (type, node, symbolTable, assign) {
-            debugger;
+            ;
             if (node.type == "ID" || node.type == "DIGIT" || node.type == "BOOL" || node.type === "STRING") {
                 if (node.type === "ID") {
                     var temp = this.findVarType(node, symbolTable);

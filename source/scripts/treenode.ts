@@ -1,15 +1,13 @@
 module TSC
 {
 	export class TreeNode {
-        private children;
         public scope;
-	constructor(private type:string, private parent:TreeNode, private value?:any, private line?:number) {
+	constructor(private type:string, private parent:TreeNode, private value?:any, private line?:number, private children=[]) {
         //for CST
         this.type = type;
         this.value = (value===undefined)? '':value;
         this.parent = parent;
         this.line = (line===undefined)? -1:line;
-        this.children =[];
         this.scope =-1;
     }
     public toString(){
@@ -23,7 +21,7 @@ module TSC
         return str;
     }
     public equals(node:TreeNode){
-        return this.value===node.value &&this.parent === this.parent;
+        return this.value===node.value &&this.parent === node.parent &&this.type==node.type;
     }
     public getType(){
     	return this.type;
@@ -44,9 +42,13 @@ module TSC
     public getParent(){
     	return this.parent;
     }
-
+    public getNextChild(){
+        for(var i=0; i<this.parent.children.length-1;i++)
+            if (this ===this.parent.children[i])
+                return this.parent.children[i+1];
+    }
     public addChild(child:any, value?:string){
-        ////debugger;
+        ////;
         if (typeof child ==="string")
            var ch = new TreeNode(child, this, '');
         else if (value===undefined)
@@ -63,7 +65,7 @@ module TSC
         return child;
     }
     public addChildren(node){
-       // debugger;
+       // ;
         var temp = null;
         if (this.type ==="DIGIT"|| this.type=="CHARLIST"|| this.type=="BOOL"||this.type==="ADD" ||this.type==="BOOLOP"||this.type=="ID"){
             if (this.type=="CHARLIST"){
@@ -127,14 +129,14 @@ module TSC
             this.children[i].printCST(depth+1, id);
     }
     public makeAST(depth?:number, currnode?:TreeNode){
-        ////debugger;
+        ////;
         if (depth===-1 && this.type==="BLOCK"){
             _ASTRoot = new TreeNode("BLOCK", null);
             currnode = _ASTRoot
             depth=0;
         }
         for(var i=0; i<this.children.length; i++){
-            ////debugger;
+            ////;
             if (this.type!=="PROGRAM"){
                 switch(this.children[i].type){
                     case 'BLOCK':
@@ -154,7 +156,7 @@ module TSC
                     case 'IFSTATEMENT':
                         var str = (this.children[i].type==='IFSTATEMENT')? "IF" :"WHILE";
                         var temp =new TreeNode(str, null,'', this.children[i].line);
-                        //debugger;
+                        //;
                         if (this.children[i].children[1].children[0].type !=="LPAREN"){
                             //where case with if true/false
                             temp.addChildNode(this.children[i].children[1].children[0]);
@@ -189,7 +191,7 @@ module TSC
         
     }
     public printAST(depth?:number, id?:string){
-       ////debugger;
+       ////;
         if(depth===null)
             depth = 0;
         this.nodeHTML(depth, id);

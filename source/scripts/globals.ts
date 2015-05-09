@@ -16,6 +16,7 @@ var _Lexer;
 var _Parser;
 var _Token;
 var _SemanticAnalysis;
+var _CodeGenerator;
 
 var _ASTRoot=null;
 var _SymbolTableRoot;
@@ -47,6 +48,7 @@ var onDocumentLoad = function() {
 	_Lexer = TSC.Lexer;
 	_Parser = new TSC.Parser();
 	_Messenger = new TSC.Messenger("taOutput");
+	_CodeGenerator = new TSC.CodeGen();
 	_Token = TSC.Token;
 	_Tokens = [];
 	_TokenStr =[];

@@ -1,17 +1,18 @@
 var TSC;
 (function (TSC) {
     var TreeNode = (function () {
-        function TreeNode(type, parent, value, line) {
+        function TreeNode(type, parent, value, line, children) {
+            if (children === void 0) { children = []; }
             this.type = type;
             this.parent = parent;
             this.value = value;
             this.line = line;
+            this.children = children;
             //for CST
             this.type = type;
             this.value = (value === undefined) ? '' : value;
             this.parent = parent;
             this.line = (line === undefined) ? -1 : line;
-            this.children = [];
             this.scope = -1;
         }
         TreeNode.prototype.toString = function () {
@@ -25,7 +26,7 @@ var TSC;
             return str;
         };
         TreeNode.prototype.equals = function (node) {
-            return this.value === node.value && this.parent === this.parent;
+            return this.value === node.value && this.parent === node.parent && this.type == node.type;
         };
         TreeNode.prototype.getType = function () {
             return this.type;
@@ -45,8 +46,13 @@ var TSC;
         TreeNode.prototype.getParent = function () {
             return this.parent;
         };
+        TreeNode.prototype.getNextChild = function () {
+            for (var i = 0; i < this.parent.children.length - 1; i++)
+                if (this === this.parent.children[i])
+                    return this.parent.children[i + 1];
+        };
         TreeNode.prototype.addChild = function (child, value) {
-            ////debugger;
+            ////;
             if (typeof child === "string")
                 var ch = new TreeNode(child, this, '');
             else if (value === undefined)
@@ -62,7 +68,7 @@ var TSC;
             return child;
         };
         TreeNode.prototype.addChildren = function (node) {
-            // debugger;
+            // ;
             var temp = null;
             if (this.type === "DIGIT" || this.type == "CHARLIST" || this.type == "BOOL" || this.type === "ADD" || this.type === "BOOLOP" || this.type == "ID") {
                 if (this.type == "CHARLIST") {
@@ -119,14 +125,14 @@ var TSC;
                 this.children[i].printCST(depth + 1, id);
         };
         TreeNode.prototype.makeAST = function (depth, currnode) {
-            ////debugger;
+            ////;
             if (depth === -1 && this.type === "BLOCK") {
                 _ASTRoot = new TreeNode("BLOCK", null);
                 currnode = _ASTRoot;
                 depth = 0;
             }
             for (var i = 0; i < this.children.length; i++) {
-                ////debugger;
+                ////;
                 if (this.type !== "PROGRAM") {
                     switch (this.children[i].type) {
                         case 'BLOCK':
@@ -146,7 +152,7 @@ var TSC;
                         case 'IFSTATEMENT':
                             var str = (this.children[i].type === 'IFSTATEMENT') ? "IF" : "WHILE";
                             var temp = new TreeNode(str, null, '', this.children[i].line);
-                            //debugger;
+                            //;
                             if (this.children[i].children[1].children[0].type !== "LPAREN") {
                                 //where case with if true/false
                                 temp.addChildNode(this.children[i].children[1].children[0]);
@@ -180,7 +186,7 @@ var TSC;
             }
         };
         TreeNode.prototype.printAST = function (depth, id) {
-            ////debugger;
+            ////;
             if (depth === null)
                 depth = 0;
             this.nodeHTML(depth, id);

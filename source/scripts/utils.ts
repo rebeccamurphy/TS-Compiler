@@ -52,7 +52,7 @@ module TSC {
         return original.substr(0, index) + string + original.substr(index);
         }
     public static charsToString(node, str?){
-        debugger;
+        ;
         if (str ===undefined){
             str ='';
         }

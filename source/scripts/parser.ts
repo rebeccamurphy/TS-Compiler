@@ -51,7 +51,7 @@ module TSC
     	}
     	//Block ::== {StatementList}
     	public parseBlock(node:TreeNode){
-            ////debugger;
+            ////;
             node.addChild("BLOCK");
             //set current node to be the new block node
             node = node.getNewestChild();
@@ -199,7 +199,7 @@ module TSC
     	//		::== BooleanExpr
     	//		::== Id
     	public parseExpr(node:TreeNode){
-    		//debugger;
+    		//;
             node.addChild("EXPR");
             node = node.getNewestChild();
     		switch(_CurrentToken.type){
@@ -254,7 +254,7 @@ module TSC
     	//IntExpr	::== digit intop Expr
     	//			::== digit
     	public parseIntExpr(node:TreeNode){
-    		//debugger;
+    		//;
             node.addChild("INTEXPR");
             node = node.getNewestChild();
     		if (_CurrentToken.type ===TokenType.DIGIT){
@@ -298,7 +298,7 @@ module TSC
 		//			::== space CharList
 		//			::== epsilon
 		public parseCharList(node:TreeNode){
-			//debugger;
+			//;
             node.addChild("CHARLIST");
             node = node.getNewestChild();
 			switch (_CurrentToken.type){

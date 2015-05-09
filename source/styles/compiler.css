@@ -95,7 +95,7 @@ td{
 .tab-pane{
 	min-height: 500px;
 }
-#Code{
+#CodeTable tr td {
 	padding:5px!important;
 	font-family: monospace;
 }

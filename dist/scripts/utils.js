@@ -42,7 +42,7 @@ var TSC;
             return original.substr(0, index) + string + original.substr(index);
         };
         Utils.charsToString = function (node, str) {
-            debugger;
+            ;
             if (str === undefined) {
                 str = '';
             }
