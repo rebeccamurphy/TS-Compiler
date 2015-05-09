@@ -491,7 +491,7 @@ var TSC;
             //if we are not dealing with expressions
             if ((arg1.getType() !== "ADD" && arg2.getType() !== "COMP") && (arg1.getType() !== "ADD" && arg2.getType() !== "COMP")) {
                 if (arg1.getType() === "ID" && arg2.getType() !== "ID") {
-                    this.addCell(opCode.loadXWithConstant);
+                    this.addCell(this.opCode.loadXWithConstant);
                     if (arg2.getType() === "BOOL")
                         this.addCell(arg2.getValue() === "true" ? "01" : "00");
                     else if (arg2.getType() === "STRING")
@@ -507,7 +507,7 @@ var TSC;
                     if (arg1.getType() === "BOOL")
                         this.addCell(arg1.getValue() === "true" ? "01" : "00");
                     else if (arg1.getType() === "STRING")
-                        this.addCell(addToHeap(arg1.getValue()));
+                        this.addCell(this.addToHeap(arg1.getValue()));
                     else
                         this.addCell(TSC.Utils.toHexStr(arg1.getValue()));
                     this.addCell(this.opCode.compareByteToX);
@@ -550,57 +550,57 @@ var TSC;
                     return;
                 }
                 //actual code
-                if (!arg1 && !arg2) {
+                if (arg1 === "DIGIT" && arg2 === "DIGIT") {
                     //deal with addition
                     //ARG ONE
                     //do addition and store in acc
-                    populateCodeTable(node.getChild(0));
+                    this.populateCodeTable(node.getChild(0));
                     //store that val in temp mem
-                    addCell(opCode.storeAccInMemory);
-                    addCell(getFromStaticTable("temp2", new TSC.TreeNode("temp2")).temp);
-                    addCell("XX");
+                    this.addCell(this.opCode.storeAccInMemory);
+                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell("XX");
                     //load that val from temp mem into X reg
-                    addCell(opCode.loadXFromMemory);
-                    addCell(getFromStaticTable("temp2", new TSC.TreeNode("temp2")).temp);
-                    addCell("XX");
+                    this.addCell(this.opCode.loadXFromMemory);
+                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell("XX");
                     //ARG2
                     //do addition and store in acc for Arg2
-                    populateCodeTable(node.getChild(1));
+                    this.populateCodeTable(node.getChild(1));
                     //store that in temp mem
-                    addCell(opCode.storeAccInMemory);
-                    addCell(getFromStaticTable("temp2", new TSC.TreeNode("temp2")).temp);
-                    addCell("XX");
+                    this.addCell(this.opCode.storeAccInMemory);
+                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell("XX");
                     //compare the two for equality
-                    addCell(opCode.compareByteToX);
-                    addCell(getFromStaticTable("temp2", new TSC.TreeNode("temp2")).temp);
-                    addCell("XX");
+                    this.addCell(this.opCode.compareByteToX);
+                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell("XX");
                 }
                 else {
                     //we know that one or the other is an expr
                     //so grab the one that is
-                    var expr = (!arg1) ? node.getChild(0) : node.getChild(1);
+                    var expr = (arg1 === "COMP" || arg1 === "ADD") ? node.getChild(0) : node.getChild(1);
                     //the other is a value
-                    var value = (!arg1) ? arg2 : arg1;
+                    var value = (arg2 !== "COMP" || arg2 !== "ADD") ? arg2 : arg1;
                     //do addition in expr
-                    populateCodeTable(expr);
+                    this.populateCodeTable(expr);
                     //store that val in temp mem
-                    addCell(opCode.storeAccInMemory);
-                    addCell(getFromStaticTable("temp2", new TSC.TreeNode("temp2")).temp);
-                    addCell("XX");
+                    this.addCell(this.opCode.storeAccInMemory);
+                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell("XX");
                     //load value into memory
-                    if (value.kind === "T_ID") {
-                        addCell(opCode.loadXFromMemory);
-                        addCell(getFromStaticTable(value.value, value.scope).temp);
-                        addCell("XX");
+                    if (value.getType() === "ID") {
+                        this.addCell(this.opCode.loadXFromMemory);
+                        this.addCell(this.getFromStaticTable(value.getValue(), value.scope).temp);
+                        this.addCell("XX");
                     }
                     else {
-                        addCell(opCode.loadXWithConstant);
-                        addCell(toHexStr(value.value));
+                        this.addCell(this.opCode.loadXWithConstant);
+                        this.addCell(TSC.Utils.toHexStr(value.getValue()));
                     }
                     //compare the two for equality
-                    addCell(opCode.compareByteToX);
-                    addCell(getFromStaticTable("temp2", new TSC.TreeNode("temp2")).temp);
-                    addCell("XX");
+                    this.addCell(this.opCode.compareByteToX);
+                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell("XX");
                 }
             }
         };
