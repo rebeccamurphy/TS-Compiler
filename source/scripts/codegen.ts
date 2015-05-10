@@ -75,7 +75,7 @@ module TSC
 	        if( this.errors> 0)
 	            return;
 	        _Messenger.putMessage("Backpatching temporary variables in static memory.");
-	        //this.populateStaticTable();
+	        this.populateStaticTable();
 	        if(this.errors > 0){
 	        	_Messenger.putHeaderMessage("Found: " + this.errors + "errors. Ceasing Code Gen.")
 	            return;
@@ -85,7 +85,7 @@ module TSC
 	        	_Messenger.putHeaderMessage("Found: " + this.errors + "errors. Ceasing Code Gen.")
 	            return;
 	        }
-	        //this.fillInJumps();
+	        this.fillInJumps();
 	        _Messenger.putHeaderMessage("Code Generation Complete. Errors: " + this.errors);
 	        this.displayCode();
 
@@ -113,7 +113,7 @@ module TSC
 	    	var parent = false;
 	    	while(node!==null){
 	    		if(parent===true){
-	    			////debugger;
+	    			debugger;
 	    			for (var j =0; j<node.getChildren().length;j++){
 		        		var vard = node.getChildren()[j];
 		        		if (vard.getType()==="VARDECL"){
@@ -230,9 +230,9 @@ module TSC
                 		_Messenger.putMessage("Generating code for " + node.toString());
 
         			for(var i=0; i<node.getChildren().length; i++){
+        				
+        				this.populateCodeTable(node.getChildren()[i]);
         				if (node.getChildren()[i].getType()==="IF" ||node.getChildren()[i].getType()==="WHILE"){
-            				this.populateCodeTable(node.getChildren()[i]);
-            				//skip if/while block because it is handled in if code
             				i++;
         				}
         			}
@@ -444,6 +444,7 @@ module TSC
                 
             }
             else{
+            	debugger;
 	            this.addCell(this.opCode.loadAccWithConstant);
 	            this.addCell("00");
 	            this.addCell(this.opCode.storeAccInMemory);
