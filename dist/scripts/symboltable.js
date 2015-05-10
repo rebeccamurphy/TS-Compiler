@@ -55,6 +55,20 @@ var TSC;
         SymbolTable.prototype.getParent = function () {
             return this.parent;
         };
+        SymbolTable.prototype.findVarInParent = function (node) {
+            debugger;
+            if (this.scope === node.scope) {
+                if (this.findValueInScope(node.getValue()) === null) {
+                    _varInParentScope = null;
+                    this.findValueInParentScope(node.getValue());
+                }
+            }
+            else {
+                for (var i = 0; i < this.children.length; i++) {
+                    this.children[i].findVarInParent(node);
+                }
+            }
+        };
         SymbolTable.prototype.findValueInScope = function (id) {
             //find closest to recently declared
             for (var i = this.nodes.length - 1; i >= 0; i--) {
@@ -65,13 +79,13 @@ var TSC;
             return null;
         };
         SymbolTable.prototype.findValueInParentScope = function (id) {
-            ;
             if (this === null || this.parent === null)
                 return null;
             //find closest to recently declared
             for (var i = this.parent.nodes.length - 1; i >= 0; i--) {
                 if (id === this.parent.nodes[i].ID) {
                     _varInParentScope = (_varInParentScope === null) ? this.parent.nodes[i] : _varInParentScope;
+                    _parentScope = this.parent.scope;
                     return this.parent.nodes[i];
                 }
             }

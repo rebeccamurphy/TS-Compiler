@@ -47,14 +47,14 @@ module TSC
             if (this ===this.parent.children[i])
                 return this.parent.children[i+1];
     }
-    public addChild(child:any, value?:string){
+    public addChild(child:any, value?:string, scope?:number){
         //debugger;  
         if (typeof child ==="string")
-           var ch = new TreeNode(child, this, '', _CurrentToken.line, _ScopeForParse);
+           var ch = new TreeNode(child, this, '', _CurrentToken.line,scope);
         else if (value===undefined)
-    	   var ch = new TreeNode(TokenTypeString[child], this, TokenTypeChar[child], _CurrentToken.line, _ScopeForParse);
+    	   var ch = new TreeNode(TokenTypeString[child], this, TokenTypeChar[child], _CurrentToken.line,scope);
         else 
-            var ch = new TreeNode(TokenTypeString[child], this, value, _CurrentToken.line, _ScopeForParse);
+            var ch = new TreeNode(TokenTypeString[child], this, value, _CurrentToken.line,scope);
         this.children.push(ch);
         return ch;
     }

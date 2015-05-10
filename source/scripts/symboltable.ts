@@ -54,6 +54,22 @@ module TSC
 		public getParent(){
 			return this.parent;
 		}
+		public findVarInParent(node:TreeNode){
+			debugger;
+
+			if (this.scope===node.scope){
+				if (this.findValueInScope(node.getValue())===null){
+					_varInParentScope =null;
+					this.findValueInParentScope(node.getValue());
+				}
+			}
+			else{
+				for (var i=0; i<this.children.length; i++){
+					this.children[i].findVarInParent(node);
+				}
+			}
+
+		}
 		public findValueInScope(id):any{
 			//find closest to recently declared
 			for(var i=this.nodes.length-1; i>=0;i--){
@@ -64,13 +80,14 @@ module TSC
 			return null;
 		}
 		public findValueInParentScope(id):any{
-			;
+			
 			if (this===null || this.parent===null)
 				return null; 
 			//find closest to recently declared
 			for(var i=this.parent.nodes.length-1; i>=0;i--){
 				if (id === this.parent.nodes[i].ID){
 					_varInParentScope = (_varInParentScope===null)? this.parent.nodes[i]: _varInParentScope;
+					_parentScope = this.parent.scope;
 					return this.parent.nodes[i];
 				}
 			}

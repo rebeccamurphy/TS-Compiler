@@ -37,27 +37,27 @@ var TSC;
         Parser.prototype.parseProgram = function (node) {
             this.rootNode = new TSC.TreeNode(TokenTypeString[TokenType.PROGRAM], null);
             node = this.rootNode;
-            this.parseBlock(node);
+            this.parseBlock(node, -1);
             node.addChild(TokenType.EOF);
             this.checkToken(TokenType.EOF);
             _Messenger.putSuccess(this.part);
         };
         //Block ::== {StatementList}
-        Parser.prototype.parseBlock = function (node) {
+        Parser.prototype.parseBlock = function (node, scope) {
             ////;
-            _ScopeForParse++;
-            node.addChild("BLOCK");
+            scope++;
+            node.addChild("BLOCK", "", scope);
             //set current node to be the new block node
             node = node.getNewestChild();
             this.checkToken(TokenType.LCURLY); //expect block to start with {
-            node.addChild(TokenType.LCURLY);
-            this.parseStatementList(node);
+            node.addChild(TokenType.LCURLY, "", scope);
+            this.parseStatementList(node, scope);
             this.checkToken(TokenType.RCURLY); //expect block to end with }
-            node.addChild(TokenType.RCURLY);
+            node.addChild(TokenType.RCURLY, "", scope);
         };
         //StatementList ::== Statement StatementList
         //				::== epsilon
-        Parser.prototype.parseStatementList = function (node) {
+        Parser.prototype.parseStatementList = function (node, scope) {
             if (_CurrentToken.type === TokenType.PRINT ||
                 _CurrentToken.type === TokenType.ID ||
                 _CurrentToken.type === TokenType.WHILE ||
@@ -66,10 +66,10 @@ var TSC;
                 _CurrentToken.type === TokenType.INT ||
                 _CurrentToken.type === TokenType.STR ||
                 _CurrentToken.type === TokenType.BOOL) {
-                node.addChild("STATEMENTLIST");
+                node.addChild("STATEMENTLIST", "", scope);
                 node = node.getNewestChild();
-                this.parseStatement(node);
-                this.parseStatementList(node);
+                this.parseStatement(node, scope);
+                this.parseStatementList(node, scope);
             }
             else {
             }
@@ -80,71 +80,71 @@ var TSC;
         //           ::== WhileStatement
         //           ::== IfStatement
         //           ::== Block
-        Parser.prototype.parseStatement = function (node) {
-            node.addChild("STATEMENT");
+        Parser.prototype.parseStatement = function (node, scope) {
+            node.addChild("STATEMENT", "", scope);
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
                 case TokenType.PRINT:
-                    this.parsePrintStatement(node);
+                    this.parsePrintStatement(node, scope);
                     break;
                 case TokenType.ID:
-                    this.parseAssignmentStatement(node);
+                    this.parseAssignmentStatement(node, scope);
                     break;
                 case TokenType.STR:
                 case TokenType.INT:
                 case TokenType.BOOL:
-                    this.parseVarDecl(node);
+                    this.parseVarDecl(node, scope);
                     break;
                 case TokenType.WHILE:
-                    this.parseWhileStatement(node);
+                    this.parseWhileStatement(node, scope);
                     break;
                 case TokenType.IF:
-                    this.parseIfStatement(node);
+                    this.parseIfStatement(node, scope);
                     break;
                 default:
-                    this.parseBlock(node);
+                    this.parseBlock(node, scope);
             }
         };
         // PrintStatement ::== print ( Expr )
-        Parser.prototype.parsePrintStatement = function (node) {
-            node.addChild("PRINTSTATEMENT");
+        Parser.prototype.parsePrintStatement = function (node, scope) {
+            node.addChild("PRINTSTATEMENT", "", scope);
             node = node.getNewestChild();
             this.checkToken(TokenType.PRINT);
-            node.addChild(TokenType.PRINT);
+            node.addChild(TokenType.PRINT, "", scope);
             this.checkToken(TokenType.LPAREN);
-            node.addChild(TokenType.LPAREN);
-            this.parseExpr(node);
+            node.addChild(TokenType.LPAREN, "", scope);
+            this.parseExpr(node, scope);
             this.checkToken(TokenType.RPAREN);
-            node.addChild(TokenType.RPAREN);
+            node.addChild(TokenType.RPAREN, "", scope);
         };
         //AssignmentStatement ::== Id = Expr
-        Parser.prototype.parseAssignmentStatement = function (node) {
-            node.addChild("ASSIGNMENTSTATEMENT");
+        Parser.prototype.parseAssignmentStatement = function (node, scope) {
+            node.addChild("ASSIGNMENTSTATEMENT", "", scope);
             node = node.getNewestChild();
-            this.parseID(node);
+            this.parseID(node, scope);
             this.checkToken(TokenType.EQUALSIGN);
-            node.addChild(TokenType.EQUALSIGN);
-            this.parseExpr(node);
+            node.addChild(TokenType.EQUALSIGN, "", scope);
+            this.parseExpr(node, scope);
         };
         //VarDecl  ::== type Id
-        Parser.prototype.parseVarDecl = function (node) {
-            node.addChild("VARDECL");
+        Parser.prototype.parseVarDecl = function (node, scope) {
+            node.addChild("VARDECL", "", scope);
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
                 case TokenType.STR:
                     this.checkToken(TokenType.STR);
-                    node.addChild(TokenType.STR);
-                    this.parseID(node);
+                    node.addChild(TokenType.STR, "", scope);
+                    this.parseID(node, scope);
                     break;
                 case TokenType.INT:
                     this.checkToken(TokenType.INT);
-                    node.addChild(TokenType.INT);
-                    this.parseID(node);
+                    node.addChild(TokenType.INT, "", scope);
+                    this.parseID(node, scope);
                     break;
                 case TokenType.BOOL:
-                    node.addChild(TokenType.BOOL, _CurrentToken.value);
+                    node.addChild(TokenType.BOOL, _CurrentToken.value, scope);
                     this.checkToken(TokenType.BOOL);
-                    this.parseID(node);
+                    this.parseID(node, scope);
                     break;
                 default:
                     //when we hit this it means we were expecting a type and failed
@@ -152,91 +152,91 @@ var TSC;
             }
         };
         //WhileStatement ::== while BooleanExpr Block
-        Parser.prototype.parseWhileStatement = function (node) {
-            node.addChild("WHILESTATEMENT");
+        Parser.prototype.parseWhileStatement = function (node, scope) {
+            node.addChild("WHILESTATEMENT", "", scope);
             node = node.getNewestChild();
             this.checkToken(TokenType.WHILE);
-            node.addChild(TokenType.WHILE);
-            this.parseBooleanExpr(node);
-            this.parseBlock(node);
+            node.addChild(TokenType.WHILE, "", scope);
+            this.parseBooleanExpr(node, scope);
+            this.parseBlock(node, scope);
         };
         //IfStatement ::== if BooleanExpr Block
-        Parser.prototype.parseIfStatement = function (node) {
-            node.addChild("IFSTATEMENT");
+        Parser.prototype.parseIfStatement = function (node, scope) {
+            node.addChild("IFSTATEMENT", "", scope);
             node = node.getNewestChild();
             this.checkToken(TokenType.IF);
-            node.addChild(TokenType.IF);
-            this.parseBooleanExpr(node);
-            this.parseBlock(node);
+            node.addChild(TokenType.IF, "", scope);
+            this.parseBooleanExpr(node, scope);
+            this.parseBlock(node, scope);
         };
         //Expr 	::== IntExpr
         //		::== StringExpr
         //		::== BooleanExpr
         //		::== Id
-        Parser.prototype.parseExpr = function (node) {
+        Parser.prototype.parseExpr = function (node, scope) {
             //;
-            node.addChild("EXPR");
+            node.addChild("EXPR", "", scope);
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
                 case TokenType.DIGIT:
-                    this.parseIntExpr(node);
+                    this.parseIntExpr(node, scope);
                     break;
                 case TokenType.QUOTE:
-                    this.parseStringExpr(node);
+                    this.parseStringExpr(node, scope);
                     break;
                 case TokenType.LPAREN:
                 case TokenType.BOOL:
-                    this.parseBooleanExpr(node);
+                    this.parseBooleanExpr(node, scope);
                     break;
                 case TokenType.ID:
-                    this.parseID(node);
+                    this.parseID(node, scope);
                     break;
             }
         };
         //BooleanExpr	::== (Expr boolOp Expr)
         //				::== boolVal
-        Parser.prototype.parseBooleanExpr = function (node) {
-            node.addChild("BOOLEANEXPR");
+        Parser.prototype.parseBooleanExpr = function (node, scope) {
+            node.addChild("BOOLEANEXPR", "", scope);
             node = node.getNewestChild();
             if (_CurrentToken.type === TokenType.BOOL) {
                 //TODO change tokens to bool type with value of true false
-                node.addChild(TokenType.BOOL, _CurrentToken.value);
+                node.addChild(TokenType.BOOL, _CurrentToken.value, scope);
                 this.checkToken(TokenType.BOOL);
             }
             else {
                 this.checkToken(TokenType.LPAREN);
-                node.addChild(TokenType.LPAREN);
-                this.parseExpr(node);
+                node.addChild(TokenType.LPAREN, "", scope);
+                this.parseExpr(node, scope);
                 if (_CurrentToken.type === TokenType.BOOLOP) {
-                    node.addChild(TokenType.BOOLOP, _CurrentToken.value);
+                    node.addChild(TokenType.BOOLOP, _CurrentToken.value, scope);
                     this.checkToken(TokenType.BOOLOP);
-                    this.parseExpr(node);
+                    this.parseExpr(node, scope);
                     this.checkToken(TokenType.RPAREN);
-                    node.addChild(TokenType.RPAREN);
+                    node.addChild(TokenType.RPAREN, "", scope);
                 }
                 else {
                     //when this is hit it means a boolean operator was expected but not found
                     this.checkToken(TokenType.BOOLOP);
-                    node.addChild(TokenTypeString[TokenType.BOOLOP]);
+                    node.addChild(TokenTypeString[TokenType.BOOLOP], "", scope);
                 }
             }
         };
         //IntExpr	::== digit intop Expr
         //			::== digit
-        Parser.prototype.parseIntExpr = function (node) {
+        Parser.prototype.parseIntExpr = function (node, scope) {
             //;
-            node.addChild("INTEXPR");
+            node.addChild("INTEXPR", "", scope);
             node = node.getNewestChild();
             if (_CurrentToken.type === TokenType.DIGIT) {
-                node.addChild(TokenType.DIGIT, _CurrentToken.value);
+                node.addChild(TokenType.DIGIT, _CurrentToken.value, scope);
                 this.checkToken(TokenType.DIGIT);
                 if (_CurrentToken.type === TokenType.ADD) {
                     this.checkToken(TokenType.ADD);
-                    node.addChild(TokenType.ADD);
+                    node.addChild(TokenType.ADD, "", scope);
                     if (_CurrentToken.type === TokenType.ADD) {
                         this.checkToken(TokenType.DIGIT);
                     }
-                    this.parseExpr(node);
+                    this.parseExpr(node, scope);
                 }
             }
             else {
@@ -244,41 +244,41 @@ var TSC;
             }
         };
         //StringExpr ::== " CharList "    	
-        Parser.prototype.parseStringExpr = function (node) {
-            node.addChild("STRINGEXPR");
+        Parser.prototype.parseStringExpr = function (node, scope) {
+            node.addChild("STRINGEXPR", "", scope);
             node = node.getNewestChild();
             this.checkToken(TokenType.QUOTE);
-            node.addChild(TokenType.QUOTE);
-            this.parseCharList(node);
+            node.addChild(TokenType.QUOTE, "", scope);
+            this.parseCharList(node, scope);
             this.checkToken(TokenType.QUOTE);
-            node.addChild(TokenType.QUOTE);
+            node.addChild(TokenType.QUOTE, "", scope);
         };
         //Id ::== char
-        Parser.prototype.parseID = function (node) {
-            node.addChild(TokenType.ID, _CurrentToken.value);
+        Parser.prototype.parseID = function (node, scope) {
+            node.addChild(TokenType.ID, _CurrentToken.value, scope);
             node = node.getNewestChild();
             this.checkToken(TokenType.ID);
         };
         //CharList	::== char CharList
         //			::== space CharList
         //			::== epsilon
-        Parser.prototype.parseCharList = function (node) {
+        Parser.prototype.parseCharList = function (node, scope) {
             //;
-            node.addChild("CHARLIST");
+            node.addChild("CHARLIST", "", scope);
             node = node.getNewestChild();
             switch (_CurrentToken.type) {
                 case TokenType.CHAR:
-                    node.addChild(TokenType.CHAR, _CurrentToken.value);
+                    node.addChild(TokenType.CHAR, _CurrentToken.value, scope);
                     this.checkToken(TokenType.CHAR);
                     break;
                 case TokenType.SPACE:
-                    node.addChild(TokenType.SPACE, _CurrentToken.value);
+                    node.addChild(TokenType.SPACE, _CurrentToken.value, scope);
                     this.checkToken(TokenType.SPACE);
                     break;
                 default:
             }
             if (_CurrentToken.type === TokenType.CHAR || _CurrentToken.type === TokenType.SPACE)
-                this.parseCharList(node);
+                this.parseCharList(node, scope);
         };
         Parser.prototype.checkToken = function (tokenType) {
             if (_CurrentToken.type == tokenType) {

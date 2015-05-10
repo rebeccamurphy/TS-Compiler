@@ -18,6 +18,7 @@ var _ASTRoot = null;
 var _SymbolTableRoot;
 var _Verbose;
 var _varInParentScope = null;
+var _parentScope = -1;
 var TokenType;
 (function (TokenType) {
     TokenType[TokenType["LCURLY"] = 0] = "LCURLY";

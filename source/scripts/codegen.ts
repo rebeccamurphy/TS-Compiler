@@ -109,41 +109,32 @@ module TSC
 
 	    public getFromStaticTable(origin:TreeNode) {
 	    	////debugger;
-	    	var node = origin;
-	    	var parent = false;
-	    	while(node!==null){
-	    		if(parent===true){
-	    			debugger;
-	    			for (var j =0; j<node.getChildren().length;j++){
-		        		var vard = node.getChildren()[j];
-		        		if (vard.getType()==="VARDECL"){
-		        			if (vard.getChildren()[1].getValue()===origin.getValue()){
-		        				for(var i=0; i<this.staticTable.length;i++){
-				        			var child = node.getChildren()[j]
-				        			if((this.staticTable[i].id === child.getChildren()[1].getValue()) 
-					            		&& (this.staticTable[i].scope === child.getChildren()[0].scope)
-					            		&& (this.staticTable[i].type ===child.getChildren()[0].getType())){
-					            			debugger;
-					            			return this.staticTable[i];	
-					            			break;
-					            	}
-				            		
-					            }				
-		        			}
-		        		}
-	            	}
-	    		}
-	    		else
-		        	for(var i=0; i<this.staticTable.length;i++){
-	            		if((this.staticTable[i].id === node.getValue()) 
-	            			&& (this.staticTable[i].scope === node.scope)){
-	            			return this.staticTable[i];	
-	            			break;
-	            		}
-		            }
-	            node = node.getParent();//to check if in parent scope
-	            parent=true;
+	    	var node:any =origin;
+	    	var parent = true;	
+    		for(var i=0; i<this.staticTable.length;i++){
+        		if((this.staticTable[i].id === node.getValue()) 
+        			&& (this.staticTable[i].scope === node.scope)){
+        			parent=false;
+        			return this.staticTable[i];	
+        			break;
+        		}
+            }
+            if(parent===true){
+    			debugger;
+            	var node = _SymbolTableRoot.findVarInParent(origin);
+            	node = (node===undefined||node===null)? _varInParentScope:node;
+            	for(var i=0; i<this.staticTable.length;i++){
+            		if((this.staticTable[i].id === node.ID) 
+            			&& (node.type === this.staticTable[i].type)
+            			&& (_parentScope ===this.staticTable[i].scope)){
+            			node=null;
+            			return this.staticTable[i];	
+            			break;
+            		}
+	            }
     		}
+	            
+    		
         	return null;
     	}
 
