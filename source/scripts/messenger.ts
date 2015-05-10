@@ -21,20 +21,21 @@ module TSC
 		if (typeof msg !=="number"){
 			this.putMessage("*****(Line: "+line +") Error: " + msg+"*****");
 			if (part ==="Lexer")
-				_LexerError = true;
+				_LexerError = true;	
+			document.getElementById("Errors").innerHTML += "<div>(Line: "+line +") Error: " + msg +"</div>";
+		
 		}
 		else if (part===undefined){
 			this.putMessage("*****(Line: "+line +") Error: " + ErrorStr[msg]+"*****");
 			document.getElementById("Errors").innerHTML += "<div>(Line: "+line +") Error: " + ErrorStr[msg] +"</div>";
 		}
 		else{
-
 			this.putMessage("*****(Line: "+line +") Error: " + ErrorStr[msg]+"*****");
 			document.getElementById("Errors").innerHTML += "<div>(Line: "+line +") ID: "+part +"  Error: " + ErrorStr[msg] +"</div>";
 		}
 	}
 	public putWarning(line,msg:any){
-		//;
+		
 		if (typeof msg !=="number"){
 			this.putMessage("***(Line: "+line+") Warning: " +msg+"***");
 			document.getElementById("Warnings").innerHTML += "<div>(Line: "+line +") Warning: " + msg +"</div>";

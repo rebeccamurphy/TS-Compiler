@@ -13,6 +13,7 @@ var _Parser;
 var _Token;
 var _SemanticAnalysis;
 var _CodeGenerator;
+var _ScopeForParse = -1;
 var _ASTRoot = null;
 var _SymbolTableRoot;
 var _Verbose;
@@ -90,4 +91,5 @@ var onDocumentLoad = function () {
     _Verbose = false;
     _SymbolTableRoot = null;
     _ASTRoot = null;
+    _ScopeForParse = -1;
 };

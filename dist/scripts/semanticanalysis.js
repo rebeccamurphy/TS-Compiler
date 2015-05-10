@@ -51,7 +51,6 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeBLOCK = function (currNode, symbolTable) {
-            //;
             //entering a newscopeso we add a new scope to symbol table
             var tempST = new TSC.SymbolTable();
             //this will probably be ok but apologizes to future me if its not
@@ -82,7 +81,6 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
-            ;
             if (currNode.getChildren()[0].type === "COMP") {
                 var left = currNode.getChildren()[0].getChildren()[0];
                 var compChild = currNode.getChildren()[0];
@@ -102,7 +100,6 @@ var TSC;
             //else dont do anything because type was already checked in parser
         };
         SemanticAnalysis.prototype.analyzeASSIGN = function (currNode, symbolTable) {
-            ;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             //TODO add check for addition in assignment
@@ -114,7 +111,6 @@ var TSC;
             symbolTable = this.checkType(idType, currNode, symbolTable, true);
         };
         SemanticAnalysis.prototype.analyzePRINT = function (currNode, symbolTable) {
-            ;
             var idChild = currNode.getChildren()[0];
             var valueChild = currNode.getChildren()[1];
             if (idChild.type === "ADD")
@@ -133,7 +129,6 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.findVarType = function (idChild, symbolTable, assign) {
-            ;
             if (idChild.type !== "ID") {
                 return [idChild.type, symbolTable];
             }

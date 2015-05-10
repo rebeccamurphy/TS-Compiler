@@ -48,7 +48,7 @@ var TSC;
             document.getElementById("CodeTable").innerHTML = output;
         };
         CodeGen.prototype.gen = function () {
-            _Messenger.putHeaderMessage("<h3>Generating 6502a code...</h3>");
+            _Messenger.putHeaderMessage("Generating 6502a code...");
             //initialize codeTable to 0s
             _Messenger.putMessage("Initializing bytes (" + this.maxByteSize + ").");
             for (var i = 0; i < this.maxByteSize; i++)
@@ -61,19 +61,23 @@ var TSC;
             if (this.errors > 0)
                 return;
             _Messenger.putMessage("Backpatching temporary variables in static memory.");
-            this.populateStaticTable();
-            if (this.errors > 0)
+            //this.populateStaticTable();
+            if (this.errors > 0) {
+                _Messenger.putHeaderMessage("Found: " + this.errors + "errors. Ceasing Code Gen.");
                 return;
+            }
             _Messenger.putMessage("Backpatching temporary jump locations.");
-            if (this.errors > 0)
+            if (this.errors > 0) {
+                _Messenger.putHeaderMessage("Found: " + this.errors + "errors. Ceasing Code Gen.");
                 return;
-            this.fillInJumps();
+            }
+            //this.fillInJumps();
             _Messenger.putHeaderMessage("Code Generation Complete. Errors: " + this.errors);
             this.displayCode();
             return this.codeTable;
         };
         CodeGen.prototype.addToStaticTable = function (varName, scope, type, address) {
-            debugger;
+            ////debugger;
             var tempName = "T" + this.staticTable.length;
             _Messenger.putMessage("Adding item " + varName + "@" + scope + " as " + tempName + "XX to static table.");
             this.staticTable.push({
@@ -86,10 +90,42 @@ var TSC;
             });
             return tempName;
         };
-        CodeGen.prototype.getFromStaticTable = function (id, scope) {
-            for (var i = 0; i < this.staticTable.length; i++)
-                if (this.staticTable[i].id === id && this.staticTable[i].scope === scope)
-                    return this.staticTable[i];
+        CodeGen.prototype.getFromStaticTable = function (origin) {
+            ////debugger;
+            var node = origin;
+            var parent = false;
+            while (node !== null) {
+                if (parent === true) {
+                    ////debugger;
+                    for (var j = 0; j < node.getChildren().length; j++) {
+                        var vard = node.getChildren()[j];
+                        if (vard.getType() === "VARDECL") {
+                            if (vard.getChildren()[1].getValue() === origin.getValue()) {
+                                for (var i = 0; i < this.staticTable.length; i++) {
+                                    var child = node.getChildren()[j];
+                                    if ((this.staticTable[i].id === child.getChildren()[1].getValue())
+                                        && (this.staticTable[i].scope === child.getChildren()[0].scope)
+                                        && (this.staticTable[i].type === child.getChildren()[0].getType())) {
+                                        debugger;
+                                        return this.staticTable[i];
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                    for (var i = 0; i < this.staticTable.length; i++) {
+                        if ((this.staticTable[i].id === node.getValue())
+                            && (this.staticTable[i].scope === node.scope)) {
+                            return this.staticTable[i];
+                            break;
+                        }
+                    }
+                node = node.getParent(); //to check if in parent scope
+                parent = true;
+            }
             return null;
         };
         CodeGen.prototype.addToJumpTable = function (temp, distance) {
@@ -154,7 +190,7 @@ var TSC;
             return TSC.Utils.toHexStr(this.currHeapLoc);
         };
         CodeGen.prototype.addCell = function (opC) {
-            debugger;
+            //////debugger;
             _Messenger.putMessage("Adding byte: " + opC);
             this.codeTable[this.currMemLoc++] = opC;
             if (this.currMemLoc >= this.currHeapLoc) {
@@ -164,33 +200,41 @@ var TSC;
             }
         };
         CodeGen.prototype.populateCodeTable = function (node) {
+            debugger;
             switch (node.getType()) {
                 case "BLOCK":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
+                    for (var i = 0; i < node.getChildren().length; i++) {
+                        if (node.getChildren()[i].getType() === "IF" || node.getChildren()[i].getType() === "WHILE") {
+                            this.populateCodeTable(node.getChildren()[i]);
+                            //skip if/while block because it is handled in if code
+                            i++;
+                        }
+                    }
                     break;
                 case "PRINT":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getChildren()[0].getLine();
+                    this.line = node.getLine();
                     this.printCode(node.getChildren()[0]);
                     break;
                 case "ASSIGN":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getChildren()[0].getLine();
+                    this.line = node.getLine();
                     this.assignCode(node);
                     break;
                 case "VARDECL":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getChildren()[0].getLine();
+                    this.line = node.getLine();
                     this.varDeclCode(node);
                     break;
                 case "WHILE":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getChildren()[0].getLine();
+                    this.line = node.getLine();
                     this.whileCode(node);
                     break;
                 case "IF":
@@ -229,23 +273,22 @@ var TSC;
                 default:
                     break;
             }
-            for (var i = 0; i < node.getChildren().length; i++)
-                this.populateCodeTable(node.getChildren()[i]);
         };
         CodeGen.prototype.printCode = function (node) {
+            //debugger;
             switch (node.getType()) {
                 case "ID":
-                    var itemInStaticTable = this.getFromStaticTable(node.getValue(), node.scope);
+                    var itemInStaticTable = this.getFromStaticTable(node);
                     this.addCell(this.opCode.loadYFromMemory);
                     this.addCell(itemInStaticTable.temp);
                     this.addCell("XX");
                     this.addCell(this.opCode.loadXWithConstant);
-                    this.addCell((itemInStaticTable.type === "string") ? "02" : "01");
+                    this.addCell((itemInStaticTable.type === "STR") ? "02" : "01");
                     this.addCell(this.opCode.sysCall);
                     break;
                 case "BOOL":
                     this.addCell(this.opCode.loadYWithConstant);
-                    this.addCell((node.getValue() === "true") ? "01" : "00");
+                    this.addCell((node.getValue() == "true") ? "01" : "00");
                     this.addCell(this.opCode.loadXWithConstant);
                     this.addCell("01");
                     this.addCell(this.opCode.sysCall);
@@ -266,62 +309,54 @@ var TSC;
                     this.addCell("01"); //print the integer stored in the Y register
                     this.addCell(this.opCode.sysCall);
                     break;
-                /*
-
                 case "ADD":
                     this.populateCodeTable(node); //get result of addition in accumulator
-                    TODO
-                    this.addCell(this.getFromStaticTable("temp", new TreeNode("temp")).temp);
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
                     this.addCell(this.opCode.loadYFromMemory); //load temp into y reg
-                    this.addCell(this.getFromStaticTable("temp", new TreeNode("temp")).temp);
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
                     this.addCell(this.opCode.loadXWithConstant); //load 01 into x to print non-string
                     this.addCell("01");
-                    this.addCell(this.opCode.sysCall); //sys call to print
+                    this.addCell(this.opCode.sysCall); //sys call to print                    
                     break;
                 case "COMP":
                     //handle as boolean
                     //set default value to false
                     this.addCell(this.opCode.loadAccWithConstant);
                     this.addCell("00");
-                    
                     //if false, skip to next instruction
-                    this.addCell(opCode.branchNotEqual);
+                    this.addCell(this.opCode.branchNotEqual);
                     this.addCell("02");
-
                     //if not false, it should reach here and set the value to true
-                    this.addCell(opCode.loadAccWithConstant);
+                    this.addCell(this.opCode.loadAccWithConstant);
                     this.addCell("01");
                     this.addCell(this.opCode.storeAccInMemory); //store accumulator in temp mem
-
-
-                    this.addCell(this.getFromStaticTable("temp", new TreeNode("temp")).temp);
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
                     this.addCell(this.opCode.loadYFromMemory); //load temp into y reg
-                    this.addCell(this.getFromStaticTable("temp", new TreeNode("temp")).temp);
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
                     this.addCell(this.opCode.loadXWithConstant); //load 01 into x to print non-string
                     this.addCell("01");
                     this.addCell(this.opCode.sysCall); //sys call to print
- 
-                    break;*/
+                    break;
                 default:
                     console.log('no match');
                     break;
             }
         };
         CodeGen.prototype.assignCode = function (node) {
-            debugger;
+            //debugger;
             var id = node.getChildren()[0];
             var val = node.getChildren()[1];
             var typeOfAssign = val.getType();
-            var staticEntry = this.getFromStaticTable(id.value, id.scope);
+            var staticEntry = this.getFromStaticTable(id);
             var type = staticEntry.type;
             switch (typeOfAssign) {
                 case "ID":
                     this.addCell(this.opCode.loadAccFromMemory);
-                    this.addCell(this.getFromStaticTable(val.value, val.scope).temp);
+                    this.addCell((this.getFromStaticTable(val)).temp);
                     this.addCell("XX");
                     break;
                 case "DIGIT":
@@ -357,18 +392,20 @@ var TSC;
             this.addCell("XX");
         };
         CodeGen.prototype.varDeclCode = function (node) {
-            debugger;
+            ////debugger;
             var type = node.getChildren()[0].getType();
             var val = node.getChildren()[1];
-            if (type === "STRING") {
+            if (type === "STR") {
+                //////debugger;
                 this.addToStaticTable(val.getValue(), val.scope, type, true);
-                return;
             }
-            this.addCell(this.opCode.loadAccWithConstant);
-            this.addCell("00");
-            this.addCell(this.opCode.storeAccInMemory);
-            this.addCell(this.addToStaticTable(val.getValue(), val.scope, type, false));
-            this.addCell("XX");
+            else {
+                this.addCell(this.opCode.loadAccWithConstant);
+                this.addCell("00");
+                this.addCell(this.opCode.storeAccInMemory);
+                this.addCell((this.addToStaticTable(val.getValue(), val.scope, type, false)));
+                this.addCell("XX");
+            }
         };
         CodeGen.prototype.whileCode = function (node) {
             var tempJump = this.addToJumpTable(); //create temp jump location
@@ -394,6 +431,7 @@ var TSC;
             this.addCell(this.opCode.loadXWithConstant); //put a 01 in X reg to make branchNotEqual happen after comparison
             this.addCell("01");
             this.addCell(this.opCode.compareByteToX);
+            this.populateCodeTable(node.getNextChild()); //gets the block
             this.addCell(TSC.Utils.toHexStr(this.maxByteSize - 1)); //the last byte, always 00
             this.addCell("00");
             this.addCell(this.opCode.branchNotEqual); //branch back to top of loop
@@ -401,7 +439,7 @@ var TSC;
             this.addToJumpTable(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
         };
         CodeGen.prototype.ifCode = function (node) {
-            debugger;
+            //debugger;
             var tempJump = this.addToJumpTable(); //create a temp jump location
             //in case of 'true' or 'false'
             if (node.getChildren()[0].getType() === "BOOL") {
@@ -421,30 +459,31 @@ var TSC;
             this.addToJumpTable(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
         };
         CodeGen.prototype.recursiveAdd = function (node) {
+            //////debugger;
             if (node.getType() !== "ADD" && node.getType() !== "COMP") {
                 if (node.getType() === "ID") {
                     this.addCell(this.opCode.addWithCarry);
-                    this.addCell(this.getFromStaticTable(node.getValue(), node.scope).temp);
+                    this.addCell((this.getFromStaticTable(node)).temp);
                     this.addCell("XX");
                 }
                 else {
                     //store accumulator in memory
                     this.addCell(this.opCode.storeAccInMemory);
-                    this.addCell(this.getFromStaticTable("temp2", -1));
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2"))).temp);
                     this.addCell("XX");
                     //store temp digit in memory (overwrites accumulator)
                     this.addCell(this.opCode.loadAccWithConstant);
                     this.addCell(TSC.Utils.toHexStr(node.getValue()));
                     this.addCell(this.opCode.storeAccInMemory);
-                    this.addCell(this.getFromStaticTable("temp", -1));
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
                     //load back old accumulator
                     this.addCell(this.opCode.loadAccFromMemory);
-                    this.addCell(this.getFromStaticTable("temp2", -1));
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2"))).temp);
                     this.addCell("XX");
                     //add stored digit to accumulator
                     this.addCell(this.opCode.addWithCarry);
-                    this.addCell(this.getFromStaticTable("temp", -1));
+                    this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
                 }
             }
@@ -452,24 +491,24 @@ var TSC;
                 //ADD THE DIGIT FIRST
                 //store accumulator in memory
                 this.addCell(this.opCode.storeAccInMemory);
-                this.addCell(this.getFromStaticTable("temp2", -1));
+                this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2"))).temp);
                 this.addCell("XX");
                 //store temp digit in memory (overwrites accumulator)
                 this.addCell(this.opCode.loadAccWithConstant);
-                this.addCell(TSC.Utils.toHexStr(node.getChild(0).getValue()));
+                this.addCell(TSC.Utils.toHexStr(node.getChildren()[0].getValue()));
                 this.addCell(this.opCode.storeAccInMemory);
-                this.addCell(this.getFromStaticTable("temp", -1));
+                this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                 this.addCell("XX");
                 //load back old accumulator
                 this.addCell(this.opCode.loadAccFromMemory);
-                this.addCell(this.getFromStaticTable("temp2", -1));
+                this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2"))).temp);
                 this.addCell("XX");
                 //add stored digit to accumulator
                 this.addCell(this.opCode.addWithCarry);
-                this.addCell(this.getFromStaticTable("temp", -1));
+                this.addCell((this.getFromStaticTable(new TSC.TreeNode("int", null, "temp"))).temp);
                 this.addCell("XX");
                 //recurse on the right side bb
-                this.recursiveAdd(node.getChildren[1]);
+                this.recursiveAdd(node.getChildren()[1]);
             }
         };
         CodeGen.prototype.populateStaticTable = function () {
@@ -477,8 +516,10 @@ var TSC;
             for (var i = 0; i < this.staticTable.length; i++) {
                 var item = this.staticTable[i];
                 for (var j = 0; j < this.codeTable.length; j++) {
-                    if (this.codeTable[j] === item.temp)
+                    if (this.codeTable[j] === item.temp) {
+                        //debugger;
                         this.codeTable[j] = TSC.Utils.toHexStr(this.currMemLoc);
+                    }
                     if (this.codeTable[j] === "XX")
                         this.codeTable[j] = "00";
                 }
@@ -511,7 +552,7 @@ var TSC;
                     else
                         this.addCell(TSC.Utils.toHexStr(arg2.getValue()));
                     this.addCell(this.opCode.compareByteToX);
-                    this.addCell(this.getFromStaticTable(arg1.getValue(), arg1.scope).temp);
+                    this.addCell((this.getFromStaticTable(arg1)).temp);
                     this.addCell("XX");
                 }
                 else if (arg1.getType() !== "ID" && arg2.getType() === "ID") {
@@ -523,7 +564,7 @@ var TSC;
                     else
                         this.addCell(TSC.Utils.toHexStr(arg1.getValue()));
                     this.addCell(this.opCode.compareByteToX);
-                    this.addCell(this.getFromStaticTable(arg2.getValue(), arg2.scope).temp);
+                    this.addCell((this.getFromStaticTable(arg2)).temp);
                     this.addCell("XX");
                 }
                 else if (arg1.getType() !== "ID" && arg2.getType() !== "ID") {
@@ -545,10 +586,10 @@ var TSC;
                 }
                 else {
                     this.addCell(this.opCode.loadXFromMemory);
-                    this.addCell(this.getFromStaticTable(arg1.getValue(), arg1.scope).temp);
+                    this.addCell(this.getFromStaticTable(arg1).temp);
                     this.addCell("XX");
                     this.addCell(this.opCode.compareByteToX);
-                    this.addCell(this.getFromStaticTable(arg2.getValue(), arg2.scope).temp);
+                    this.addCell(this.getFromStaticTable(arg2).temp);
                     this.addCell("XX");
                 }
             }
@@ -569,22 +610,22 @@ var TSC;
                     this.populateCodeTable(node.getChildren()[0]);
                     //store that val in temp mem
                     this.addCell(this.opCode.storeAccInMemory);
-                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell(this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2")).temp);
                     this.addCell("XX");
                     //load that val from temp mem into X reg
                     this.addCell(this.opCode.loadXFromMemory);
-                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell(this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2")).temp);
                     this.addCell("XX");
                     //ARG2
                     //do addition and store in acc for Arg2
                     this.populateCodeTable(node.getChildren()[1]);
                     //store that in temp mem
                     this.addCell(this.opCode.storeAccInMemory);
-                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell(this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2")).temp);
                     this.addCell("XX");
                     //compare the two for equality
                     this.addCell(this.opCode.compareByteToX);
-                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell(this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2")).temp);
                     this.addCell("XX");
                 }
                 else {
@@ -597,12 +638,12 @@ var TSC;
                     this.populateCodeTable(expr);
                     //store that val in temp mem
                     this.addCell(this.opCode.storeAccInMemory);
-                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell(this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2")).temp);
                     this.addCell("XX");
                     //load value into memory
                     if (value.getType() === "ID") {
                         this.addCell(this.opCode.loadXFromMemory);
-                        this.addCell(this.getFromStaticTable(value.getValue(), value.scope).temp);
+                        this.addCell(this.getFromStaticTable(value).temp);
                         this.addCell("XX");
                     }
                     else {
@@ -611,7 +652,7 @@ var TSC;
                     }
                     //compare the two for equality
                     this.addCell(this.opCode.compareByteToX);
-                    this.addCell(this.getFromStaticTable("temp2", -1).temp);
+                    this.addCell(this.getFromStaticTable(new TSC.TreeNode("int", null, "temp2")).temp);
                     this.addCell("XX");
                 }
             }

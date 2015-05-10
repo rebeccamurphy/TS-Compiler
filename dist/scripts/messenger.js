@@ -22,6 +22,7 @@ var TSC;
                 this.putMessage("*****(Line: " + line + ") Error: " + msg + "*****");
                 if (part === "Lexer")
                     _LexerError = true;
+                document.getElementById("Errors").innerHTML += "<div>(Line: " + line + ") Error: " + msg + "</div>";
             }
             else if (part === undefined) {
                 this.putMessage("*****(Line: " + line + ") Error: " + ErrorStr[msg] + "*****");
@@ -33,7 +34,6 @@ var TSC;
             }
         };
         Messenger.prototype.putWarning = function (line, msg) {
-            //;
             if (typeof msg !== "number") {
                 this.putMessage("***(Line: " + line + ") Warning: " + msg + "***");
                 document.getElementById("Warnings").innerHTML += "<div>(Line: " + line + ") Warning: " + msg + "</div>";

@@ -52,6 +52,7 @@ module TSC
     	//Block ::== {StatementList}
     	public parseBlock(node:TreeNode){
             ////;
+            _ScopeForParse++;
             node.addChild("BLOCK");
             //set current node to be the new block node
             node = node.getNewestChild();

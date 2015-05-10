@@ -54,7 +54,7 @@ module TSC
 		}
 			
 		private analyzeBLOCK(currNode, symbolTable){
-			//;
+			
 			//entering a newscopeso we add a new scope to symbol table
 			var tempST = new SymbolTable();
 			//this will probably be ok but apologizes to future me if its not
@@ -78,7 +78,6 @@ module TSC
 				_Messenger.putMessage("(" + valueChild.value+ ", Line: " +valueChild.line+
 					") Declared properly");
 				symbolTable.addNode(temp);
-				//currNode.scope = symbolTable.scope;
 			}
 			else {
 				_Messenger.putError(idChild.line, ErrorType.Redeclared);
@@ -88,7 +87,6 @@ module TSC
 			return symbolTable;
 		}
 		private analyzeIFWHILE(currNode, symbolTable){
-			;
 			if (currNode.getChildren()[0].type==="COMP"){
 				var left = currNode.getChildren()[0].getChildren()[0];
 				var compChild = currNode.getChildren()[0];
@@ -102,14 +100,14 @@ module TSC
 					type = temp[0];
 					symbolTable = temp[1];
 				}
-
 				symbolTable = this.checkType(type, currNode, symbolTable);
 				this.numComps =0;
 			}
+
 			//else dont do anything because type was already checked in parser
 		}
 		private analyzeASSIGN(currNode, symbolTable){
-			;
+			
 			var valueChild = currNode.getChildren()[1];
 			var idChild = currNode.getChildren()[0];
 			//TODO add check for addition in assignment
@@ -122,7 +120,7 @@ module TSC
 			
 		}
 		private analyzePRINT(currNode, symbolTable){
-			;
+			
 			var idChild = currNode.getChildren()[0];
 			var valueChild = currNode.getChildren()[1];
 			if (idChild.type==="ADD")
@@ -138,11 +136,12 @@ module TSC
 			else if (type ==="STRING")
 				type= "STR";
 			symbolTable= this.checkType(type , currNode,  symbolTable);
+
 			return symbolTable;
 		}
 
 		private findVarType(idChild, symbolTable:SymbolTable, assign?){
-			;
+			
 			if (idChild.type !=="ID"){
 				return [idChild.type, symbolTable];
 			}

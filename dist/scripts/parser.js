@@ -45,6 +45,7 @@ var TSC;
         //Block ::== {StatementList}
         Parser.prototype.parseBlock = function (node) {
             ////;
+            _ScopeForParse++;
             node.addChild("BLOCK");
             //set current node to be the new block node
             node = node.getNewestChild();
