@@ -34,6 +34,10 @@
     <script type="text/javascript" src="dist/scripts/node.js"></script> 
     <script type="text/javascript" src="dist/scripts/messenger.js"></script> 
     <script type="text/javascript" src="dist/scripts/codegen.js"></script> 
+    <script type="text/javascript" src="dist/scripts/tables/statictable.js"></script> 
+    <script type="text/javascript" src="dist/scripts/tables/statictableentry.js"></script> 
+    <script type="text/javascript" src="dist/scripts/tables/jumptableentry.js"></script> 
+    <script type="text/javascript" src="dist/scripts/tables/jumptable.js"></script> 
 
     <!--Added Plugins-->
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -116,16 +120,15 @@
     <div class="container">
     <div role="tabpanel">
         <ul class="nav nav-tabs" role="tabList">
-            <li role="presentation" class="active"><a href="#Tokens" aria-controls="Tokens" role="tab" data-toggle="tab"><h2>Tokens</h2></a></li>
-            <li role="presentation"><a href="#CST" aria-controls="CST" role="tab" data-toggle="tab"><h2>CST</h2></a></li>
-            <li role="presentation"><a href="#AST" aria-controls="AST" role="tab" data-toggle="tab"><h2>AST</h2></a></li>
-            <li role="presentation" ><a href="#SymbolTable" aria-controls="SymbolTable" role="tab" data-toggle="tab"><h2>SymbolTable</h2></a></li>
-            <li role="presentation"><a href="#Errors" aria-controls="Errors" role="tab" data-toggle="tab"><h2>Errors</h2></a></li>
-            <li role="presentation"><a href="#Warnings" aria-controls="Warnings" role="tab" data-toggle="tab"><h2>Warnings</h2></a></li>
-            <!--
-            <li role="presentation"><a href="#StaticTable" aria-controls="Warnings" role="tab" data-toggle="tab"><h2>Static Table</h2></a></li>
-            <li role="presentation"><a href="#JumpTable" aria-controls="Warnings" role="tab" data-toggle="tab"><h2>Jump Table</h2></a></li>-->
-            <li role="presentation"><a href="#Code" aria-controls="Code" role="tab" data-toggle="tab"><h2>Code</h2></a></li>
+            <li role="presentation" class="active"><a href="#Tokens" aria-controls="Tokens" role="tab" data-toggle="tab"><h3>Tokens</h3></a></li>
+            <li role="presentation"><a href="#CST" aria-controls="CST" role="tab" data-toggle="tab"><h3>CST</h3></a></li>
+            <li role="presentation"><a href="#AST" aria-controls="AST" role="tab" data-toggle="tab"><h3>AST</h3></a></li>
+            <li role="presentation" ><a href="#SymbolTable" aria-controls="SymbolTable" role="tab" data-toggle="tab"><h3>SymbolTable</h3></a></li>
+            <li role="presentation"><a href="#Errors" aria-controls="Errors" role="tab" data-toggle="tab"><h3>Errors</h3></a></li>
+            <li role="presentation"><a href="#Warnings" aria-controls="Warnings" role="tab" data-toggle="tab"><h3>Warnings</h3></a></li>
+            <li role="presentation"><a href="#StaticTable" aria-controls="Warnings" role="tab" data-toggle="tab"><h3>Static Table</h3></a></li>
+            <li role="presentation"><a href="#JumpTable" aria-controls="Warnings" role="tab" data-toggle="tab"><h3>Jump Table</h3></a></li>
+            <li role="presentation"><a href="#Code" aria-controls="Code" role="tab" data-toggle="tab"><h3>Code</h3></a></li>
         </ul>
     </div>
     
@@ -149,23 +152,16 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="Errors">TBC</div>
         <div role="tabpanel" class="tab-pane" id="Warnings">TBC</div>
-        <!--<div role="tabpanel" class="tab-pane" id="StaticTable">TBC</div>
-            <table id="StatTable">
-                <tr>
-                    <th>Temp</th>
-                    <th>Var</th>
-                    <th>Address</th>
-                </tr>
+        <div role="tabpanel" class="tab-pane" id="StaticTable">
+            <table id="ST">
+            
             </table>
         </div>
         <div role="tabpanel" class="tab-pane" id="JumpTable">
-            <table id="JTable">
-                <tr>
-                    <th>Temp</th>
-                    <th>Distance</th>
-                </tr>
+            <table id="JT">
+            
             </table>
-        </div>-->
+        </div>
         <div role="tabpanel" class="tab-pane" id="Code">
             <table id="CodeTable"><tr><td>TBC</td></tr></table>
         </div>

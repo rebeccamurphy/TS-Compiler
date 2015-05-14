@@ -56,7 +56,7 @@ var TSC;
             return this.parent;
         };
         SymbolTable.prototype.findVarInParent = function (node) {
-            debugger;
+            //debugger;
             if (this.scope === node.scope) {
                 if (this.findValueInScope(node.getValue()) === null) {
                     _varInParentScope = null;

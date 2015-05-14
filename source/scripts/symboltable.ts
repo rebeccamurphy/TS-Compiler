@@ -55,7 +55,7 @@ module TSC
 			return this.parent;
 		}
 		public findVarInParent(node:TreeNode){
-			debugger;
+			//debugger;
 
 			if (this.scope===node.scope){
 				if (this.findValueInScope(node.getValue())===null){

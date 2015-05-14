@@ -19,8 +19,6 @@ var TSC;
                 sysCall: "FF"
             };
             this.codeTable = [];
-            this.staticTable = [];
-            this.jumpTable = [];
             this.maxByteSize = 256;
             this.currMemLoc = 0;
             this.currHeapLoc = (this.maxByteSize - 1);
@@ -75,6 +73,12 @@ var TSC;
                 return;
             }
             this.fillInJumps();
+            if (_Verbose) {
+                _Messenger.putMessage("Displaying Static Table.");
+                _Messenger.putMessage("Displaying Jump Table.");
+            }
+            _StaticTable.display();
+            _JumpTable.display();
             _Messenger.putHeaderMessage("Code Generation Complete. Errors: " + this.errors);
             this.displayCode();
             return this.codeTable;
@@ -117,7 +121,7 @@ var TSC;
             return TSC.Utils.toHexStr(this.currHeapLoc);
         };
         CodeGen.prototype.addCell = function (opC) {
-            //////debugger;
+            ////////debugger;
             _Messenger.putMessage("Adding byte: " + opC);
             this.codeTable[this.currMemLoc++] = opC;
             if (this.currMemLoc >= this.currHeapLoc) {
@@ -127,7 +131,7 @@ var TSC;
             }
         };
         CodeGen.prototype.populateCodeTable = function (node) {
-            debugger;
+            //debugger;
             switch (node.getType()) {
                 case "BLOCK":
                     if (_Verbose)
@@ -201,7 +205,7 @@ var TSC;
             }
         };
         CodeGen.prototype.printCode = function (node) {
-            //debugger;
+            ////debugger;
             switch (node.getType()) {
                 case "ID":
                     var itemInStaticTable = _StaticTable.get(node);
@@ -273,7 +277,7 @@ var TSC;
             }
         };
         CodeGen.prototype.assignCode = function (node) {
-            //debugger;
+            ////debugger;
             var id = node.getChildren()[0];
             var val = node.getChildren()[1];
             var typeOfAssign = val.getType();
@@ -318,15 +322,15 @@ var TSC;
             this.addCell("XX");
         };
         CodeGen.prototype.varDeclCode = function (node) {
-            ////debugger;
+            //////debugger;
             var type = node.getChildren()[0].getType();
             var val = node.getChildren()[1];
             if (type === "STR") {
-                //////debugger;
+                ////////debugger;
                 _StaticTable.add(val.getValue(), val.scope, type, true);
             }
             else {
-                debugger;
+                //debugger;
                 this.addCell(this.opCode.loadAccWithConstant);
                 this.addCell("00");
                 this.addCell(this.opCode.storeAccInMemory);
@@ -366,7 +370,7 @@ var TSC;
             _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
         };
         CodeGen.prototype.ifCode = function (node) {
-            //debugger;
+            ////debugger;
             var tempJump = _JumpTable.add(); //create a temp jump location
             //in case of 'true' or 'false'
             if (node.getChildren()[0].getType() === "BOOL") {
@@ -386,7 +390,7 @@ var TSC;
             _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
         };
         CodeGen.prototype.recursiveAdd = function (node) {
-            //////debugger;
+            ////////debugger;
             if (node.getType() !== "ADD" && node.getType() !== "COMP") {
                 if (node.getType() === "ID") {
                     this.addCell(this.opCode.addWithCarry);
@@ -440,11 +444,11 @@ var TSC;
         };
         CodeGen.prototype.populateStaticTable = function () {
             this.currMemLoc += 1;
-            for (var i = 0; i < this.staticTable.length; i++) {
-                var item = this.staticTable[i];
+            for (var i = 0; i < _StaticTable.entrys.length; i++) {
+                var item = _StaticTable.entrys[i];
                 for (var j = 0; j < this.codeTable.length; j++) {
                     if (this.codeTable[j] === item.temp) {
-                        //debugger;
+                        ////debugger;
                         this.codeTable[j] = TSC.Utils.toHexStr(this.currMemLoc);
                     }
                     if (this.codeTable[j] === "XX")
@@ -459,10 +463,10 @@ var TSC;
             }
         };
         CodeGen.prototype.fillInJumps = function () {
-            for (var i = 0; i < this.jumpTable.length; i++) {
+            for (var i = 0; i < _JumpTable.entrys.length; i++) {
                 for (var j = 0; j < this.codeTable.length; j++)
-                    if (this.codeTable[j] === this.jumpTable[i].temp)
-                        this.codeTable[j] = this.jumpTable[i].distance;
+                    if (this.codeTable[j] === _JumpTable.entrys[i].temp)
+                        this.codeTable[j] = _JumpTable.entrys[i].distance;
             }
         };
         CodeGen.prototype.setZFlagEquals = function (node) {
@@ -495,8 +499,8 @@ var TSC;
                     this.addCell("XX");
                 }
                 else if (arg1.getType() !== "ID" && arg2.getType() !== "ID") {
-                    //we can optimize by comparing the variables right here
-                    //we know they are the same type by now
+                    //can optimize by comparing the variables right here
+                    //they are the same type
                     //and they are defined prior to runtime explicitly
                     if (arg1.getValue() === arg2.getValue()) {
                         //since they are equal, let's force true
@@ -527,6 +531,7 @@ var TSC;
                 if ((a1.getType() === "BOOL" || a2.getType() === "BOOL")) {
                     //nested boolean expressions detected
                     //abortMission();
+                    _Messenger.putMessage("You put a fuck ton of nexted booleans, and I don't know how to deal with it. ");
                     return;
                 }
                 //actual code
