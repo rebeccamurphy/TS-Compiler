@@ -33,6 +33,7 @@ module TSC
 			this.putMessage("*****(Line: "+line +") Error: " + ErrorStr[msg]+"*****");
 			document.getElementById("Errors").innerHTML += "<div>(Line: "+line +") ID: "+part +"  Error: " + ErrorStr[msg] +"</div>";
 		}
+		_ErrorCount++;
 	}
 	public putWarning(line,msg:any){
 		

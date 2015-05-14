@@ -32,6 +32,7 @@ var TSC;
                 this.putMessage("*****(Line: " + line + ") Error: " + ErrorStr[msg] + "*****");
                 document.getElementById("Errors").innerHTML += "<div>(Line: " + line + ") ID: " + part + "  Error: " + ErrorStr[msg] + "</div>";
             }
+            _ErrorCount++;
         };
         Messenger.prototype.putWarning = function (line, msg) {
             if (typeof msg !== "number") {

@@ -168,7 +168,7 @@ var TSC;
             return [type, symbolTable];
         };
         SemanticAnalysis.prototype.checkType = function (type, node, symbolTable, assign) {
-            ;
+            debugger;
             if (node.type == "ID" || node.type == "DIGIT" || node.type == "BOOL" || node.type === "STRING") {
                 if (node.type === "ID") {
                     var temp = this.findVarType(node, symbolTable);
@@ -222,7 +222,7 @@ var TSC;
                     else
                         this.checkType(type, node.children[i], symbolTable);
                 }
-                else
+                else if (node.children[i].type !== "BLOCK")
                     this.checkType(type, node.children[i], symbolTable);
             }
             return symbolTable;

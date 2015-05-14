@@ -46,7 +46,8 @@ var TSC;
             }
             output += "</tr>";
             document.getElementById("CodeTable").innerHTML = output;
-            TSC.Utils.copyToClipboard(code);
+            if (_Autocopy)
+                TSC.Utils.copyToClipboard(code);
         };
         CodeGen.prototype.gen = function () {
             _Messenger.putHeaderMessage("Generating 6502a code...");
@@ -527,12 +528,11 @@ var TSC;
                 var a1 = node.getChild(0);
                 var a2 = node.getChild(1);
                 if ((a1.getType() === "BOOL" || a2.getType() === "BOOL")) {
-                    //nested boolean expressions detected
-                    //abortMission();
+                    //nested boolean expressions
                     _Messenger.putMessage("You put a fuck ton of nexted booleans, and I don't know how to deal with it. ");
+                    throw new Error('Lazy Programmer :(');
                     return;
                 }
-                //actual code
                 if (arg1 === "DIGIT" && arg2 === "DIGIT") {
                     //deal with addition
                     //ARG ONE

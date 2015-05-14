@@ -21,6 +21,7 @@ var _ScopeForParse =-1;
 var _ASTRoot=null;
 var _SymbolTableRoot;
 var _Verbose;
+var _Autocopy;
 var _varInParentScope = null;
 var _parentScope = -1;
 var _StaticTable = null;
@@ -59,6 +60,7 @@ var onDocumentLoad = function() {
     _CurrentToken = ' ';
     _ErrorCount = 0;
     _Verbose = false;
+    _Autocopy = false;
 	_SymbolTableRoot =null;
 	_ASTRoot=null;
 	_ScopeForParse =-1;

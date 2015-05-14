@@ -12,6 +12,7 @@
         <div style="text-align:center;">
         <input type="button" id="btnCompile" value="Compile" onclick="btnCompile_click();"/>
         <input id="verbose" type="checkbox" name="Verbose" checked="true" value ="verbose">Verbose?
+        <input id="autocopy" type="checkbox" name="AutoCopy" checked="true" value ="verbose">Auto copy?
         </div>
     <div class="outer">
         <div style="display:inline-block;">
@@ -78,6 +79,8 @@
         init();
         
         _Verbose = $("#verbose")[0].checked;
+        _Autocopy = $("#autocopy")[0].checked;
+
         
         _Messenger.putHeaderMessage("Compilation Started...");
         // Grab the tokens from the lexer . . .
@@ -100,18 +103,21 @@
         _Parser.rootNode.printCST(0, "CST");
         _Messenger.putHeaderMessage("Creating AST...");
         _Parser.rootNode.makeAST(-1);
-        _Messenger.putHeaderMessage("Printing AST...");
-        _ASTRoot.printAST(0, "AST");
         _SemanticAnalysis = new TSC.SemanticAnalysis(_ASTRoot, "STTable");
         _SemanticAnalysis.SemanticAnalysis(_SemanticAnalysis.rootNode);
         _Messenger.putHeaderMessage("Completed Semantic Analysis.");
-        
+
+        _Messenger.putHeaderMessage("Printing AST...");
+        _ASTRoot.printAST(0, "AST");
         _Messenger.putHeaderMessage("Printing Symbol Table...");
         _SymbolTableRoot.print();
         if(_ErrorCount===0){
             _Messenger.putHeaderMessage("Starting Code Generation...");
             _CodeGenerator.gen();
             _Messenger.putHeaderMessage("DONE.");
+        }
+        else{
+            _Messenger.putHeaderMessage("Code cannot be generated due to errors.");
         }
     }
 
