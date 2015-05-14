@@ -1,0 +1,29 @@
+Project 3 Test Cases:
+
+1: over flows dah heap
+{
+    string h
+    h = "so how you doing im pretty well i dont know how you are but yeah thats great"
+    string p
+    p = "do you think i have enough space for this isnt a lot of space"
+    
+}$
+
+
+2: I didn't actually try to account for nested booleans so this is an error.
+{
+int a 
+a =0
+	if (true == (a==2) ){
+		print ("HAHA")
+        }
+
+}$
+
+Correct Code:
+
+{
+    int i
+    i = 1+2+3+4+5+6+7+8+9
+    print(i);
+}$

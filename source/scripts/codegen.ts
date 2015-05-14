@@ -583,6 +583,7 @@ module TSC
 	            if((a1.getType() === "BOOL" || a2.getType() === "BOOL")) {
 	                //nested boolean expressions
 	                _Messenger.putMessage("You put a fuck ton of nexted booleans, and I don't know how to deal with it. ")
+	                //TODO maybe check for like just normal booleans and optimize?
 	                throw new Error ('Lazy Programmer :(');
 	                return;
 	            }
