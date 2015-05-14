@@ -53,7 +53,6 @@ var TSC;
                     return this.parent.children[i + 1];
         };
         TreeNode.prototype.addChild = function (child, value, scope) {
-            ////debugger;  
             if (typeof child === "string")
                 var ch = new TreeNode(child, this, '', _CurrentToken.line, scope);
             else if (value === undefined)
@@ -119,7 +118,6 @@ var TSC;
                 }
         };
         TreeNode.prototype.replace = function (node, replacement) {
-            //debugger;
             if (this === null || this.parent === null)
                 return false;
             for (var i = 0; i < this.children.length; i++)
@@ -130,7 +128,6 @@ var TSC;
             this.parent.replace(node, replacement);
         };
         TreeNode.prototype.setScope = function (scope) {
-            //debugger;
             var temp = new TreeNode(this.type, this.parent, this.value, this.line, scope);
             this.replace(this, temp);
         };

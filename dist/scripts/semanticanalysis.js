@@ -10,7 +10,6 @@ var TSC;
             this.ID = ID;
         }
         SemanticAnalysis.prototype.SemanticAnalysis = function (currNode, symbolTable) {
-            debugger;
             if (this.currScope === -1) {
                 _Messenger.putHeaderMessage("Starting Semantic Analysis...");
                 _SymbolTableRoot = new TSC.SymbolTable();
@@ -34,7 +33,6 @@ var TSC;
             }
         };
         SemanticAnalysis.prototype.analysis = function (currNode, symbolTable) {
-            debugger;
             switch (currNode.type) {
                 case "BLOCK":
                     return this.analyzeBLOCK(currNode, symbolTable);
@@ -80,7 +78,6 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
-            debugger;
             if (currNode.getChildren()[0].type === "COMP") {
                 var left = currNode.getChildren()[0].getChildren()[0];
                 var compChild = currNode.getChildren()[0];
@@ -95,6 +92,12 @@ var TSC;
                     symbolTable = temp[1];
                 }
                 symbolTable = this.checkType(type, currNode, symbolTable);
+                this.numComps = 0;
+                return symbolTable;
+            }
+            else if (currNode.getChildren()[0].type === "BOOL") {
+                //stupid check for while true stupid grammar IS STUPID
+                symbolTable = this.checkType("BOOL", currNode.getChildren()[0], symbolTable);
                 this.numComps = 0;
                 return symbolTable;
             }
@@ -168,7 +171,6 @@ var TSC;
             return [type, symbolTable];
         };
         SemanticAnalysis.prototype.checkType = function (type, node, symbolTable, assign) {
-            debugger;
             if (node.type == "ID" || node.type == "DIGIT" || node.type == "BOOL" || node.type === "STRING") {
                 if (node.type === "ID") {
                     var temp = this.findVarType(node, symbolTable);

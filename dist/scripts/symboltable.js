@@ -56,7 +56,6 @@ var TSC;
             return this.parent;
         };
         SymbolTable.prototype.findVarInParent = function (node) {
-            //debugger;
             if (this.scope === node.scope) {
                 if (this.findValueInScope(node.getValue()) === null) {
                     _varInParentScope = null;
@@ -79,7 +78,6 @@ var TSC;
             return null;
         };
         SymbolTable.prototype.findValueInParentScope = function (id) {
-            //debugger;
             if (this === null || this.parent === null)
                 return null;
             //find closest to recently declared

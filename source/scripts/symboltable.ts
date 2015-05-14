@@ -55,7 +55,7 @@ module TSC
 			return this.parent;
 		}
 		public findVarInParent(node:TreeNode){
-			//debugger;
+			
 
 			if (this.scope===node.scope){
 				if (this.findValueInScope(node.getValue())===null){
@@ -80,7 +80,7 @@ module TSC
 			return null;
 		}
 		public findValueInParentScope(id):any{
-			//debugger;
+			
 			if (this===null || this.parent===null)
 				return null; 
 			//find closest to recently declared

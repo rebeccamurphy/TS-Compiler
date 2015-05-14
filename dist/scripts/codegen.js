@@ -125,7 +125,6 @@ var TSC;
             return TSC.Utils.toHexStr(this.currHeapLoc);
         };
         CodeGen.prototype.addCell = function (opC) {
-            ////////debugger;
             _Messenger.putMessage("Adding byte: " + opC);
             console.log(opC);
             this.codeTable[this.currMemLoc++] = opC;
@@ -136,7 +135,7 @@ var TSC;
             }
         };
         CodeGen.prototype.populateCodeTable = function (node) {
-            //debugger;
+            this.line = (node.getLine() == -1) ? this.line : node.getLine();
             switch (node.getType()) {
                 case "BLOCK":
                     if (_Verbose)
@@ -148,25 +147,21 @@ var TSC;
                 case "PRINT":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getLine();
                     this.printCode(node.getChildren()[0]);
                     break;
                 case "ASSIGN":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getLine();
                     this.assignCode(node);
                     break;
                 case "VARDECL":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getLine();
                     this.varDeclCode(node);
                     break;
                 case "WHILE":
                     if (_Verbose)
                         _Messenger.putMessage("Generating code for " + node.toString());
-                    this.line = node.getLine();
                     this.whileCode(node);
                     break;
                 case "IF":
@@ -190,14 +185,20 @@ var TSC;
                     }
                     else {
                         //SET Z-FLAG TO THE RESULT OF EQUALS AND THEN FLIP THE VALUE
-                        this.setZFlagEquals(node); //set z-flag the result of an equals operation
-                        this.addCell(this.opCode.loadXWithConstant); //load X with 00 to compare against 00
-                        this.addCell("00"); //effectively setting a default of true 
-                        this.addCell(this.opCode.branchNotEqual); //if z-flag is false, we want to return
-                        this.addCell("02"); //the default (true), so branch over false value
-                        this.addCell(this.opCode.loadXWithConstant); //load X with 01 to compare against 00 
-                        this.addCell("01"); //effectively setting the z-flag to false on comparison
-                        this.addCell(this.opCode.compareByteToX); //compare the X reg with 00
+                        //set z-flag the result of an equals operation
+                        this.setZFlagEquals(node);
+                        //load X with 00 to compare against 00 which basically makes the default true
+                        this.addCell(this.opCode.loadXWithConstant);
+                        this.addCell("00");
+                        //if z-flag is false, we want to return the default (true), so branch over false value
+                        this.addCell(this.opCode.branchNotEqual);
+                        this.addCell("02");
+                        //load X with 01 to compare against 00 
+                        //which basically sets the z-flag to false on comparison
+                        this.addCell(this.opCode.loadXWithConstant);
+                        this.addCell("01");
+                        //compare the X reg with 00
+                        this.addCell(this.opCode.compareByteToX);
                         this.addCell(TSC.Utils.toHexStr(this.maxByteSize - 1));
                         this.addCell("00");
                     }
@@ -207,7 +208,6 @@ var TSC;
             }
         };
         CodeGen.prototype.printCode = function (node) {
-            ////debugger;
             switch (node.getType()) {
                 case "ID":
                     var itemInStaticTable = _StaticTable.get(node);
@@ -230,7 +230,8 @@ var TSC;
                     this.addCell(this.opCode.loadYWithConstant);
                     this.addCell(strRef);
                     this.addCell(this.opCode.loadXWithConstant);
-                    this.addCell("02"); //print the 00-terminated string stored at the address in the Y register.
+                    //print the 00-terminated string stored at the address in the Y register.
+                    this.addCell("02");
                     this.addCell(this.opCode.sysCall);
                     break;
                 case "DIGIT":
@@ -238,23 +239,27 @@ var TSC;
                     this.addCell(this.opCode.loadYWithConstant);
                     this.addCell(hex);
                     this.addCell(this.opCode.loadXWithConstant);
-                    this.addCell("01"); //print the integer stored in the Y register
+                    //print the integer stored in the Y register
+                    this.addCell("01");
                     this.addCell(this.opCode.sysCall);
                     break;
                 case "ADD":
-                    this.populateCodeTable(node); //get result of addition in accumulator
+                    //get result of addition in accumulator
+                    this.populateCodeTable(node);
                     this.addCell((_StaticTable.get(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
-                    this.addCell(this.opCode.loadYFromMemory); //load temp into y reg
+                    //load temp into y reg
+                    this.addCell(this.opCode.loadYFromMemory);
                     this.addCell((_StaticTable.get(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
-                    this.addCell(this.opCode.loadXWithConstant); //load 01 into x to print non-string
+                    //load 01 into x to print non-string
+                    this.addCell(this.opCode.loadXWithConstant);
                     this.addCell("01");
-                    this.addCell(this.opCode.sysCall); //sys call to print                    
+                    //sys call to print. the only assembly i can actually remember
+                    this.addCell(this.opCode.sysCall);
                     break;
                 case "COMP":
-                    //handle as boolean
-                    //set default value to false
+                    //handle as boolean and set default to false
                     this.addCell(this.opCode.loadAccWithConstant);
                     this.addCell("00");
                     //if false, skip to next instruction
@@ -263,23 +268,27 @@ var TSC;
                     //if not false, it should reach here and set the value to true
                     this.addCell(this.opCode.loadAccWithConstant);
                     this.addCell("01");
-                    this.addCell(this.opCode.storeAccInMemory); //store accumulator in temp mem
+                    //store accumulator in temp mem
+                    this.addCell(this.opCode.storeAccInMemory);
                     this.addCell((_StaticTable.get(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
-                    this.addCell(this.opCode.loadYFromMemory); //load temp into y reg
+                    //load temp into y reg
+                    this.addCell(this.opCode.loadYFromMemory);
                     this.addCell((_StaticTable.get(new TSC.TreeNode("int", null, "temp"))).temp);
                     this.addCell("XX");
-                    this.addCell(this.opCode.loadXWithConstant); //load 01 into x to print non-string
+                    //load 01 into x to print non-string
+                    this.addCell(this.opCode.loadXWithConstant);
                     this.addCell("01");
-                    this.addCell(this.opCode.sysCall); //sys call to print
+                    //sys call to print. still only one i remember.
+                    this.addCell(this.opCode.sysCall);
                     break;
                 default:
+                    //this should never go but might as well keep it for the memories
                     console.log('no match');
                     break;
             }
         };
         CodeGen.prototype.assignCode = function (node) {
-            ////debugger;
             var id = node.getChildren()[0];
             var val = node.getChildren()[1];
             var typeOfAssign = val.getType();
@@ -324,14 +333,12 @@ var TSC;
             this.addCell("XX");
         };
         CodeGen.prototype.varDeclCode = function (node) {
-            //////debugger;
             var type = node.getChildren()[0].getType();
             var val = node.getChildren()[1];
             if (type === "STR") {
                 _StaticTable.add(val.getValue(), val.scope, type, true);
             }
             else {
-                //debugger;
                 this.addCell(this.opCode.loadAccWithConstant);
                 this.addCell("00");
                 this.addCell(this.opCode.storeAccInMemory);
@@ -340,9 +347,10 @@ var TSC;
             }
         };
         CodeGen.prototype.whileCode = function (node) {
-            debugger;
-            var tempJump = _JumpTable.add(); //create temp jump location
-            var startLoc = this.currMemLoc; //grab the location at the beginning of the loop
+            //create temp jump location
+            var tempJump = _JumpTable.add();
+            //grab the location at the beginning of the loop
+            var startLoc = this.currMemLoc;
             //in case of 'true' or 'false'
             if (node.getChildren()[0].getType() === "BOOL") {
                 var boolVal = node.getChild(0).getValue() === "true";
@@ -357,24 +365,37 @@ var TSC;
             }
             else
                 this.populateCodeTable(node.getChildren()[0]); //do comparison; fill z flag
-            this.addCell(this.opCode.branchNotEqual); //if false, branch away from while loop
-            this.addCell(tempJump); //the location after the while loop (temp jump location)
-            var lastLoc = this.currMemLoc; //save the memory location after the comparison
-            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
-            this.addCell(this.opCode.loadXWithConstant); //put a 01 in X reg to make branchNotEqual happen after comparison
+            //if false, branch away from while loop
+            this.addCell(this.opCode.branchNotEqual);
+            //the location after the while loop (temp jump location)
+            this.addCell(tempJump);
+            //save the memory location after the comparison
+            var lastLoc = this.currMemLoc;
+            //the code in the while block
+            this.populateCodeTable(node.getChildren()[1]);
+            //put a 01 in X reg to make branchNotEqual happen after comparison
+            this.addCell(this.opCode.loadXWithConstant);
             this.addCell("01");
             this.addCell(this.opCode.compareByteToX);
-            this.addCell(TSC.Utils.toHexStr(this.maxByteSize - 1)); //the last byte, always 00
+            //the last byte, always 00
+            this.addCell(TSC.Utils.toHexStr(this.maxByteSize - 1));
             this.addCell("00");
-            this.addCell(this.opCode.branchNotEqual); //branch back to top of loop
-            this.addCell(TSC.Utils.toHexStr((this.maxByteSize - 1) - (this.currMemLoc - startLoc))); //jump to top of loop
-            _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
+            //branch back to top of loop
+            this.addCell(this.opCode.branchNotEqual);
+            //jump to top of loop
+            this.addCell(TSC.Utils.toHexStr((this.maxByteSize - 1) - (this.currMemLoc - startLoc)));
+            //fill in temp jump location with real location
+            _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc));
         };
         CodeGen.prototype.ifCode = function (node) {
             var tempJump = _JumpTable.add(); //create a temp jump location
             //in case of 'true' or 'false'
             if (node.getChildren()[0].getType() === "BOOL") {
                 var boolVal = node.getChild(0).getValue() === "true";
+                if (boolVal)
+                    _Messenger.putWarning(this.line, "This will always be true. Why.");
+                else
+                    _Messenger.putWarning(this.line, "This will always be false. Why.");
                 this.addCell(this.opCode.loadXWithConstant);
                 this.addCell(boolVal ? "00" : "01");
                 this.addCell(this.opCode.compareByteToX);
@@ -383,14 +404,18 @@ var TSC;
             }
             else
                 this.populateCodeTable(node.getChildren()[0]); //do the comparison; fill z flag
-            this.addCell(this.opCode.branchNotEqual); //if false, branch
-            this.addCell(tempJump); //the location after the if statement to branch to (temp jump location)
-            var lastLoc = this.currMemLoc; //store our current location in memory
-            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
-            _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
+            //if false, branch
+            this.addCell(this.opCode.branchNotEqual);
+            //the location after the if statement to branch to (temp jump location)
+            this.addCell(tempJump);
+            //store our current location in memory
+            var lastLoc = this.currMemLoc;
+            //the code in the while block
+            this.populateCodeTable(node.getChildren()[1]);
+            //fill in temp jump location with real location
+            _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc));
         };
         CodeGen.prototype.recursiveAdd = function (node) {
-            ////////debugger;
             if (node.getType() !== "ADD" && node.getType() !== "COMP") {
                 if (node.getType() === "ID") {
                     this.addCell(this.opCode.addWithCarry);
@@ -498,17 +523,20 @@ var TSC;
                     this.addCell("XX");
                 }
                 else if (arg1.getType() !== "ID" && arg2.getType() !== "ID") {
-                    //can optimize by comparing the variables right here
-                    //they are the same type
-                    //and they are defined prior to runtime explicitly
+                    //can optimize by comparing the values right here
+                    //IF they are the same type (which we know they are at this point)
+                    //and IF they are defined prior to runtime explicitly
+                    //so basically if 1==1 or something. which would be dumb. but here we are.
                     if (arg1.getValue() === arg2.getValue()) {
                         //since they are equal, let's force true
                         this.addCell(this.opCode.loadXWithConstant);
                         this.addCell("00");
+                        _Messenger.putWarning(this.line, "This will always be true. You're comparing two constants. Why.");
                     }
                     else {
                         this.addCell(this.opCode.loadXWithConstant);
                         this.addCell("01");
+                        _Messenger.putWarning(this.line, "This will always be false. You're comparing two constants. Why.");
                     }
                     this.addCell(this.opCode.compareByteToX);
                     this.addCell(TSC.Utils.toHexStr(this.maxByteSize - 1));

@@ -48,7 +48,7 @@ module TSC
                 return this.parent.children[i+1];
     }
     public addChild(child:any, value?:string, scope?:number){
-        ////debugger;  
+        
         if (typeof child ==="string")
            var ch = new TreeNode(child, this, '', _CurrentToken.line,scope);
         else if (value===undefined)
@@ -121,7 +121,7 @@ module TSC
 
     }
     public replace(node:TreeNode, replacement:TreeNode){
-        //debugger;
+        
         if (this===null || this.parent===null)
             return false;
         for(var i =0; i<this.children.length; i++)
@@ -132,7 +132,7 @@ module TSC
         this.parent.replace(node, replacement);
     }
     public setScope(scope:number){
-        //debugger;
+        
         var temp = new TreeNode(this.type, this.parent, this.value, this.line, scope);
         this.replace(this, temp);
     }

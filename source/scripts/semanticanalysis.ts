@@ -12,7 +12,7 @@ module TSC
 		}
 
 		public SemanticAnalysis(currNode:TreeNode, symbolTable?){
-			debugger;
+			
 			if (this.currScope===-1){
 				_Messenger.putHeaderMessage("Starting Semantic Analysis...");
 				_SymbolTableRoot = new SymbolTable();
@@ -36,7 +36,7 @@ module TSC
 	        }
 		}
 		private analysis(currNode, symbolTable?){
-			debugger;
+			
 			switch(currNode.type){
 				case"BLOCK":
 					return this.analyzeBLOCK(currNode, symbolTable);
@@ -87,7 +87,6 @@ module TSC
 			return symbolTable;
 		}
 		private analyzeIFWHILE(currNode, symbolTable){
-			debugger;
 			if (currNode.getChildren()[0].type==="COMP"){
 				var left = currNode.getChildren()[0].getChildren()[0];
 				var compChild = currNode.getChildren()[0];
@@ -104,6 +103,13 @@ module TSC
 				symbolTable = this.checkType(type, currNode, symbolTable);
 				this.numComps =0;
 				return symbolTable;
+			}
+			else if (currNode.getChildren()[0].type==="BOOL"){
+				//stupid check for while true stupid grammar IS STUPID
+				symbolTable = this.checkType("BOOL", currNode.getChildren()[0], symbolTable);
+				this.numComps=0;
+				return symbolTable;
+				
 			}
 
 			//else dont do anything because type was already checked in parser
@@ -184,7 +190,7 @@ module TSC
 			return [type, symbolTable];
 		}
 		private checkType(type, node, symbolTable, assign?){
-			debugger;
+			
 			if (node.type =="ID"||node.type =="DIGIT" ||node.type =="BOOL"||node.type==="STRING"){
 				if (node.type ==="ID"){
 					var temp = this.findVarType(node, symbolTable);
