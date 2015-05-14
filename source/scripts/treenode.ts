@@ -12,7 +12,7 @@ module TSC
     }
     public toString(){
         var s = (this.scope===-1)? "" : this.scope;
-        return this.type +", " +this.value +" "+ s;
+        return this.type +", " +this.value;
     }
     private tabs(n) {
         var str = "";
@@ -145,7 +145,7 @@ module TSC
             this.children[i].printCST(depth+1, id);
     }
     public makeAST(depth?:number, currnode?:TreeNode){
-        ////;
+        
         if (depth===-1 && this.type==="BLOCK"){
             _ASTRoot = new TreeNode("BLOCK", null, '', this.line, this.scope);
             currnode = _ASTRoot
@@ -154,9 +154,8 @@ module TSC
         for(var i=0; i<this.children.length; i++){
             
             if (this.type!=="PROGRAM"){
-                ////debugger;
+            
                 switch(this.children[i].type){
-
                     case 'BLOCK':
                         var temp = new TreeNode("BLOCK", null, '', this.children[i].line, this.children[i].scope);
                         currnode.addChildNode(temp);
@@ -187,7 +186,7 @@ module TSC
                             temp.addChildNode(comp);
                         }
                         currnode.addChildNode(temp);
-                        //block
+                        currnode = temp;
                         this.children[i].makeAST(depth+1, currnode); 
                         break;
                     case 'PRINTSTATEMENT':
@@ -221,7 +220,7 @@ module TSC
     public nodeHTML(depth:number, id?:string){
         var output = (this.value===''||this.value===undefined)? this.type : this.type +", <b>" +this.value + "</b>";
     	document.getElementById(id).innerHTML = document.getElementById(id).innerHTML + 
-            "<div>" +this.tabs(depth) + output + " "+this.scope+"</div>";
+            "<div>" +this.tabs(depth) + output+"</div>";
     }
 	
     }

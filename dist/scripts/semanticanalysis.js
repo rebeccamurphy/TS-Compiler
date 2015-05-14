@@ -10,7 +10,7 @@ var TSC;
             this.ID = ID;
         }
         SemanticAnalysis.prototype.SemanticAnalysis = function (currNode, symbolTable) {
-            //;
+            debugger;
             if (this.currScope === -1) {
                 _Messenger.putHeaderMessage("Starting Semantic Analysis...");
                 _SymbolTableRoot = new TSC.SymbolTable();
@@ -34,7 +34,7 @@ var TSC;
             }
         };
         SemanticAnalysis.prototype.analysis = function (currNode, symbolTable) {
-            //;
+            debugger;
             switch (currNode.type) {
                 case "BLOCK":
                     return this.analyzeBLOCK(currNode, symbolTable);
@@ -60,7 +60,6 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeVARDECL = function (currNode, symbolTable) {
-            //;
             var valueChild = currNode.getChildren()[1];
             var idChild = currNode.getChildren()[0];
             if (_Verbose)
@@ -81,6 +80,7 @@ var TSC;
             return symbolTable;
         };
         SemanticAnalysis.prototype.analyzeIFWHILE = function (currNode, symbolTable) {
+            debugger;
             if (currNode.getChildren()[0].type === "COMP") {
                 var left = currNode.getChildren()[0].getChildren()[0];
                 var compChild = currNode.getChildren()[0];
@@ -96,6 +96,7 @@ var TSC;
                 }
                 symbolTable = this.checkType(type, currNode, symbolTable);
                 this.numComps = 0;
+                return symbolTable;
             }
             //else dont do anything because type was already checked in parser
         };

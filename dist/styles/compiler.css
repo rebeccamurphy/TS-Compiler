@@ -96,6 +96,6 @@ td{
 	min-height: 500px;
 }
 #CodeTable tr td {
-	padding:5px!important;
+	padding:2px!important;
 	font-family: monospace;
 }

@@ -18,7 +18,7 @@ var TSC;
         }
         TreeNode.prototype.toString = function () {
             var s = (this.scope === -1) ? "" : this.scope;
-            return this.type + ", " + this.value + " " + s;
+            return this.type + ", " + this.value;
         };
         TreeNode.prototype.tabs = function (n) {
             var str = "";
@@ -142,7 +142,6 @@ var TSC;
                 this.children[i].printCST(depth + 1, id);
         };
         TreeNode.prototype.makeAST = function (depth, currnode) {
-            ////;
             if (depth === -1 && this.type === "BLOCK") {
                 _ASTRoot = new TreeNode("BLOCK", null, '', this.line, this.scope);
                 currnode = _ASTRoot;
@@ -150,7 +149,6 @@ var TSC;
             }
             for (var i = 0; i < this.children.length; i++) {
                 if (this.type !== "PROGRAM") {
-                    ////debugger;
                     switch (this.children[i].type) {
                         case 'BLOCK':
                             var temp = new TreeNode("BLOCK", null, '', this.children[i].line, this.children[i].scope);
@@ -182,7 +180,7 @@ var TSC;
                                 temp.addChildNode(comp);
                             }
                             currnode.addChildNode(temp);
-                            //block
+                            currnode = temp;
                             this.children[i].makeAST(depth + 1, currnode);
                             break;
                         case 'PRINTSTATEMENT':
@@ -212,7 +210,7 @@ var TSC;
         TreeNode.prototype.nodeHTML = function (depth, id) {
             var output = (this.value === '' || this.value === undefined) ? this.type : this.type + ", <b>" + this.value + "</b>";
             document.getElementById(id).innerHTML = document.getElementById(id).innerHTML +
-                "<div>" + this.tabs(depth) + output + " " + this.scope + "</div>";
+                "<div>" + this.tabs(depth) + output + "</div>";
         };
         return TreeNode;
     })();

@@ -89,6 +89,9 @@ var TSC;
             var numHex = this.dec2hex(numDec);
             return "0x" + Array(3 - (numHex.length - 1)).join("0") + numHex;
         };
+        Utils.copyToClipboard = function (text) {
+            window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+        };
         return Utils;
     })();
     TSC.Utils = Utils;

@@ -31,6 +31,7 @@ var TSC;
         CodeGen.prototype.displayCode = function () {
             var output = "<tr>";
             var rowID = "";
+            var code = "";
             for (var i = 0; i < this.codeTable.length; i++) {
                 if (i % 16 === 0) {
                     rowID = "rowID" + (i / 16);
@@ -38,12 +39,14 @@ var TSC;
                 }
                 else
                     output += "<td id='dataID" + i + "'>" + this.codeTable[i] + '</td>';
+                code += this.codeTable[i];
                 if (this.codeTable[i] == "00" && this.currHeapLoc == this.maxByteSize - 1 && i >= this.currMemLoc)
                     //nothing store on heap
                     break;
             }
             output += "</tr>";
             document.getElementById("CodeTable").innerHTML = output;
+            TSC.Utils.copyToClipboard(code);
         };
         CodeGen.prototype.gen = function () {
             _Messenger.putHeaderMessage("Generating 6502a code...");
@@ -139,9 +142,6 @@ var TSC;
                         _Messenger.putMessage("Generating code for " + node.toString());
                     for (var i = 0; i < node.getChildren().length; i++) {
                         this.populateCodeTable(node.getChildren()[i]);
-                        if (node.getChildren()[i].getType() === "IF" || node.getChildren()[i].getType() === "WHILE") {
-                            i++;
-                        }
                     }
                     break;
                 case "PRINT":
@@ -359,7 +359,7 @@ var TSC;
             this.addCell(this.opCode.branchNotEqual); //if false, branch away from while loop
             this.addCell(tempJump); //the location after the while loop (temp jump location)
             var lastLoc = this.currMemLoc; //save the memory location after the comparison
-            this.populateCodeTable(node.getNextChild()); //the code in the while block
+            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
             this.addCell(this.opCode.loadXWithConstant); //put a 01 in X reg to make branchNotEqual happen after comparison
             this.addCell("01");
             this.addCell(this.opCode.compareByteToX);
@@ -370,7 +370,6 @@ var TSC;
             _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
         };
         CodeGen.prototype.ifCode = function (node) {
-            ////debugger;
             var tempJump = _JumpTable.add(); //create a temp jump location
             //in case of 'true' or 'false'
             if (node.getChildren()[0].getType() === "BOOL") {
@@ -386,7 +385,7 @@ var TSC;
             this.addCell(this.opCode.branchNotEqual); //if false, branch
             this.addCell(tempJump); //the location after the if statement to branch to (temp jump location)
             var lastLoc = this.currMemLoc; //store our current location in memory
-            this.populateCodeTable(node.getNextChild()); //gets the block
+            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
             _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc - lastLoc)); //fill in temp jump location with real location
         };
         CodeGen.prototype.recursiveAdd = function (node) {

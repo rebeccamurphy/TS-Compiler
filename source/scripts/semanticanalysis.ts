@@ -12,7 +12,7 @@ module TSC
 		}
 
 		public SemanticAnalysis(currNode:TreeNode, symbolTable?){
-			//;
+			debugger;
 			if (this.currScope===-1){
 				_Messenger.putHeaderMessage("Starting Semantic Analysis...");
 				_SymbolTableRoot = new SymbolTable();
@@ -36,7 +36,7 @@ module TSC
 	        }
 		}
 		private analysis(currNode, symbolTable?){
-			//;
+			debugger;
 			switch(currNode.type){
 				case"BLOCK":
 					return this.analyzeBLOCK(currNode, symbolTable);
@@ -64,7 +64,7 @@ module TSC
 			return symbolTable;
 		}
 		private analyzeVARDECL(currNode, symbolTable){
-			//;
+			
 			var valueChild = currNode.getChildren()[1];
 			var idChild = currNode.getChildren()[0];
 			if (_Verbose)
@@ -87,6 +87,7 @@ module TSC
 			return symbolTable;
 		}
 		private analyzeIFWHILE(currNode, symbolTable){
+			debugger;
 			if (currNode.getChildren()[0].type==="COMP"){
 				var left = currNode.getChildren()[0].getChildren()[0];
 				var compChild = currNode.getChildren()[0];
@@ -102,6 +103,7 @@ module TSC
 				}
 				symbolTable = this.checkType(type, currNode, symbolTable);
 				this.numComps =0;
+				return symbolTable;
 			}
 
 			//else dont do anything because type was already checked in parser
