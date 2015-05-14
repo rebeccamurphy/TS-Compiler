@@ -91,7 +91,7 @@ module TSC
 					return this.parent.nodes[i];
 				}
 			}
-			this.parent.findValueInParentScope(id);
+			return this.parent.findValueInParentScope(id);
 		}	
 		public replace(node:Node){
 			if (this===null || this.parent===null)

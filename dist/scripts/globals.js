@@ -19,6 +19,8 @@ var _SymbolTableRoot;
 var _Verbose;
 var _varInParentScope = null;
 var _parentScope = -1;
+var _StaticTable = null;
+var _JumpTable = null;
 var TokenType;
 (function (TokenType) {
     TokenType[TokenType["LCURLY"] = 0] = "LCURLY";
@@ -93,4 +95,6 @@ var onDocumentLoad = function () {
     _SymbolTableRoot = null;
     _ASTRoot = null;
     _ScopeForParse = -1;
+    _StaticTable = null;
+    _JumpTable = null;
 };

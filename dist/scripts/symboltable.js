@@ -89,7 +89,7 @@ var TSC;
                     return this.parent.nodes[i];
                 }
             }
-            this.parent.findValueInParentScope(id);
+            return this.parent.findValueInParentScope(id);
         };
         SymbolTable.prototype.replace = function (node) {
             if (this === null || this.parent === null)

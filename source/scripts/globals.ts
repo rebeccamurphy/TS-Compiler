@@ -23,6 +23,8 @@ var _SymbolTableRoot;
 var _Verbose;
 var _varInParentScope = null;
 var _parentScope = -1;
+var _StaticTable = null;
+var _JumpTable =null;
 enum TokenType {LCURLY, RCURLY, PRINT, LPAREN, RPAREN, EQUALSIGN, WHILE, IF, INT, STR, BOOL, CHAR,
 	EQUALS, NOTEQUALS,SPACE, FALSE, TRUE, ADD,EOF, QUOTE, NEWLINE, ID,DIGIT, TYPE, BOOLOP, NONE, PROGRAM};
 var TokenTypeString =['LCURLY', 'RCURLY', 'PRINT', 'LPAREN', 'RPAREN', 'EQUALSIGN', 'WHILE', 'IF', 'INT', 
@@ -60,5 +62,7 @@ var onDocumentLoad = function() {
 	_SymbolTableRoot =null;
 	_ASTRoot=null;
 	_ScopeForParse =-1;
+	_StaticTable = null;
+	_JumpTable = null;
 
 };
