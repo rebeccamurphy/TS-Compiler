@@ -32,8 +32,8 @@ var TSC;
             var output = "<tr>";
             var rowID = "";
             for (var i = 0; i < this.codeTable.length; i++) {
-                if (i % 8 === 0) {
-                    rowID = "rowID" + (i / 8);
+                if (i % 16 === 0) {
+                    rowID = "rowID" + (i / 16);
                     output += "</tr><tr id=" + rowID + "><td id='dataID" + i + "'>" + this.codeTable[i] + '</td>';
                 }
                 else
@@ -123,6 +123,7 @@ var TSC;
         CodeGen.prototype.addCell = function (opC) {
             ////////debugger;
             _Messenger.putMessage("Adding byte: " + opC);
+            console.log(opC);
             this.codeTable[this.currMemLoc++] = opC;
             if (this.currMemLoc >= this.currHeapLoc) {
                 _Messenger.putError(this.line, "Out of memory. Code area has overflowed into the heap.");
@@ -326,7 +327,6 @@ var TSC;
             var type = node.getChildren()[0].getType();
             var val = node.getChildren()[1];
             if (type === "STR") {
-                ////////debugger;
                 _StaticTable.add(val.getValue(), val.scope, type, true);
             }
             else {
@@ -339,6 +339,7 @@ var TSC;
             }
         };
         CodeGen.prototype.whileCode = function (node) {
+            debugger;
             var tempJump = _JumpTable.add(); //create temp jump location
             var startLoc = this.currMemLoc; //grab the location at the beginning of the loop
             //in case of 'true' or 'false'
@@ -358,11 +359,10 @@ var TSC;
             this.addCell(this.opCode.branchNotEqual); //if false, branch away from while loop
             this.addCell(tempJump); //the location after the while loop (temp jump location)
             var lastLoc = this.currMemLoc; //save the memory location after the comparison
-            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
+            this.populateCodeTable(node.getNextChild()); //the code in the while block
             this.addCell(this.opCode.loadXWithConstant); //put a 01 in X reg to make branchNotEqual happen after comparison
             this.addCell("01");
             this.addCell(this.opCode.compareByteToX);
-            this.populateCodeTable(node.getNextChild()); //gets the block
             this.addCell(TSC.Utils.toHexStr(this.maxByteSize - 1)); //the last byte, always 00
             this.addCell("00");
             this.addCell(this.opCode.branchNotEqual); //branch back to top of loop
@@ -448,7 +448,6 @@ var TSC;
                 var item = _StaticTable.entrys[i];
                 for (var j = 0; j < this.codeTable.length; j++) {
                     if (this.codeTable[j] === item.temp) {
-                        ////debugger;
                         this.codeTable[j] = TSC.Utils.toHexStr(this.currMemLoc);
                     }
                     if (this.codeTable[j] === "XX")

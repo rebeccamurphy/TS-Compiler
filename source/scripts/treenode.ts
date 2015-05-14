@@ -8,7 +8,7 @@ module TSC
         this.value = (value===undefined)? '':value;
         this.parent = parent;
         this.line = (line===undefined)? _CurrentToken.line:line;
-        this.scope = scope;
+        this.scope = (scope===undefined)? -1 :scope;
     }
     public toString(){
         var s = (this.scope===-1)? "" : this.scope;

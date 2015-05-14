@@ -79,6 +79,7 @@ var TSC;
             return null;
         };
         SymbolTable.prototype.findValueInParentScope = function (id) {
+            //debugger;
             if (this === null || this.parent === null)
                 return null;
             //find closest to recently declared
@@ -89,7 +90,7 @@ var TSC;
                     return this.parent.nodes[i];
                 }
             }
-            return this.parent.findValueInParentScope(id);
+            this.parent.findValueInParentScope(id);
         };
         SymbolTable.prototype.replace = function (node) {
             if (this === null || this.parent === null)

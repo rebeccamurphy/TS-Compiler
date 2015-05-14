@@ -44,8 +44,8 @@ module TSC
 			var output="<tr>";
 			var rowID="";
 			for (var i=0; i<this.codeTable.length; i++){
-			    if (i % 8 ===0){
-			        rowID="rowID"+(i/8);
+			    if (i % 16 ===0){
+			        rowID="rowID"+(i/16);
 			        output += "</tr><tr id="+rowID+"><td id='dataID" + i + "'>" + this.codeTable[i] + '</td>';
 			    }
 			    else
@@ -146,6 +146,7 @@ module TSC
         public addCell(opC:string) {
         	////////debugger;
         	_Messenger.putMessage("Adding byte: " + opC);
+        	console.log(opC);
         	this.codeTable[this.currMemLoc++] = opC; 
         	
         	if(this.currMemLoc >= this.currHeapLoc) {
@@ -158,11 +159,11 @@ module TSC
     		//debugger;
     	   	switch(node.getType()){
         		case "BLOCK":
+
         			if (_Verbose)
                 		_Messenger.putMessage("Generating code for " + node.toString());
 
         			for(var i=0; i<node.getChildren().length; i++){
-        				
         				this.populateCodeTable(node.getChildren()[i]);
         				if (node.getChildren()[i].getType()==="IF" ||node.getChildren()[i].getType()==="WHILE"){
             				i++;
@@ -371,9 +372,7 @@ module TSC
             var val = node.getChildren()[1];
 
             if(type === "STR") {
-            	////////debugger;
                 _StaticTable.add(val.getValue(), val.scope, type, true);
-                
             }
             else{
             	//debugger;
@@ -387,6 +386,7 @@ module TSC
     	}
 
     	public whileCode(node:TreeNode){
+    		debugger;
     		var tempJump = _JumpTable.add(); //create temp jump location
             var startLoc = this.currMemLoc; //grab the location at the beginning of the loop
            
@@ -407,15 +407,13 @@ module TSC
             this.addCell(this.opCode.branchNotEqual); //if false, branch away from while loop
             this.addCell(tempJump); //the location after the while loop (temp jump location)
             var lastLoc = this.currMemLoc; //save the memory location after the comparison
-            this.populateCodeTable(node.getChildren()[1]); //the code in the while block
+            this.populateCodeTable(node.getNextChild()); //the code in the while block
             this.addCell(this.opCode.loadXWithConstant); //put a 01 in X reg to make branchNotEqual happen after comparison
             this.addCell("01");
             this.addCell(this.opCode.compareByteToX);
-            this.populateCodeTable(node.getNextChild()); //gets the block
             this.addCell(TSC.Utils.toHexStr(this.maxByteSize-1)); //the last byte, always 00
             this.addCell("00");
             this.addCell(this.opCode.branchNotEqual); //branch back to top of loop
-
             this.addCell(TSC.Utils.toHexStr((this.maxByteSize-1) - (this.currMemLoc - startLoc))); //jump to top of loop
             _JumpTable.add(tempJump, TSC.Utils.toHexStr(this.currMemLoc-lastLoc)); //fill in temp jump location with real location
             
@@ -500,7 +498,6 @@ module TSC
 	            var item = _StaticTable.entrys[i];
 	            for(var j=0;j < this.codeTable.length; j++) {
 	                if(this.codeTable[j]===item.temp){ 
-	                	////debugger;
 	                    this.codeTable[j] = TSC.Utils.toHexStr(this.currMemLoc);
 	                }
 	                if(this.codeTable[j] === "XX")
@@ -523,7 +520,6 @@ module TSC
     	}
 
     	public setZFlagEquals(node:TreeNode) {
-    		
 	        var arg1 = node.getChildren()[0];
 	        var arg2 = node.getChildren()[1];
 	        //if we are not dealing with expressions

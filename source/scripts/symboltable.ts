@@ -80,7 +80,7 @@ module TSC
 			return null;
 		}
 		public findValueInParentScope(id):any{
-			
+			//debugger;
 			if (this===null || this.parent===null)
 				return null; 
 			//find closest to recently declared
@@ -91,7 +91,7 @@ module TSC
 					return this.parent.nodes[i];
 				}
 			}
-			return this.parent.findValueInParentScope(id);
+			this.parent.findValueInParentScope(id);
 		}	
 		public replace(node:Node){
 			if (this===null || this.parent===null)
